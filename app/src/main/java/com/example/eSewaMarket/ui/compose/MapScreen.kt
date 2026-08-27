@@ -4,11 +4,24 @@ import android.location.Geocoder
 import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,8 +33,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -34,7 +49,9 @@ import kotlin.coroutines.resume
 
 @Composable
 fun MapScreen(
-    onLocationSelected: (LatLng) -> Unit
+    onLocationSelected: (LatLng) -> Unit,
+    onCrossClick: () -> Unit,
+    onSearchClick: () -> Unit
 ) {
 
     val cameraPositionState = rememberCameraPositionState {
@@ -98,7 +115,9 @@ fun MapScreen(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
     ) {
 
         GoogleMap(
@@ -118,10 +137,76 @@ fun MapScreen(
         Text(
             text = selectedAddress,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
+                .align(Alignment.TopCenter)
                 .padding(16.dp)
                 .background(Color.White)
                 .padding(8.dp)
         )
+
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(16.dp)
+                ),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Icon(
+                painter = painterResource(R.drawable.ic_close),
+                contentDescription = "Remove address",
+                modifier = Modifier
+                    .padding(start = 16.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = onCrossClick
+                    )
+            )
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .background(
+                        color = Color.White
+                    ),
+                textStyle = LocalTextStyle.current.copy(
+                    fontSize = 20.sp,
+                    lineHeight = 24.sp,
+                    letterSpacing = 2.sp,
+                    color = colorResource(R.color.text_dark_300)
+                ),
+                lineLimits = TextFieldLineLimits.SingleLine,
+                state = rememberTextFieldState(),
+                placeholder = {
+                    Text(
+                        text = "Choose a shipping address",
+                        fontSize = 20.sp,
+                        lineHeight = 24.sp,
+                        letterSpacing = 2.sp,
+                        color = colorResource(R.color.text_dark_100)
+                    )
+                },
+                shape = RoundedCornerShape(16.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent
+                )
+            )
+
+            Icon(
+                painter = painterResource(R.drawable.ic_search),
+                contentDescription = "Search Location",
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = onSearchClick
+                    )
+            )
+        }
     }
 }
