@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -29,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,15 +45,17 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.example.eSewaMarket.R
+import com.example.eSewaMarket.utils.searchLocation
+import com.google.android.gms.maps.CameraUpdateFactory
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 
 @Composable
 fun MapScreen(
-    onLocationSelected: (LatLng) -> Unit,
-    onSearchClick: () -> Unit
+    onLocationSelected: (LatLng) -> Unit
 ) {
 
     val cameraPositionState = rememberCameraPositionState {
@@ -72,6 +76,8 @@ fun MapScreen(
     val context = LocalContext.current
 
     val addressState = rememberTextFieldState()
+
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(cameraPositionState.isMoving) {
         if (!cameraPositionState.isMoving) {
@@ -143,6 +149,9 @@ fun MapScreen(
             modifier = Modifier
                 .align(Alignment.Center)
                 .size(48.dp)
+                .offset(
+                    y = (-24).dp
+                )
         )
 
         Text(
@@ -221,7 +230,28 @@ fun MapScreen(
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                        onClick = onSearchClick
+                        onClick = {
+                            val query = addressState.text.toString().trim()
+
+                            if (query.isNotEmpty()) {
+                                scope.launch {
+
+                                    val location = searchLocation(
+                                        context,
+                                        query
+                                    )
+
+                                    location?.let {
+                                        cameraPositionState.animate(
+                                            CameraUpdateFactory.newLatLngZoom(
+                                                it,
+                                                15f
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     )
             )
         }

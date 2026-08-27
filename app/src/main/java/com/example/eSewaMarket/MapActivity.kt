@@ -12,8 +12,7 @@ class MapActivity : AppCompatActivity() {
 
         setContent{
             MapScreen(
-                onLocationSelected = {},
-                onSearchClick = {}
+                onLocationSelected = {}
             )
         }
     }
