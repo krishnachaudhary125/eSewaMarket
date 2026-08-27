@@ -3,6 +3,7 @@ package com.example.eSewaMarket
 import android.app.Application
 import androidx.room3.Room
 import com.example.eSewaMarket.data.local.AppDatabase
+import com.google.android.libraries.places.api.Places
 
 class EsewaMarketApplication : Application() {
 
@@ -19,5 +20,11 @@ class EsewaMarketApplication : Application() {
         )
             .fallbackToDestructiveMigration(true)
             .build()
+
+
+        Places.initializeWithNewPlacesApiEnabled(
+            applicationContext,
+            getString(R.string.maps_api_key)
+        )
     }
 }
