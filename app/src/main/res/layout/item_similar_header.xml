@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/shopNowLayout"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:layout_width="150dp"
+    android:layout_marginStart="@dimen/margin_medium"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/Widget.Card.Wrap"
+        android:letterSpacing="0.05"
+        android:textSize="10sp"
+        android:textColor="@color/white"
+        android:text="Discover More"/>
+
+    <TextView
+        style="@style/Widget.Card.Wrap"
+        android:textSize="34sp"
+        android:letterSpacing="0.05"
+        android:textColor="@color/white"
+        android:text="Similar"/>
+
+    <TextView
+        style="@style/Widget.Card.Wrap"
+        android:textSize="34sp"
+        android:letterSpacing="0.05"
+        android:textColor="@color/white"
+        android:text="Products"/>
+
+    <TextView
+        android:id="@+id/shopNowBtn"
+        style="@style/Widget.Card.Wrap"
+        android:clickable="true"
+        android:focusable="true"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:paddingVertical="@dimen/padding_medium"
+        android:paddingHorizontal="@dimen/padding_large"
+        android:textSize="16sp"
+        android:letterSpacing="0.05"
+        android:textColor="@color/white"
+        android:background="@drawable/bg_continue_shopping"
+        android:text="SHOP NOW"/>
+
+</LinearLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="green">#2ABB00</color>
+    <color name="popular_category_background">#182B3C</color>
+    <color name="text_dark">#555770</color>
+    <color name="red">#FF0000</color>
+    <color name="addToCartSoldOut">#E3E4EB</color>
+    <color name="text_dark_100">#C7C8D9</color>
+    <color name="text_dark_200">#8E90A6</color>
+    <color name="text_dark_300">#555770</color>
+    <color name="text_dark_400">#28293D</color>
+    <color name="esewa_yellow">#FFC107</color>
+    <color name="esewa_bg_light">#F8F8FA</color>
+    <color name="cart_image_bg">#ebebeb</color>
+    <color name="below_welcome">#8E90A6</color>
+    <color name="background">#E6ECF4</color>
+    <color name="delete_red">#FF7F6A</color>
+    <color name="light_300">#F2F2F5</color>
+    <color name="primary_green">#EAF9E6</color>
+    <color name="color_charcoal">#182B3C</color>
+    <color name="compose_text_field">#E9E9E9</color>
+    <color name="image_bg_color">#F0F0F0</color>
+</resources>

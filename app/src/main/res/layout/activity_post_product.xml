@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#E6ECF4">
+
+    <LinearLayout
+        android:id="@+id/postProductToolbar"
+        style="@style/Widget.Card.MatchWrap"
+        android:minHeight="56dp"
+        android:gravity="center"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/postProductBack"
+            style="@style/Widget.Card.Wrap"
+            android:layout_marginStart="16dp"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="8dp"
+            android:clickable="true"
+            android:contentDescription="@string/back_arrow"
+            android:focusable="true"
+            android:src="@drawable/ic_back_arrow"/>
+
+        <Space style="@style/Widget.Card.layout_weight"/>
+
+        <TextView
+            style="@style/Widget.Card.Wrap"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            android:text="@string/post_product"/>
+
+        <Space style="@style/Widget.Card.layout_weight"
+            android:layout_marginEnd="24dp"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/postProductFrame"
+        style="@style/Widget.Card.MatchWrap"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/postProductToolbar">
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

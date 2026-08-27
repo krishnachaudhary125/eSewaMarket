@@ -1,0 +1,14 @@
+<resources>
+    <string name="greet">Good morning</string>
+    <string name="name">John,</string>
+    <string name="discover">Everything you will discover here</string>
+    <string name="search_hint">What are you searching for?</string>
+    <string name="categories">Categories</string>
+    <string name="featured">Featured Products</string>
+    <string name="hot_deal">Hot Deals of The Day</string>
+    <string name="popular">Popular Brands</string>
+    <string name="recommended">Recommended for you</string>
+    <string name="loading">LOADING…</string>
+    <string name="sell_btn">SELL</string>
+    <string name="discount_off">%1$d%% OFF</string>
+</resources>

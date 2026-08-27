@@ -1,0 +1,74 @@
+<com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolBarCartFragment"
+    android:layout_width="match_parent"
+    app:contentInsetStart="0dp"
+    app:contentInsetEnd="0dp"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        android:gravity="center"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/backBtn"
+            style="@style/Widget.Card.Wrap"
+            android:padding="@dimen/margin_medium"
+            android:src="@drawable/ic_back_arrow"
+            android:background="@null"/>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/toolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"/>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            style="@style/Widget.Card.Wrap">
+
+            <ImageButton
+                android:id="@+id/toolbarIcon"
+                style="@style/Widget.Card.Wrap"
+                android:minWidth="@dimen/icon_size"
+                android:minHeight="@dimen/icon_size"
+                android:padding="@dimen/padding_medium"
+                android:layout_marginEnd="@dimen/margin_medium"
+                android:background="@drawable/bg_cart"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/numOfProductInCart"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:gravity="center"
+                android:textSize="10sp"
+                android:background="@drawable/bg_green_circle_stroke"
+                android:textColor="@color/white"
+                app:layout_constraintTop_toTopOf="@id/toolbarIcon"
+                app:layout_constraintEnd_toEndOf="@id/toolbarIcon"
+                android:translationX="-10dp"
+                android:translationY="10dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.appbar.MaterialToolbar>

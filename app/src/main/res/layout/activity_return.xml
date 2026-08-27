@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E6ECF4"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <include
+        android:id="@+id/toolbarMyReturn"
+        layout="@layout/toolbar_back_title"
+        style="@style/Widget.Card.MatchWrap"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/returnBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:paddingBottom="72dp"
+        android:background="#ffffff"
+        app:layout_constraintTop_toBottomOf="@id/toolbarMyReturn"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="150dp"
+            android:minWidth="150dp"
+            android:src="@drawable/ic_my_return"
+            android:layout_marginTop="48dp"
+            android:padding="64dp"
+            android:background="@drawable/bg_return"
+            app:layout_constraintTop_toTopOf="@id/returnBox"
+            app:layout_constraintStart_toStartOf="@id/returnBox"
+            app:layout_constraintEnd_toEndOf="@id/returnBox"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="260dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="@id/returnBox"
+            app:layout_constraintStart_toStartOf="@id/returnBox"
+            app:layout_constraintEnd_toEndOf="@id/returnBox">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="Empty returns"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textSize="16sp"
+                android:textColor="#8E90A6"
+                android:text="There are no returns yet."/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/continueShopping"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="343dp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/bg_continue_shopping"
+            android:text="CONTINUE SHOPPING"
+            android:textSize="14sp"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="16dp"
+            android:letterSpacing="0.15"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

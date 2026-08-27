@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E6ECF4"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/cartScrollLayer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/checkoutLayout">
+
+        <LinearLayout
+            style="@style/Widget.Card.MatchWrap"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/toolbarCart"
+                style="@style/Widget.Card.MatchWrap"
+                layout="@layout/toolbar_cart_fragment"/>
+
+            <LinearLayout
+                style="@style/Widget.Card.MatchWrap"
+                android:layout_margin="@dimen/margin_medium"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/Widget.Card.Wrap"
+                    android:textColor="@color/text_dark_300"
+                    android:textSize="14sp"
+                    android:letterSpacing="0.05"
+                    android:text="Items"/>
+
+                <TextView
+                    android:id="@+id/itemCount"
+                    style="@style/Widget.Card.Wrap"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:textColor="@color/text_dark_300"
+                    android:textSize="14sp"
+                    android:letterSpacing="0.05"/>
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:visibility="gone"
+                android:id="@+id/emptyCartLayout"
+                style="@style/Widget.Card.MatchWrap"
+                app:cardCornerRadius="16dp"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:layout_marginBottom="@dimen/margin_medium"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    style="@style/Widget.Card.MatchWrap"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    
+                    <ImageView
+                        style="@style/Widget.Card.Wrap"
+                        android:layout_marginTop="32dp"
+                        android:src="@drawable/ic_empty_cart"/>
+
+                    <TextView
+                        style="@style/Widget.Card.Wrap"
+                        android:textSize="20sp"
+                        android:layout_margin="@dimen/margin_small"
+                        android:textStyle="bold"
+                        android:text="Empty cart"/>
+
+                    <TextView
+                        android:id="@+id/emptyCartMsg"
+                        style="@style/Widget.Card.Wrap"
+                        android:layout_margin="@dimen/margin_small"
+                        android:textSize="16sp"
+                        android:textColor="@color/text_dark_200"/>
+
+                    <TextView
+                        visibility="gone"
+                        android:id="@+id/continueShoppingBtn"
+                        style="@style/Widget.Card.Wrap"
+                        android:layout_marginTop="@dimen/margin_medium"
+                        android:layout_marginBottom="32dp"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/bg_continue_shopping"
+                        android:text="CONTINUE SHOPPING"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:textSize="14sp"
+                        android:paddingVertical="12dp"
+                        android:paddingHorizontal="@dimen/padding_medium"
+                        android:letterSpacing="0.15"/>
+
+                    <TextView
+                        visibility="gone"
+                        android:id="@+id/goToLoginBtn"
+                        style="@style/Widget.Card.Wrap"
+                        android:layout_marginTop="@dimen/margin_medium"
+                        android:layout_marginBottom="32dp"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/bg_continue_shopping"
+                        android:text="LOGIN"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:textSize="14sp"
+                        android:paddingVertical="12dp"
+                        android:paddingHorizontal="@dimen/padding_medium"
+                        android:letterSpacing="0.15"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCartProduct"
+                style="@style/Widget.Card.MatchWrap"
+                android:layout_marginHorizontal="@dimen/margin_medium"/>
+
+            <LinearLayout
+                style="@style/Widget.Card.MatchWrap"
+                android:layout_marginVertical="@dimen/margin_medium"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    style="@style/Widget.Card.Wrap"
+                    android:text="@string/recommended"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+
+                <Space style="@style/Widget.Card.layout_weight"/>
+
+                <ImageView
+                    style="@style/Widget.Card.Wrap"
+                    android:minWidth="46dp"
+                    android:minHeight="24dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:background="@drawable/transparent_background"/>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRecommendedCart"
+                style="@style/Widget.Card.MatchWrap"
+                android:layout_marginStart="@dimen/margin_medium"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/checkoutLayout"
+        style="@style/Widget.Card.MatchWrap"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            style="@style/Widget.Card.Wrap"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="@dimen/margin_medium"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            style="@style/Widget.Card.Wrap"
+            android:textColor="@color/text_dark_300"
+            android:textSize="14sp"
+            android:letterSpacing="0.1"
+            android:paddingVertical="@dimen/padding_extra_small"
+            android:text="Checkout Total" />
+
+        <TextView
+            android:id="@+id/tvTotalPrice"
+            style="@style/Widget.Card.Wrap"
+            android:textColor="@color/text_dark_400"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/checkoutBtn"
+            style="@style/Widget.Card.Wrap"
+            android:textColor="@color/white"
+            android:layout_margin="@dimen/margin_medium"
+            android:paddingVertical="@dimen/padding_medium"
+            android:paddingHorizontal="@dimen/padding_extra_large"
+            android:letterSpacing="0.1"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/bg_continue_shopping"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="CHECKOUT"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

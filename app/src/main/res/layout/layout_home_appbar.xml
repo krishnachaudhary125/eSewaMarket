@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/appBar"
+    android:background="@android:color/transparent"
+    style="@style/Widget.Card.MatchWrap">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/homeToolBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <LinearLayout
+            style="@style/Widget.Card.MatchWrap"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                style="@style/Widget.Card.layout_weight"
+                android:orientation="horizontal">
+
+                <ImageView
+                    style="@style/Widget.Card.Wrap"
+                    android:src="@drawable/esewa_logo"/>
+
+                <ImageView
+                    style="@style/Widget.Card.Wrap"
+                    android:layout_marginStart="7dp"
+                    android:layout_marginTop="14dp"
+                    android:src="@drawable/market" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/Widget.Card.Wrap"
+                android:minWidth="72dp"
+                android:orientation="horizontal"
+                android:layout_marginEnd="@dimen/margin_medium">
+
+                <ImageButton
+                    android:id="@+id/notification"
+                    style="@style/Widget.Card.Wrap"
+                    android:src="@drawable/ic_notify"
+                    android:background="@null"/>
+
+                <Space style="@style/Widget.Card.layout_weight"/>
+
+                <ImageButton
+                    style="@style/Widget.Card.Wrap"
+                    android:src="@drawable/ic_overflow_option"
+                    android:background="@null"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <LinearLayout
+        style="@style/Widget.Card.MatchWrap"
+        android:orientation="horizontal"
+        android:layout_marginVertical="@dimen/margin_small"
+        android:layout_marginStart="@dimen/margin_medium">
+
+        <TextView
+            style="@style/Widget.Card.Wrap"
+            android:textFontWeight="400"
+            android:textSize="10sp"
+            android:letterSpacing="0.04"
+            android:text="@string/greet" />
+
+        <TextView
+            android:id="@+id/userName"
+            style="@style/Widget.Card.Wrap"
+            android:textStyle="bold"
+            android:layout_marginHorizontal="2dp"
+            android:textSize="10sp"
+            android:letterSpacing="0.04" />
+
+        <TextView
+            style="@style/Widget.Card.Wrap"
+            android:textFontWeight="400"
+            android:textSize="10sp"
+            android:letterSpacing="0.04"
+            android:text="@string/discover" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/Widget.Card.MatchWrap"
+        android:minHeight="48dp"
+        android:orientation="horizontal"
+        android:background="@drawable/edit_text_background"
+        android:layout_marginHorizontal="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:gravity="center">
+
+        <ImageView
+            style="@style/Widget.Card.Wrap"
+            android:minHeight="@dimen/icon_size"
+            android:minWidth="@dimen/icon_size"
+            android:layout_marginHorizontal="@dimen/margin_medium"
+            android:src="@drawable/ic_search"/>
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textFontWeight="400"
+            android:textSize="14sp"
+            android:autofillHints="What are you searching for?"
+            android:hint="@string/search_hint"
+            android:inputType="text"
+            android:background="@null"/>
+
+        <ImageButton
+            style="@style/Widget.Card.Wrap"
+            android:minHeight="@dimen/icon_size"
+            android:minWidth="@dimen/icon_size"
+            android:layout_marginHorizontal="@dimen/margin_medium"
+            android:src="@drawable/ic_slider"
+            android:background="@android:color/transparent"/>
+
+    </LinearLayout>
+
+</com.google.android.material.appbar.AppBarLayout>

@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.Card.Match"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#E6ECF4">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/shopScrollLayer"
+        style="@style/Widget.Card.Match"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            style="@style/Widget.Card.MatchWrap"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/homeAppBar"
+                layout="@layout/layout_home_appbar"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
+
+            <LinearLayout
+                style="@style/Widget.Card.MatchWrap"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    style="@style/Widget.Card.MatchWrap"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp">
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/vpBanner"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:minHeight="160dp"
+                        android:orientation="horizontal"
+                        android:scrollbars="none"
+                        app:layout_constraintDimensionRatio="2:1"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabLayoutIndicator"
+                    style="@style/Widget.Card.Wrap"
+                    android:layout_marginTop="12dp"
+                    android:background="@android:color/transparent"
+                    app:tabBackground="@drawable/tab_selector"
+                    app:tabGravity="center"
+                    app:tabIndicatorHeight="0dp"
+                    app:tabPaddingEnd="5dp"
+                    app:tabPaddingStart="5dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/Widget.Card.MatchWrap"
+                android:layout_marginHorizontal="16dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    style="@style/Widget.Card.Wrap"
+                    android:text="@string/categories"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+
+                <Space style="@style/Widget.Card.layout_weight"/>
+
+                <ImageView
+                    style="@style/Widget.Card.Wrap"
+                    android:minWidth="46dp"
+                    android:minHeight="24dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:background="@drawable/transparent_background"/>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/categoryRecyclerView"
+                style="@style/Widget.Card.Wrap"
+                android:minHeight="85dp"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="16dp"
+                android:scrollbars="none"
+                android:layout_marginTop="16dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+            <LinearLayout
+                style="@style/Widget.Card.MatchWrap"
+                android:layout_marginVertical="@dimen/margin_medium"
+                android:layout_marginHorizontal="16dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    style="@style/Widget.Card.Wrap"
+                    android:text="@string/featured"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+
+                <Space style="@style/Widget.Card.layout_weight"/>
+
+                <ImageView
+                    android:id="@+id/featuredProductBtn"
+                    style="@style/Widget.Card.Wrap"
+                    android:minWidth="46dp"
+                    android:minHeight="24dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:background="@drawable/transparent_background"/>
+
+            </LinearLayout>
+
+            <include
+                android:id="@+id/featuredTryAgain"
+                android:visibility="gone"
+                layout="@layout/layout_retry"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvFeaturedProduct"
+                android:layout_marginStart="@dimen/margin_medium"
+                style="@style/Widget.Card.Match"/>
+
+            <LinearLayout
+                style="@style/Widget.Card.MatchWrap"
+                android:layout_marginVertical="@dimen/margin_medium"
+                android:layout_marginHorizontal="16dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    style="@style/Widget.Card.Wrap"
+                    android:text="@string/hot_deal"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+
+                <Space style="@style/Widget.Card.layout_weight"/>
+
+                <ImageView
+                    android:id="@+id/hotDealProductsBtn"
+                    style="@style/Widget.Card.Wrap"
+                    android:minWidth="46dp"
+                    android:minHeight="24dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:background="@drawable/transparent_background"/>
+
+            </LinearLayout>
+
+            <include
+                android:id="@+id/hotDealsTryAgain"
+                android:visibility="gone"
+                layout="@layout/layout_retry"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvHotDealProduct"
+                android:layout_marginStart="@dimen/margin_medium"
+                style="@style/Widget.Card.Match"/>
+
+            <ImageView
+                style="@style/Widget.Card.Wrap"
+                android:layout_marginTop="24dp"
+                android:scaleType="fitCenter"
+                android:layout_marginHorizontal="24dp"
+                android:src="@drawable/benchmark"/>
+
+            <LinearLayout
+                style="@style/Widget.Card.MatchWrap"
+                android:layout_marginTop="36dp"
+                android:orientation="horizontal"
+                android:layout_marginStart="16dp">
+
+                <TextView
+                    style="@style/Widget.Card.Wrap"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:text="Most Popular"/>
+
+            </LinearLayout>
+
+            <include
+                android:id="@+id/mostPopularTryAgain"
+                android:visibility="gone"
+                layout="@layout/layout_retry"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/hotDealCategoriesRecyclerView"
+                style="@style/Widget.Card.MatchWrap"
+                android:layout_marginHorizontal="16dp"/>
+
+            <LinearLayout
+                style="@style/Widget.Card.MatchWrap"
+                android:layout_marginVertical="@dimen/margin_medium"
+                android:layout_marginHorizontal="16dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    style="@style/Widget.Card.Wrap"
+                    android:text="@string/popular"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+
+                <Space style="@style/Widget.Card.layout_weight"/>
+
+                <ImageView
+                    android:id="@+id/popularBrandBtn"
+                    style="@style/Widget.Card.Wrap"
+                    android:minWidth="46dp"
+                    android:minHeight="24dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:background="@drawable/transparent_background"/>
+
+            </LinearLayout>
+
+            <include
+                android:id="@+id/popularBrandTryAgain"
+                android:visibility="gone"
+                layout="@layout/layout_retry"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPopularBrand"
+                android:layout_marginStart="@dimen/margin_medium"
+                style="@style/Widget.Card.Match"/>
+
+            <LinearLayout
+                style="@style/Widget.Card.MatchWrap"
+                android:layout_marginVertical="@dimen/margin_medium"
+                android:layout_marginHorizontal="16dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    style="@style/Widget.Card.Wrap"
+                    android:text="@string/recommended"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+
+                <Space style="@style/Widget.Card.layout_weight"/>
+
+                <ImageView
+                    style="@style/Widget.Card.Wrap"
+                    android:minWidth="46dp"
+                    android:minHeight="24dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:background="@drawable/transparent_background"/>
+
+            </LinearLayout>
+
+            <include
+                android:id="@+id/recommendedTryAgain"
+                android:visibility="gone"
+                layout="@layout/layout_retry"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRecommended"
+                android:layout_marginStart="@dimen/margin_medium"
+                style="@style/Widget.Card.MatchWrap"
+                android:nestedScrollingEnabled="false"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/floatingSellButton"
+        style="@style/Widget.Card.Wrap"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/bg_sell"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            style="@style/Widget.Card.Wrap"
+            android:minWidth="24dp"
+            android:minHeight="24dp"
+            android:layout_marginVertical="12dp"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_sell"/>
+
+        <TextView
+            android:id="@+id/floatingSell"
+            style="@style/Widget.Card.Wrap"
+            android:maxLines="1"
+            android:paddingStart="6dp"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginEnd="16dp"
+            android:textStyle="bold"
+            android:letterSpacing="0.1"
+            android:textColor="@color/white"
+            android:text="@string/sell_btn"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
