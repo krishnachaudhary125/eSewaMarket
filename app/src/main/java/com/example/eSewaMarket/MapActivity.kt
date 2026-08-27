@@ -1,7 +1,6 @@
 package com.example.eSewaMarket
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import com.example.eSewaMarket.ui.compose.MapScreen
@@ -14,7 +13,6 @@ class MapActivity : AppCompatActivity() {
         setContent{
             MapScreen(
                 onLocationSelected = {},
-                onCrossClick = {},
                 onSearchClick = {}
             )
         }

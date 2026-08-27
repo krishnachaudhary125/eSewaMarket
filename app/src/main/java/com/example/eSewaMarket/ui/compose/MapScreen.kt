@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -50,7 +51,6 @@ import kotlin.coroutines.resume
 @Composable
 fun MapScreen(
     onLocationSelected: (LatLng) -> Unit,
-    onCrossClick: () -> Unit,
     onSearchClick: () -> Unit
 ) {
 
@@ -71,6 +71,8 @@ fun MapScreen(
 
     val context = LocalContext.current
 
+    val addressState = rememberTextFieldState()
+
     LaunchedEffect(cameraPositionState.isMoving) {
         if (!cameraPositionState.isMoving) {
             selectedLocation = cameraPositionState.position.target
@@ -79,38 +81,47 @@ fun MapScreen(
     }
 
     LaunchedEffect(selectedLocation) {
-        selectedAddress = withContext(Dispatchers.IO) {
 
+        val address = withContext(Dispatchers.IO) {
             try {
                 val geoCoder = Geocoder(context)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    suspendCancellableCoroutine { continuation ->
 
+                    suspendCancellableCoroutine { continuation ->
                         geoCoder.getFromLocation(
                             selectedLocation.latitude,
                             selectedLocation.longitude,
                             1
                         ) { addresses ->
+
                             continuation.resume(
                                 addresses.firstOrNull()?.getAddressLine(0)
-                                    ?: "Address not found"
+                                    ?: ""
                             )
                         }
                     }
+
                 } else {
+
                     @Suppress("DEPRECATION")
                     geoCoder.getFromLocation(
                         selectedLocation.latitude,
                         selectedLocation.longitude,
                         1
-                    )?.firstOrNull()?.getAddressLine(0)
-                        ?: "Address not found"
+                    )?.firstOrNull()?.getAddressLine(0) ?: ""
                 }
+
             } catch (e: Exception) {
                 Log.e("LOCATION", "Unable to get location", e)
-                "Unable to get Location"
+                ""
             }
+        }
+
+        selectedAddress = address
+
+        addressState.edit {
+            replace(0, length, address)
         }
     }
 
@@ -158,11 +169,17 @@ fun MapScreen(
                 painter = painterResource(R.drawable.ic_close),
                 contentDescription = "Remove address",
                 modifier = Modifier
-                    .padding(start = 16.dp)
+                    .padding(
+                        start = 16.dp,
+                        top = 8.dp,
+                        bottom = 8.dp
+                    )
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                        onClick = onCrossClick
+                        onClick = {
+                            addressState.clearText()
+                        }
                     )
             )
 
@@ -173,19 +190,19 @@ fun MapScreen(
                         color = Color.White
                     ),
                 textStyle = LocalTextStyle.current.copy(
-                    fontSize = 20.sp,
+                    fontSize = 16.sp,
                     lineHeight = 24.sp,
-                    letterSpacing = 2.sp,
+                    letterSpacing = 1.sp,
                     color = colorResource(R.color.text_dark_300)
                 ),
                 lineLimits = TextFieldLineLimits.SingleLine,
-                state = rememberTextFieldState(),
+                state = addressState,
                 placeholder = {
                     Text(
                         text = "Choose a shipping address",
-                        fontSize = 20.sp,
+                        fontSize = 16.sp,
                         lineHeight = 24.sp,
-                        letterSpacing = 2.sp,
+                        letterSpacing = 1.sp,
                         color = colorResource(R.color.text_dark_100)
                     )
                 },
