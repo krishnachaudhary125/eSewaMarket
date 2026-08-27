@@ -5,11 +5,49 @@
     android:background="#E6ECF4"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <LinearLayout
+        android:id="@+id/tbLayout"
+        style="@style/Widget.Card.MatchWrap"
+        android:layout_width="0dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <include
+            android:id="@+id/toolbarCart"
+            style="@style/Widget.Card.MatchWrap"
+            layout="@layout/toolbar_cart_fragment"/>
+
+        <LinearLayout
+            style="@style/Widget.Card.MatchWrap"
+            android:layout_margin="@dimen/margin_medium"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Widget.Card.Wrap"
+                android:textColor="@color/text_dark_300"
+                android:textSize="14sp"
+                android:letterSpacing="0.05"
+                android:text="Items"/>
+
+            <TextView
+                android:id="@+id/itemCount"
+                style="@style/Widget.Card.Wrap"
+                android:layout_marginStart="@dimen/margin_small"
+                android:textColor="@color/text_dark_300"
+                android:textSize="14sp"
+                android:letterSpacing="0.05"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/cartScrollLayer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tbLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/checkoutLayout">
@@ -17,33 +55,6 @@
         <LinearLayout
             style="@style/Widget.Card.MatchWrap"
             android:orientation="vertical">
-
-            <include
-                android:id="@+id/toolbarCart"
-                style="@style/Widget.Card.MatchWrap"
-                layout="@layout/toolbar_cart_fragment"/>
-
-            <LinearLayout
-                style="@style/Widget.Card.MatchWrap"
-                android:layout_margin="@dimen/margin_medium"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/Widget.Card.Wrap"
-                    android:textColor="@color/text_dark_300"
-                    android:textSize="14sp"
-                    android:letterSpacing="0.05"
-                    android:text="Items"/>
-
-                <TextView
-                    android:id="@+id/itemCount"
-                    style="@style/Widget.Card.Wrap"
-                    android:layout_marginStart="@dimen/margin_small"
-                    android:textColor="@color/text_dark_300"
-                    android:textSize="14sp"
-                    android:letterSpacing="0.05"/>
-
-            </LinearLayout>
 
             <androidx.cardview.widget.CardView
                 android:visibility="gone"
@@ -79,7 +90,7 @@
                         android:textColor="@color/text_dark_200"/>
 
                     <TextView
-                        visibility="gone"
+                        android:visibility="gone"
                         android:id="@+id/continueShoppingBtn"
                         style="@style/Widget.Card.Wrap"
                         android:layout_marginTop="@dimen/margin_medium"
@@ -95,7 +106,7 @@
                         android:letterSpacing="0.15"/>
 
                     <TextView
-                        visibility="gone"
+                        android:visibility="gone"
                         android:id="@+id/goToLoginBtn"
                         style="@style/Widget.Card.Wrap"
                         android:layout_marginTop="@dimen/margin_medium"
