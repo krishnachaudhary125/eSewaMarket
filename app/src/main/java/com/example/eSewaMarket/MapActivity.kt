@@ -12,7 +12,9 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent{
-            MapScreen()
+            MapScreen(
+                onLocationSelected = {}
+            )
         }
     }
 }
