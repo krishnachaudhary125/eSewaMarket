@@ -5,10 +5,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#E6ECF4">
 
+    <include
+        android:id="@+id/toolbarMore"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        layout="@layout/toolbar_back_title_action"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbarMore"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -16,12 +25,6 @@
         <LinearLayout
             style="@style/Widget.Card.MatchWrap"
             android:orientation="vertical">
-
-            <include
-                android:id="@+id/toolbarMore"
-                style="@style/Widget.Card.MatchWrap"
-                layout="@layout/toolbar_back_title_action" />
-
     <!-- Start of profile -->
 
             <androidx.cardview.widget.CardView
