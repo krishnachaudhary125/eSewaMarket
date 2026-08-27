@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -36,8 +38,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.CameraPosition
@@ -78,6 +82,35 @@ fun MapScreen(
     val addressState = rememberTextFieldState()
 
     val scope = rememberCoroutineScope()
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    fun performSearch() {
+
+        val query = addressState.text.toString().trim()
+
+        if (query.isEmpty()) return
+
+        keyboardController?.hide()
+
+        scope.launch {
+
+            val location = searchLocation(
+                context = context,
+                query = query
+            )
+
+            location?.let {
+
+                cameraPositionState.animate(
+                    CameraUpdateFactory.newLatLngZoom(
+                        it,
+                        15f
+                    )
+                )
+            }
+        }
+    }
 
     LaunchedEffect(cameraPositionState.isMoving) {
         if (!cameraPositionState.isMoving) {
@@ -178,11 +211,6 @@ fun MapScreen(
                 painter = painterResource(R.drawable.ic_close),
                 contentDescription = "Remove address",
                 modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        top = 8.dp,
-                        bottom = 8.dp
-                    )
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
@@ -190,9 +218,14 @@ fun MapScreen(
                             addressState.clearText()
                         }
                     )
+                    .padding(16.dp)
             )
 
             OutlinedTextField(
+                contentPadding = PaddingValues(
+                    horizontal = 0.dp,
+                    vertical = 0.dp
+                ),
                 modifier = Modifier
                     .weight(1f)
                     .background(
@@ -205,6 +238,13 @@ fun MapScreen(
                     color = colorResource(R.color.text_dark_300)
                 ),
                 lineLimits = TextFieldLineLimits.SingleLine,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Search
+                ),
+
+                onKeyboardAction = {
+                    performSearch()
+                },
                 state = addressState,
                 placeholder = {
                     Text(
@@ -226,33 +266,14 @@ fun MapScreen(
                 painter = painterResource(R.drawable.ic_search),
                 contentDescription = "Search Location",
                 modifier = Modifier
-                    .padding(end = 16.dp)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClick = {
-                            val query = addressState.text.toString().trim()
-
-                            if (query.isNotEmpty()) {
-                                scope.launch {
-
-                                    val location = searchLocation(
-                                        context,
-                                        query
-                                    )
-
-                                    location?.let {
-                                        cameraPositionState.animate(
-                                            CameraUpdateFactory.newLatLngZoom(
-                                                it,
-                                                15f
-                                            )
-                                        )
-                                    }
-                                }
-                            }
+                            performSearch()
                         }
                     )
+                    .padding(16.dp)
             )
         }
     }
