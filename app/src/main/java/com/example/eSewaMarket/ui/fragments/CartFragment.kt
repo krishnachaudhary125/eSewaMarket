@@ -58,7 +58,7 @@ class CartFragment : Fragment() {
         binding = FragmentCartBinding.inflate(inflater, container, false)
         userSessionRepository = UserSessionRepository(requireContext())
         authNavigator = AuthNavigator(userSessionRepository)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbarCart.toolBarCartFragment) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.tbLayout) { view, insets ->
             val top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
 
             view.setPadding(

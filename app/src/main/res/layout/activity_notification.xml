@@ -1,42 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/notificationLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E6ECF4"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="#E6ECF4">
 
-    <Toolbar
-        android:id="@+id/notificationTitle"
-        android:layout_width="match_parent"
+    <include
+        android:id="@+id/tbNotification"
+        layout="@layout/toolbar_back_title"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="@color/white"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/notificationBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="24dp"
-            android:minHeight="24dp"
-            android:layout_marginStart="16dp"
-            android:src="@drawable/ic_back_arrow"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingVertical="16dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_gravity="center"
-            android:text="Notification"/>
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"/>
-
-    </Toolbar>
 </androidx.constraintlayout.widget.ConstraintLayout>

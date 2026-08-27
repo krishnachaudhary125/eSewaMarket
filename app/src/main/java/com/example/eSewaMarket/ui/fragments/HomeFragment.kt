@@ -79,7 +79,7 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         userSessionRepository = UserSessionRepository(requireContext())
         authNavigator = AuthNavigator(userSessionRepository)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.homeAppBar.appBar) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.shopScrollLayer) { view, insets ->
             val top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
 
             view.setPadding(
