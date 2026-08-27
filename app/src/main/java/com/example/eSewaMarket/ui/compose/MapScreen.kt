@@ -1,12 +1,11 @@
 package com.example.eSewaMarket.ui.compose
 
-import android.location.Geocoder
-import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,8 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,13 +47,16 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.example.eSewaMarket.R
-import com.example.eSewaMarket.utils.searchLocation
 import com.google.android.gms.maps.CameraUpdateFactory
-import kotlinx.coroutines.Dispatchers
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.AutocompletePrediction
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
-import kotlin.coroutines.resume
 
 @Composable
 fun MapScreen(
@@ -85,31 +86,74 @@ fun MapScreen(
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    fun performSearch() {
+    val placesClient = remember {
+        Places.createClient(context)
+    }
 
-        val query = addressState.text.toString().trim()
+    var predictions by remember {
+        mutableStateOf<List<AutocompletePrediction>>(emptyList())
+    }
 
-        if (query.isEmpty()) return
+    val sessionToken = remember {
+        AutocompleteSessionToken.newInstance()
+    }
 
-        keyboardController?.hide()
+    fun selectPlace(prediction: AutocompletePrediction) {
 
-        scope.launch {
+        val placeFields = listOf(
+            Place.Field.ID,
+            Place.Field.DISPLAY_NAME,
+            Place.Field.FORMATTED_ADDRESS,
+            Place.Field.LOCATION
+        )
 
-            val location = searchLocation(
-                context = context,
-                query = query
-            )
+        val request = FetchPlaceRequest.builder(
+            prediction.placeId,
+            placeFields
+        )
+            .setSessionToken(sessionToken)
+            .build()
 
-            location?.let {
+        placesClient.fetchPlace(request)
+            .addOnSuccessListener { response ->
 
-                cameraPositionState.animate(
-                    CameraUpdateFactory.newLatLngZoom(
-                        it,
-                        15f
-                    )
-                )
+                val place = response.place
+
+                place.location?.let { latLng ->
+
+                    predictions = emptyList()
+
+                    keyboardController?.hide()
+
+                    addressState.edit {
+                        replace(
+                            0,
+                            length,
+                            place.formattedAddress
+                                ?: place.displayName
+                                ?: ""
+                        )
+                    }
+
+                    selectedAddress =
+                        place.formattedAddress
+                            ?: place.displayName
+                                    ?: ""
+
+                    scope.launch {
+                        cameraPositionState.animate(
+                            CameraUpdateFactory.newLatLngZoom(
+                                latLng,
+                                17f
+                            )
+                        )
+                    }
+                }
             }
-        }
+            .addOnFailureListener { exception ->
+
+                Log.e("PLACES", "Failed to fetch place", exception)
+            }
     }
 
     LaunchedEffect(cameraPositionState.isMoving) {
@@ -119,48 +163,53 @@ fun MapScreen(
         }
     }
 
-    LaunchedEffect(selectedLocation) {
+    LaunchedEffect(Unit) {
 
-        val address = withContext(Dispatchers.IO) {
-            try {
-                val geoCoder = Geocoder(context)
+        snapshotFlow {
+            addressState.text.toString()
+        }.collectLatest { text ->
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val query = text.trim()
 
-                    suspendCancellableCoroutine { continuation ->
-                        geoCoder.getFromLocation(
-                            selectedLocation.latitude,
-                            selectedLocation.longitude,
-                            1
-                        ) { addresses ->
+            if (query.length < 3) {
+                predictions = emptyList()
+                return@collectLatest
+            }
 
-                            continuation.resume(
-                                addresses.firstOrNull()?.getAddressLine(0)
-                                    ?: ""
-                            )
-                        }
+            delay(300)
+
+            val request = FindAutocompletePredictionsRequest.builder()
+                .setQuery(query)
+                .setCountries("NP")
+                .setSessionToken(sessionToken)
+                .build()
+
+            placesClient.findAutocompletePredictions(request)
+                .addOnSuccessListener { response ->
+
+                    Log.d(
+                        "PLACES",
+                        "Predictions count = ${response.autocompletePredictions.size}"
+                    )
+
+                    response.autocompletePredictions.forEach {
+                        Log.d(
+                            "PLACES",
+                            "Prediction = ${it.getFullText(null)}"
+                        )
                     }
 
-                } else {
-
-                    @Suppress("DEPRECATION")
-                    geoCoder.getFromLocation(
-                        selectedLocation.latitude,
-                        selectedLocation.longitude,
-                        1
-                    )?.firstOrNull()?.getAddressLine(0) ?: ""
+                    predictions = response.autocompletePredictions
                 }
+                .addOnFailureListener { exception ->
+                    Log.e(
+                        "PLACES",
+                        "Autocomplete failed",
+                        exception
+                    )
 
-            } catch (e: Exception) {
-                Log.e("LOCATION", "Unable to get location", e)
-                ""
-            }
-        }
-
-        selectedAddress = address
-
-        addressState.edit {
-            replace(0, length, address)
+                    predictions = emptyList()
+                }
         }
     }
 
@@ -198,6 +247,7 @@ fun MapScreen(
 
         Row(
             modifier = Modifier
+                .align(Alignment.TopCenter)
                 .padding(16.dp)
                 .fillMaxWidth()
                 .background(
@@ -243,7 +293,7 @@ fun MapScreen(
                 ),
 
                 onKeyboardAction = {
-                    performSearch()
+
                 },
                 state = addressState,
                 placeholder = {
@@ -270,11 +320,41 @@ fun MapScreen(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClick = {
-                            performSearch()
+
                         }
                     )
                     .padding(16.dp)
             )
+        }
+        if (predictions.isNotEmpty()) {
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(
+                        top = 80.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    )
+                    .fillMaxWidth()
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+            ) {
+                predictions.forEach { prediction ->
+
+                    Text(
+                        text = prediction.getFullText(null).toString(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                selectPlace(prediction)
+                            }
+                            .padding(16.dp)
+                    )
+                }
+            }
         }
     }
 }
