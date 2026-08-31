@@ -108,8 +108,8 @@ fun MapScreen(
         val placeFields = listOf(
             Place.Field.ID,
             Place.Field.DISPLAY_NAME,
-            Place.Field.ADDRESS_COMPONENTS,
             Place.Field.FORMATTED_ADDRESS,
+            Place.Field.ADDRESS_COMPONENTS,
             Place.Field.LOCATION
         )
 
@@ -128,6 +128,7 @@ fun MapScreen(
                 place.location?.let { latLng ->
 
                     predictions = emptyList()
+
                     keyboardController?.hide()
 
                     val components = place.addressComponents?.asList()
@@ -135,8 +136,7 @@ fun MapScreen(
                     val sublocality = components
                         ?.firstOrNull { component ->
                             component.types.any {
-                                it == "sublocality" ||
-                                        it == "sublocality_level_1"
+                                it == "sublocality" || it == "sublocality_level_1"
                             }
                         }
                         ?.name
@@ -150,32 +150,31 @@ fun MapScreen(
                     val shortAddress = listOfNotNull(
                         sublocality,
                         locality
-                    ).joinToString(", ")
+                    ).distinct()
+                        .joinToString(", ")
 
-                    val displayAddress = buildString {
-
+                    val addressName = buildString {
                         place.displayName?.let {
                             append(it)
                         }
 
                         if (shortAddress.isNotEmpty()) {
-                            append(",\n")
+                            append(", ")
                             append(shortAddress)
                         }
                     }
+
+                    val formattedAddress = place.formattedAddress
 
                     addressState.edit {
                         replace(
                             0,
                             length,
-                            displayAddress
+                            addressName
                         )
                     }
 
-                    selectedAddress =
-                        place.formattedAddress
-                            ?: place.displayName?.toString()
-                                    ?: ""
+                    selectedAddress = formattedAddress ?: addressName
 
                     scope.launch {
                         cameraPositionState.animate(
@@ -186,7 +185,8 @@ fun MapScreen(
                         )
                     }
                 }
-            }.addOnFailureListener { exception ->
+            }
+            .addOnFailureListener { exception ->
 
                 Log.e("PLACES", "Failed to fetch place", exception)
             }
@@ -300,7 +300,7 @@ fun MapScreen(
                 .offset(
                     y = (-56).dp
                 )
-        ){
+        ) {
             Text(
                 "Select"
             )
@@ -316,15 +316,6 @@ fun MapScreen(
                 .offset(
                     y = (-16).dp
                 )
-        )
-
-        Text(
-            text = selectedAddress,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(16.dp)
-                .background(Color.White)
-                .padding(8.dp)
         )
 
         Row(
@@ -408,6 +399,7 @@ fun MapScreen(
                     .padding(16.dp)
             )
         }
+
         if (predictions.isNotEmpty()) {
 
             Column(
