@@ -3,9 +3,11 @@ package com.example.eSewaMarket.ui.fragments
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -150,8 +152,7 @@ class MoreFragment : Fragment() {
 
     fun logoutAlertDialog() {
         val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Logout")
-            .setMessage("Do you want to logout?")
+            .setTitle("Do you want to logout?")
             .setNegativeButton("No", null)
             .setPositiveButton("Yes") { _, _ ->
 
@@ -176,6 +177,7 @@ class MoreFragment : Fragment() {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
+                        Log.e("LOGOUT", "Logout failed", e)
                     } finally {
                         if (isAdded) {
                             binding.loadingOverlay.visibility = View.GONE
@@ -189,7 +191,7 @@ class MoreFragment : Fragment() {
         dialog.show()
 
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-            .setTextColor(ContextCompat.getColor(requireContext(),R.color.green))
+            .setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             .setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
