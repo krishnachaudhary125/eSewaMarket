@@ -258,7 +258,7 @@ class LoginActivity : AppCompatActivity() {
             if (user == null) {
 
                 handleLoginError(
-                    "User authentication failed"
+                    "User with provided credential not found."
                 )
 
                 return@addOnCompleteListener
@@ -321,7 +321,7 @@ class LoginActivity : AppCompatActivity() {
                 } else {
 
                     handleLoginError(
-                        "Unable to get Firebase token"
+                        "Login failed"
                     )
                 }
             }
@@ -329,7 +329,7 @@ class LoginActivity : AppCompatActivity() {
 
                 handleLoginError(
                     exception.localizedMessage
-                        ?: "Unable to get Firebase token"
+                        ?: "Login Failed"
                 )
             }
     }
