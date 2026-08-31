@@ -30,8 +30,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
                     android:layout_marginTop="@dimen/margin_medium"
+                    android:background="@color/white"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -219,17 +219,24 @@
                 style="@style/Widget.Card.Match"
                 android:layout_marginStart="@dimen/margin_medium" />
 
-            <ImageView
-                style="@style/Widget.Card.Wrap"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="24dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/benchmark" />
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                android:layout_margin="@dimen/margin_medium"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <ImageView
+                    style="@style/Widget.Card.Match"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/benchmark" />
+
+            </androidx.cardview.widget.CardView>
 
             <LinearLayout
                 style="@style/Widget.Card.MatchWrap"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="36dp"
+                android:layout_marginStart="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_medium"
                 android:orientation="horizontal">
 
                 <TextView
