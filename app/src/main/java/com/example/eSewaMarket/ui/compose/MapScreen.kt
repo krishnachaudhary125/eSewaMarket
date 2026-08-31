@@ -19,6 +19,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
@@ -54,6 +56,7 @@ import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.maps.android.compose.MapUiSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -252,18 +255,38 @@ fun MapScreen(
 
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState
+            cameraPositionState = cameraPositionState,
+            uiSettings = MapUiSettings(
+                zoomControlsEnabled = false
+            )
         )
 
+        Button(
+            onClick = {},
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.green),
+                contentColor = Color.White
+            ),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(
+                    y = (-56).dp
+                )
+        ){
+            Text(
+                "Select"
+            )
+        }
         Icon(
             painter = painterResource(R.drawable.ic_map_pointer),
             contentDescription = "Selected location",
             tint = Color.Unspecified,
             modifier = Modifier
                 .align(Alignment.Center)
-                .size(36.dp)
+                .size(24.dp)
                 .offset(
-                    y = (-24).dp
+                    y = (-16).dp
                 )
         )
 
