@@ -2,7 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    // Internet Permission
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    // Location Permission
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".EsewaMarketApplication"
@@ -16,6 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Try">
 
+        // Google Map API
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
