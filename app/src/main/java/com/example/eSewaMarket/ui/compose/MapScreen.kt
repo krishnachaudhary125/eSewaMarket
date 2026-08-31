@@ -1,6 +1,7 @@
 package com.example.eSewaMarket.ui.compose
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -22,6 +23,7 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -257,9 +259,34 @@ fun MapScreen(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
             uiSettings = MapUiSettings(
-                zoomControlsEnabled = false
+                zoomControlsEnabled = false,
+                compassEnabled = false
             )
         )
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+                .size(50.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {
+                        cameraPositionState.position = CameraPosition.Builder(
+                            cameraPositionState.position
+                        )
+                            .bearing(0f)
+                            .build()
+                    }
+                )
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_gps_btn),
+                contentDescription = "Compass",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
 
         Button(
             onClick = {},
@@ -278,6 +305,7 @@ fun MapScreen(
                 "Select"
             )
         }
+
         Icon(
             painter = painterResource(R.drawable.ic_map_pointer),
             contentDescription = "Selected location",
