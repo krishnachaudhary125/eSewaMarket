@@ -103,7 +103,13 @@ fun MapScreen(
         AutocompleteSessionToken.newInstance()
     }
 
+    var isSelectingPlace by remember {
+        mutableStateOf(false)
+    }
+
     fun selectPlace(prediction: AutocompletePrediction) {
+
+        isSelectingPlace = true
 
         val placeFields = listOf(
             Place.Field.ID,
@@ -204,6 +210,12 @@ fun MapScreen(
         snapshotFlow {
             addressState.text.toString()
         }.collectLatest { text ->
+
+            if (isSelectingPlace) {
+                isSelectingPlace = false
+                predictions = emptyList()
+                return@collectLatest
+            }
 
             val query = text.trim()
 
