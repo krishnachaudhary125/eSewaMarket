@@ -61,7 +61,6 @@ fun CheckoutScreen(
     totalTax: Double,
     shippingCharge: Double,
     address: String,
-    onAddMapClick: () -> Unit,
     onProductClick: (ProductResponse) -> Unit
 ) {
     var isExpanded by rememberSaveable {
@@ -72,7 +71,13 @@ fun CheckoutScreen(
         mutableStateOf(false)
     }
 
-    val promoSheetState = rememberModalBottomSheetState()
+    var showPromoSheetAddress by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    val promoSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
 
     val scope = rememberCoroutineScope()
 
@@ -124,7 +129,9 @@ fun CheckoutScreen(
                         letterSpacing = 2.sp
                     )
                 },
-                onAddMapClick = onAddMapClick
+                onAddMapClick = {
+                    showPromoSheetAddress = true
+                }
             )
 
             Text(
@@ -326,6 +333,23 @@ fun CheckoutScreen(
             }
         }
     }
+
+    if (showPromoSheetAddress){
+        BottomSheetSetAddress(
+            onDismiss = {
+                showPromoSheetAddress = false
+            },
+            sheetState = promoSheetState,
+            onSetAddressClick = {},
+            onCancelClick = {
+                scope.launch {
+                    promoSheetState.hide()
+                    showPromoSheetAddress = false
+                }
+            }
+        )
+    }
+
     if (showPromoSheet) {
         ModalBottomSheet(
             onDismissRequest = {
