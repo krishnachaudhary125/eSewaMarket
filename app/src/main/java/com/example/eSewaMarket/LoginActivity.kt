@@ -141,7 +141,7 @@ class LoginActivity : AppCompatActivity() {
 
                 Toast.makeText(
                     this,
-                    error,
+                    "Following account doesn't exist.",
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -246,8 +246,7 @@ class LoginActivity : AppCompatActivity() {
             if (!task.isSuccessful) {
 
                 handleLoginError(
-                    task.exception?.localizedMessage
-                        ?: "Login failed"
+                    "Account is not registered yet."
                 )
 
                 return@addOnCompleteListener
