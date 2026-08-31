@@ -106,6 +106,7 @@
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tabLayoutIndicator"
                     style="@style/Widget.Card.Wrap"
+                    android:layout_height="8dp"
                     android:layout_marginTop="12dp"
                     android:background="@android:color/transparent"
                     app:tabBackground="@drawable/tab_selector"
