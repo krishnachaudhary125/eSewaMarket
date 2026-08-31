@@ -22,4 +22,5 @@
     <color name="color_charcoal">#182B3C</color>
     <color name="compose_text_field">#E9E9E9</color>
     <color name="image_bg_color">#F0F0F0</color>
+    <color name="fade_white">#F5F5F5</color>
 </resources>

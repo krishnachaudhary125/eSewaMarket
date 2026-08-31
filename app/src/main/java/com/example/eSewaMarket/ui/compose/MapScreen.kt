@@ -1,6 +1,7 @@
 package com.example.eSewaMarket.ui.compose
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,7 +20,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -54,6 +58,7 @@ import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.maps.android.compose.MapUiSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -98,12 +103,19 @@ fun MapScreen(
         AutocompleteSessionToken.newInstance()
     }
 
+    var isSelectingPlace by remember {
+        mutableStateOf(false)
+    }
+
     fun selectPlace(prediction: AutocompletePrediction) {
+
+        isSelectingPlace = true
 
         val placeFields = listOf(
             Place.Field.ID,
             Place.Field.DISPLAY_NAME,
             Place.Field.FORMATTED_ADDRESS,
+            Place.Field.ADDRESS_COMPONENTS,
             Place.Field.LOCATION
         )
 
@@ -125,20 +137,50 @@ fun MapScreen(
 
                     keyboardController?.hide()
 
+                    val components = place.addressComponents?.asList()
+
+                    val sublocality = components
+                        ?.firstOrNull { component ->
+                            component.types.any {
+                                it == "sublocality" || it == "sublocality_level_1"
+                            }
+                        }
+                        ?.name
+
+                    val locality = components
+                        ?.firstOrNull { component ->
+                            component.types.contains("locality")
+                        }
+                        ?.name
+
+                    val shortAddress = listOfNotNull(
+                        sublocality,
+                        locality
+                    ).distinct()
+                        .joinToString(", ")
+
+                    val addressName = buildString {
+                        place.displayName?.let {
+                            append(it)
+                        }
+
+                        if (shortAddress.isNotEmpty()) {
+                            append(", ")
+                            append(shortAddress)
+                        }
+                    }
+
+                    val formattedAddress = place.formattedAddress
+
                     addressState.edit {
                         replace(
                             0,
                             length,
-                            place.formattedAddress
-                                ?: place.displayName
-                                ?: ""
+                            addressName
                         )
                     }
 
-                    selectedAddress =
-                        place.formattedAddress
-                            ?: place.displayName
-                                    ?: ""
+                    selectedAddress = formattedAddress ?: addressName
 
                     scope.launch {
                         cameraPositionState.animate(
@@ -168,6 +210,12 @@ fun MapScreen(
         snapshotFlow {
             addressState.text.toString()
         }.collectLatest { text ->
+
+            if (isSelectingPlace) {
+                isSelectingPlace = false
+                predictions = emptyList()
+                return@collectLatest
+            }
 
             val query = text.trim()
 
@@ -221,8 +269,54 @@ fun MapScreen(
 
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState
+            cameraPositionState = cameraPositionState,
+            uiSettings = MapUiSettings(
+                zoomControlsEnabled = false,
+                compassEnabled = false
+            )
         )
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+                .size(50.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {
+                        cameraPositionState.position = CameraPosition.Builder(
+                            cameraPositionState.position
+                        )
+                            .bearing(0f)
+                            .build()
+                    }
+                )
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_gps_btn),
+                contentDescription = "Compass",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        Button(
+            onClick = {},
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.green),
+                contentColor = Color.White
+            ),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(
+                    y = (-56).dp
+                )
+        ) {
+            Text(
+                "Select"
+            )
+        }
 
         Icon(
             painter = painterResource(R.drawable.ic_map_pointer),
@@ -230,19 +324,10 @@ fun MapScreen(
             tint = Color.Unspecified,
             modifier = Modifier
                 .align(Alignment.Center)
-                .size(48.dp)
+                .size(24.dp)
                 .offset(
-                    y = (-24).dp
+                    y = (-16).dp
                 )
-        )
-
-        Text(
-            text = selectedAddress,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(16.dp)
-                .background(Color.White)
-                .padding(8.dp)
         )
 
         Row(
@@ -326,6 +411,7 @@ fun MapScreen(
                     .padding(16.dp)
             )
         }
+
         if (predictions.isNotEmpty()) {
 
             Column(

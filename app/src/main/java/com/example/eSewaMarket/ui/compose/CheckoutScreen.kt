@@ -61,7 +61,6 @@ fun CheckoutScreen(
     totalTax: Double,
     shippingCharge: Double,
     address: String,
-    onAddMapClick: () -> Unit,
     onProductClick: (ProductResponse) -> Unit
 ) {
     var isExpanded by rememberSaveable {
@@ -72,7 +71,13 @@ fun CheckoutScreen(
         mutableStateOf(false)
     }
 
-    val promoSheetState = rememberModalBottomSheetState()
+    var showPromoSheetAddress by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    val promoSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
 
     val scope = rememberCoroutineScope()
 
@@ -124,7 +129,9 @@ fun CheckoutScreen(
                         letterSpacing = 2.sp
                     )
                 },
-                onAddMapClick = onAddMapClick
+                onAddMapClick = {
+                    showPromoSheetAddress = true
+                }
             )
 
             Text(
@@ -326,126 +333,36 @@ fun CheckoutScreen(
             }
         }
     }
+
+    if (showPromoSheetAddress){
+        BottomSheetSetAddress(
+            onDismiss = {
+                showPromoSheetAddress = false
+            },
+            sheetState = promoSheetState,
+            onSetAddressClick = {},
+            onCancelClick = {
+                scope.launch {
+                    promoSheetState.hide()
+                    showPromoSheetAddress = false
+                }
+            }
+        )
+    }
+
     if (showPromoSheet) {
-        ModalBottomSheet(
-            onDismissRequest = {
+        BottomSheetPromoCode(
+            onDismiss = {
                 showPromoSheet = false
             },
             sheetState = promoSheetState,
-            dragHandle = null,
-            containerColor = Color.White
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-            ) {
-                Text(
-                    "Promocode",
-                    fontSize = 20.sp,
-                    letterSpacing = 1.sp,
-                    lineHeight = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.text_dark_400),
-                    modifier = Modifier
-                        .padding(vertical = 4.dp)
-                )
-
-                Text(
-                    "Enter promocode",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 16.sp,
-                    letterSpacing = 1.sp,
-                    color = colorResource(id = R.color.text_dark_300),
-                    modifier = Modifier
-                        .padding(
-                            top = 16.dp,
-                            bottom = 4.dp
-                        )
-                )
-
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            color = colorResource(id = R.color.compose_text_field),
-                            shape = RoundedCornerShape(16.dp)
-                        ),
-                    state = rememberTextFieldState(),
-                    placeholder = {
-                        Text(
-                            text = "Promocode",
-                            fontSize = 16.sp,
-                            lineHeight = 24.sp,
-                            letterSpacing = 2.sp,
-                            color = colorResource(R.color.text_dark_100)
-                        )
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Transparent,
-                        unfocusedBorderColor = Color.Transparent
-                    )
-                )
-
-                Row(
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                ) {
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                promoSheetState.hide()
-                                showPromoSheet = false
-                            }
-                        },
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.text_dark_300),
-                            contentColor = Color.White
-                        ),
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(
-                                end = 8.dp
-                            )
-                    ) {
-                        Text(
-                            "CANCEL",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            lineHeight = 16.sp,
-                            letterSpacing = 4.sp,
-                            modifier = Modifier
-                                .padding(vertical = 16.dp)
-                        )
-                    }
-
-                    Button(
-                        onClick = {},
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.green),
-                            contentColor = Color.White
-                        ),
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(
-                                start = 8.dp
-                            )
-                    ) {
-                        Text(
-                            "APPLY",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            lineHeight = 16.sp,
-                            letterSpacing = 4.sp,
-                            modifier = Modifier
-                                .padding(vertical = 16.dp)
-                        )
-                    }
+            onCancelClick = {
+                scope.launch {
+                    promoSheetState.hide()
+                    showPromoSheet = false
                 }
-            }
-        }
+            },
+            onApplyClick = {}
+        )
     }
 }
