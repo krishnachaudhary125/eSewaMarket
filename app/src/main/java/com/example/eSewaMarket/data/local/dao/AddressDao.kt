@@ -33,4 +33,10 @@ interface AddressDao {
         addressId: Long,
         userId: Long
     ): AddressEntity?
+
+    @Query("DELETE FROM addresses WHERE userId = :userId")
+    suspend fun clearAddress(userId: Long)
+
+    @Query("DELETE FROM addresses WHERE userId = :userId AND id NOT IN (:serverIds)")
+    suspend fun deleteNotInServer(userId: Long, serverIds: List<Long>)
 }

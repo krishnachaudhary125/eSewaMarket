@@ -1,5 +1,6 @@
 package com.example.eSewaMarket.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.eSewaMarket.data.models.AddressRequest
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 class AddressViewModel(
     private val repository: AddressRepository
@@ -78,6 +80,18 @@ class AddressViewModel(
                 .onFailure { exception ->
                     _error.value = exception.message
                 }
+        }
+    }
+
+    fun syncAddressWithServer() {
+        viewModelScope.launch {
+            try {
+                repository.syncAddressWithServer()
+            } catch (e: CancellationException) {
+                throw e
+            }catch (e: Exception){
+                Log.e("SYNC_ADDRESS", "Address sync failed", e)
+            }
         }
     }
 

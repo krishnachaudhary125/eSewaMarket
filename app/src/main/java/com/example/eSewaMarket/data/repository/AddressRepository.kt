@@ -131,4 +131,39 @@ class AddressRepository(
             Result.failure(e)
         }
     }
+
+    suspend fun syncAddressWithServer(){
+        val userId = currentUserId()
+        val token = getAuthToken()
+        val response = apiService.getAddresses(token)
+
+        val addresses = response.map {
+            AddressEntity(
+                id = it.id,
+                userId = userId,
+                fullName = it.fullName,
+                phone = it.phone,
+                addressName = it.addressName,
+                formattedAddress = it.formattedAddress,
+                isDefaultAddress = it.isDefaultAddress,
+                isBillingAddress = it.isBillingAddress,
+                label = it.label
+            )
+        }
+
+        if (addresses.isEmpty()){
+            addressDao.clearAddress(userId)
+        } else {
+            val serverIds = addresses.map{
+                it.id
+            }
+
+            addressDao.deleteNotInServer(
+                userId = userId,
+                serverIds = serverIds
+            )
+
+            addressDao.insertAddresses(addresses)
+        }
+    }
 }
