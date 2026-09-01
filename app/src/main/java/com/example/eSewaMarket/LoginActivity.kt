@@ -11,12 +11,15 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.eSewaMarket.data.api.RetrofitInstance
+import com.example.eSewaMarket.data.repository.AddressRepository
 import com.example.eSewaMarket.data.repository.CartRepository
 import com.example.eSewaMarket.data.repository.FavouriteRepository
 import com.example.eSewaMarket.data.repository.UserSessionRepository
 import com.example.eSewaMarket.databinding.ActivityLoginBinding
+import com.example.eSewaMarket.ui.factory.AddressViewModelFactory
 import com.example.eSewaMarket.ui.factory.CartViewModelFactory
 import com.example.eSewaMarket.ui.factory.FavouriteViewModelFactory
+import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
 import com.example.eSewaMarket.ui.viewmodel.FavouriteViewModel
 import com.example.eSewaMarket.ui.viewmodel.UserViewModel
@@ -30,6 +33,7 @@ class LoginActivity : AppCompatActivity() {
     private val userViewModel: UserViewModel by viewModels()
     private lateinit var cartViewModel: CartViewModel
     private lateinit var favouriteViewModel: FavouriteViewModel
+    private lateinit var addressViewModel: AddressViewModel
 
     private lateinit var userSessionRepository: UserSessionRepository
 
@@ -62,6 +66,12 @@ class LoginActivity : AppCompatActivity() {
             apiService = RetrofitInstance.api
         )
 
+        val addressRepository = AddressRepository(
+            addressDao = database.addressDao(),
+            userRepository = userSessionRepository,
+            apiService = RetrofitInstance.api
+        )
+
         cartViewModel = ViewModelProvider(
                 this,
                 CartViewModelFactory(cartRepository)
@@ -74,6 +84,14 @@ class LoginActivity : AppCompatActivity() {
                     favouriteRepository
                 )
             )[FavouriteViewModel::class.java]
+
+        addressViewModel =
+            ViewModelProvider(
+                this,
+                AddressViewModelFactory(
+                    addressRepository
+                )
+            )[AddressViewModel::class.java]
 
         observeViewModels()
 
@@ -111,6 +129,8 @@ class LoginActivity : AppCompatActivity() {
 
             favouriteViewModel
                 .syncFavouritesWithServer()
+
+            addressViewModel.syncAddressWithServer()
 
             val intent = Intent(
                 this@LoginActivity,

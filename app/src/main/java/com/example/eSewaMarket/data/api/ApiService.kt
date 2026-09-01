@@ -1,6 +1,8 @@
 package com.example.eSewaMarket.data.api
 
 import com.example.eSewaMarket.data.models.AddToCartRequest
+import com.example.eSewaMarket.data.models.AddressRequest
+import com.example.eSewaMarket.data.models.AddressResponse
 import com.example.eSewaMarket.data.models.ProductResponse
 import com.example.eSewaMarket.data.models.FavouriteToggles
 import com.example.eSewaMarket.data.models.HomeResponse
@@ -86,4 +88,21 @@ interface ApiService {
         @Query("page") page: Int,
         @Query("size") size: Int = 10
     ): PageResponse<Product>
+
+    @POST("addresses")
+    suspend fun createAddress(
+        @Header("Authorization") token: String,
+        @Body request: AddressRequest
+    ): AddressResponse
+
+    @GET("addresses")
+    suspend fun getAddresses(
+        @Header("Authorization") token: String
+    ): List<AddressResponse>
+
+    @GET("addresses/{id}")
+    suspend fun getAddress(
+        @Header("Authorization") token: String,
+        @Path("id") id: Long
+    ): AddressResponse
 }

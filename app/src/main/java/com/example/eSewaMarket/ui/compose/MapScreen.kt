@@ -23,7 +23,6 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -65,12 +64,14 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MapScreen(
-    onLocationSelected: (LatLng) -> Unit
+    onLocationSelected: (LatLng) -> Unit,
+    latitude: Double,
+    longitude: Double
 ) {
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
-            LatLng(27.6790101, 85.3164678),
+            LatLng(latitude, longitude),
             15f
         )
     }
@@ -314,7 +315,9 @@ fun MapScreen(
                 )
         ) {
             Text(
-                "Select"
+                "Select",
+                letterSpacing = 2.sp,
+                fontSize = 14.sp
             )
         }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/appBar"
-    android:background="@color/fade_white"
+    android:background="@android:color/transparent"
     style="@style/Widget.Card.MatchWrap">
 
     <com.google.android.material.appbar.MaterialToolbar

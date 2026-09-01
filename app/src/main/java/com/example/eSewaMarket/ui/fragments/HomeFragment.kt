@@ -22,6 +22,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.eSewaMarket.FeaturedProductActivity
 import com.example.eSewaMarket.HotDealProductsActivity
 import com.example.eSewaMarket.LoginActivity
+import com.example.eSewaMarket.NewAddressActivity
 import com.example.eSewaMarket.NotificationActivity
 import com.example.eSewaMarket.PopularBrandActivity
 import com.example.eSewaMarket.PostProductActivity
@@ -172,6 +173,10 @@ class HomeFragment : Fragment() {
         binding.popularBrandBtn.setOnClickListener {
             val intent = Intent(requireContext(), PopularBrandActivity::class.java)
             startActivity(intent)
+        }
+
+        binding.setAddressBtn.setOnClickListener {
+            startActivity(Intent(requireContext(), NewAddressActivity::class.java))
         }
     }
 
