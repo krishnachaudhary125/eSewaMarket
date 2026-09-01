@@ -81,7 +81,6 @@ class AddressViewModel(
         }
     }
 
-
     fun clearError() {
         _error.value = null
     }

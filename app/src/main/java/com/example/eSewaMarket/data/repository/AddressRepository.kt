@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 
 class AddressRepository(
-    private val apiService: ApiService,
     private val addressDao: AddressDao,
-    private val userRepository: UserSessionRepository
+    private val userRepository: UserSessionRepository,
+    private val apiService: ApiService
 ) {
 
     private suspend fun currentUserId(): Long {
