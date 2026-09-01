@@ -61,7 +61,8 @@ fun CheckoutScreen(
     totalTax: Double,
     shippingCharge: Double,
     address: String,
-    onProductClick: (ProductResponse) -> Unit
+    onProductClick: (ProductResponse) -> Unit,
+    onSetAddressClick: () -> Unit
 ) {
     var isExpanded by rememberSaveable {
         mutableStateOf(false)
@@ -340,7 +341,7 @@ fun CheckoutScreen(
                 showPromoSheetAddress = false
             },
             sheetState = promoSheetState,
-            onSetAddressClick = {},
+            onSetAddressClick = onSetAddressClick,
             onCancelClick = {
                 scope.launch {
                     promoSheetState.hide()

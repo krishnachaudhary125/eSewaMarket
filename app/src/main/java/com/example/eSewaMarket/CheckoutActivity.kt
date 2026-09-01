@@ -55,11 +55,11 @@ class CheckoutActivity : AppCompatActivity() {
                 totalTax = taxAmount,
                 shippingCharge = shippingCharge,
                 address = "Add Shipping Address",
-                onAddMapClick = {
-                    val intent = Intent(this, MapActivity::class.java)
+                onProductClick = {},
+                onSetAddressClick = {
+                    val intent = Intent(this, NewAddressActivity::class.java)
                     startActivity(intent)
-                },
-                onProductClick = {}
+                }
             )
         }
     }
