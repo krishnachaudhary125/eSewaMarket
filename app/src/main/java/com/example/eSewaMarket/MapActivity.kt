@@ -10,9 +10,19 @@ class MapActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val latitude = intent.getDoubleExtra(
+            "latitude", 0.0
+        )
+
+        val longitude = intent.getDoubleExtra(
+            "longitude", 0.0
+        )
+
         setContent{
             MapScreen(
-                onLocationSelected = {}
+                onLocationSelected = {},
+                latitude = latitude,
+                longitude = longitude
             )
         }
     }
