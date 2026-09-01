@@ -166,6 +166,14 @@ class NewAddressActivity : AppCompatActivity() {
                         isBillingAddress = isBillingAddress,
                         label = label
                     )
+
+                    addressViewModel.createAddress(
+                        request = request,
+                        onSuccess = {
+                            Toast.makeText(this, "Address saved successfully", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                    )
                 }
             }
         }
