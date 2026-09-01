@@ -4,20 +4,29 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.RadioButton
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.eSewaMarket.data.models.AddressRequest
 import com.example.eSewaMarket.databinding.ActivityNewAddressBinding
+import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
+import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
 import com.example.eSewaMarket.utils.LocationPermissionHandler
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.auth.FirebaseAuth
 
 class NewAddressActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewAddressBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationPermissionHandler: LocationPermissionHandler
+    private val addressViewModel: AddressViewModel by viewModels {
+        ViewModelFactoryProvider.addressFactory(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +59,17 @@ class NewAddressActivity : AppCompatActivity() {
         binding.toolbarNewShippingAddress.backBtn.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+        binding.toolbarNewShippingAddress.toolbarIcon.setOnClickListener {
+
+            binding.etFName.text?.clear()
+            binding.etMName.text?.clear()
+            binding.etLName.text?.clear()
+            binding.etPhone.text?.clear()
+            binding.etAddress.text?.clear()
+            binding.addrLabelGroup.clearCheck()
+            binding.switchShippingAddress.isChecked = false
+            binding.switchBillingAddress.isChecked = false
+        }
 
         binding.addLocationIcon.setOnClickListener {
             locationPermissionHandler.runWithLocationPermission {
@@ -64,6 +84,15 @@ class NewAddressActivity : AppCompatActivity() {
             val lastName = binding.etLName.text.toString().trim()
             val phone = binding.etPhone.text.toString().trim()
             val address = binding.etAddress.text.toString().trim()
+
+            val selectedRadioButton =
+                binding.addrLabelGroup.findViewById<RadioButton>(
+                    binding.addrLabelGroup.checkedRadioButtonId
+                )
+            val label = selectedRadioButton?.text?.toString()
+
+            val isDefaultAddress = binding.switchShippingAddress.isChecked
+            val isBillingAddress = binding.switchBillingAddress.isChecked
 
             val nameRegex = Regex("^[A-Za-z.]+$")
             val fullName = listOf(firstName, middleName, lastName)
@@ -126,8 +155,18 @@ class NewAddressActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
-                else ->
-                    Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show()
+                else -> {
+
+                    val request = AddressRequest(
+                        fullName = fullName,
+                        phone = phone,
+                        addressName = address,
+                        formattedAddress = null,
+                        isDefaultAddress = isDefaultAddress,
+                        isBillingAddress = isBillingAddress,
+                        label = label
+                    )
+                }
             }
         }
     }

@@ -48,6 +48,8 @@ class AddressRepository(
                 AddressEntity(
                     id = response.id,
                     userId = userId,
+                    fullName = response.fullName,
+                    phone = response.phone,
                     addressName = response.addressName,
                     formattedAddress = response.formattedAddress,
                     isDefaultAddress = response.isDefaultAddress,
@@ -78,6 +80,8 @@ class AddressRepository(
                 AddressEntity(
                     id = address.id,
                     userId = userId,
+                    fullName = address.fullName,
+                    phone = address.phone,
                     addressName = address.addressName,
                     formattedAddress = address.formattedAddress,
                     isDefaultAddress = address.isDefaultAddress,
@@ -110,6 +114,8 @@ class AddressRepository(
                 AddressEntity(
                     id = response.id,
                     userId = userId,
+                    fullName = response.fullName,
+                    phone = response.phone,
                     addressName = response.addressName,
                     formattedAddress = response.formattedAddress,
                     isDefaultAddress = response.isDefaultAddress,

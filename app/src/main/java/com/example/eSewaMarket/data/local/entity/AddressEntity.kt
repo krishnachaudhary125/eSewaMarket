@@ -10,6 +10,8 @@ data class AddressEntity(
 
     val id: Long,
     val userId: Long,
+    val fullName: String,
+    val phone: String,
     val addressName: String,
     val formattedAddress: String?,
     val isDefaultAddress: Boolean,

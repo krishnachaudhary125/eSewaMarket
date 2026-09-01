@@ -6,7 +6,7 @@ data class AddressRequest(
     val phone: String,
     val addressName: String,
     val formattedAddress: String?,
-    val idDefaultAddress: Boolean,
+    val isDefaultAddress: Boolean,
     val isBillingAddress: Boolean,
     val label: String?
 )
