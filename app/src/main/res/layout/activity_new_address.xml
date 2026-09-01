@@ -131,7 +131,7 @@
                         android:id="@+id/addLocationIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
+                        android:padding="@dimen/padding_medium"
                         android:contentDescription="@string/location_icon"
                         android:src="@drawable/ic_location" />
 
