@@ -2,14 +2,23 @@ package com.example.eSewaMarket.data.repository
 
 import android.util.Log
 import com.example.eSewaMarket.data.api.ApiService
+import com.example.eSewaMarket.data.local.dao.AddressDao
+import com.example.eSewaMarket.data.local.entity.AddressEntity
 import com.example.eSewaMarket.data.models.AddressRequest
 import com.example.eSewaMarket.data.models.AddressResponse
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 
 class AddressRepository(
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val addressDao: AddressDao,
+    private val userRepository: UserSessionRepository
 ) {
+
+    private suspend fun currentUserId(): Long {
+        return userRepository.user.first().id
+    }
 
     private suspend fun getAuthToken(): String {
         val token = FirebaseAuth.getInstance()
@@ -27,11 +36,24 @@ class AddressRepository(
     ): Result<AddressResponse> {
 
         return try {
+            val userId = currentUserId()
             val token = getAuthToken()
 
             val response = apiService.createAddress(
                 token = token,
                 request = request
+            )
+
+            addressDao.insertAddress(
+                AddressEntity(
+                    id = response.id,
+                    userId = userId,
+                    addressName = response.addressName,
+                    formattedAddress = response.formattedAddress,
+                    isDefaultAddress = response.isDefaultAddress,
+                    isBillingAddress = response.isBillingAddress,
+                    label = response.label
+                )
             )
 
             Result.success(response)
@@ -44,12 +66,30 @@ class AddressRepository(
     }
 
     suspend fun getAddresses(): Result<List<AddressResponse>> {
+
         return try {
+            val userId = currentUserId()
             val token = getAuthToken()
 
-            Result.success(
-                apiService.getAddresses(token)
-            )
+            val response = apiService.getAddresses(token)
+
+            val entities = response.map { address ->
+
+                AddressEntity(
+                    id = address.id,
+                    userId = userId,
+                    addressName = address.addressName,
+                    formattedAddress = address.formattedAddress,
+                    isDefaultAddress = address.isDefaultAddress,
+                    isBillingAddress = address.isBillingAddress,
+                    label = address.label
+                )
+            }
+
+            addressDao.insertAddresses(entities)
+
+            Result.success(response)
+
         } catch (e: Exception) {
             Log.e("ADDRESS", "Unable to fetch addresses.", e)
             Result.failure(e)
@@ -58,14 +98,28 @@ class AddressRepository(
 
     suspend fun getAddress(id: Long): Result<AddressResponse> {
         return try {
+            val userId = currentUserId()
             val token = getAuthToken()
 
-            Result.success(
-                apiService.getAddress(
-                    token = token,
-                    id = id
+            val response = apiService.getAddress(
+                token = token,
+                id = id
+            )
+
+            addressDao.insertAddress(
+                AddressEntity(
+                    id = response.id,
+                    userId = userId,
+                    addressName = response.addressName,
+                    formattedAddress = response.formattedAddress,
+                    isDefaultAddress = response.isDefaultAddress,
+                    isBillingAddress = response.isBillingAddress,
+                    label = response.label
                 )
             )
+
+            Result.success(response)
+
         } catch (e: Exception) {
             Log.e("ADDRESS", "Unable to fetch address.", e)
             Result.failure(e)
