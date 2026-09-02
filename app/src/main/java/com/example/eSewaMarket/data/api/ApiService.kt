@@ -3,12 +3,14 @@ package com.example.eSewaMarket.data.api
 import com.example.eSewaMarket.data.models.AddToCartRequest
 import com.example.eSewaMarket.data.models.AddressRequest
 import com.example.eSewaMarket.data.models.AddressResponse
+import com.example.eSewaMarket.data.models.DistrictResponse
 import com.example.eSewaMarket.data.models.ProductResponse
 import com.example.eSewaMarket.data.models.FavouriteToggles
 import com.example.eSewaMarket.data.models.HomeResponse
 import com.example.eSewaMarket.data.models.HotDeal
 import com.example.eSewaMarket.data.models.PageResponse
 import com.example.eSewaMarket.data.models.Product
+import com.example.eSewaMarket.data.models.ProvinceResponse
 import com.example.eSewaMarket.data.models.UserResponse
 import com.example.eSewaMarket.data.models.UserSyncRequest
 import retrofit2.Response
@@ -105,4 +107,10 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("id") id: Long
     ): AddressResponse
+
+    @GET("locations/provinces")
+    suspend fun getProvinces(): List<ProvinceResponse>
+
+    @GET("locations/provinces/{provinceId}/districts")
+    suspend fun getDistricts(provinceId: Long): List<DistrictResponse>
 }
