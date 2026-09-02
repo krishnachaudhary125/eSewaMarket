@@ -50,6 +50,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.example.eSewaMarket.R
+import com.example.eSewaMarket.utils.searchLocation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompletePrediction
@@ -66,7 +67,8 @@ import kotlinx.coroutines.launch
 fun MapScreen(
     onLocationSelected: (LatLng) -> Unit,
     latitude: Double,
-    longitude: Double
+    longitude: Double,
+    onSelectClick: () -> Unit
 ) {
 
     val cameraPositionState = rememberCameraPositionState {
@@ -262,6 +264,34 @@ fun MapScreen(
         }
     }
 
+    fun performLocationSearch() {
+        val query = addressState.text.toString().trim()
+
+        if (query.length <= 3) {
+            return
+        }
+
+        keyboardController?.hide()
+
+        scope.launch {
+            val latLng = searchLocation(
+                context = context,
+                query = query
+            )
+
+            latLng?.let {
+                predictions = emptyList()
+
+                cameraPositionState.animate(
+                    CameraUpdateFactory.newLatLngZoom(
+                        it,
+                        17f
+                    )
+                )
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -302,7 +332,7 @@ fun MapScreen(
         }
 
         Button(
-            onClick = {},
+            onClick = onSelectClick,
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.green),
@@ -381,7 +411,7 @@ fun MapScreen(
                 ),
 
                 onKeyboardAction = {
-
+                    performLocationSearch()
                 },
                 state = addressState,
                 placeholder = {
@@ -408,7 +438,7 @@ fun MapScreen(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClick = {
-
+                            performLocationSearch()
                         }
                     )
                     .padding(16.dp)

@@ -18,7 +18,7 @@ import com.example.eSewaMarket.data.local.entity.ProductEntity
         ProductEntity::class,
         AddressEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 

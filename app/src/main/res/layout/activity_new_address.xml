@@ -62,7 +62,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="4dp"
                             android:letterSpacing="0.05"
-                            android:text="First Name"
+                            android:text="@string/full_name"
                             android:textColor="@color/text_dark"
                             android:textSize="12sp"
                             android:textStyle="bold" />
@@ -72,69 +72,12 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_faq_question"
-                            android:hint="Enter First Name"
+                            android:hint="@string/enter_full_name"
                             android:inputType="text"
                             android:letterSpacing="0.1"
                             android:minHeight="56dp"
-                            android:paddingHorizontal="16dp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:letterSpacing="0.05"
-                            android:text="Middle Name (Optional)"
-                            android:textColor="@color/text_dark"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <EditText
-                            android:id="@+id/etMName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_faq_question"
-                            android:hint="Enter Middle Name"
-                            android:inputType="text"
-                            android:letterSpacing="0.1"
-                            android:minHeight="56dp"
-                            android:paddingHorizontal="16dp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:letterSpacing="0.05"
-                            android:text="Last Name"
-                            android:textColor="@color/text_dark"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <EditText
-                            android:id="@+id/etLName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_faq_question"
-                            android:hint="Enter Last Name"
-                            android:inputType="text"
-                            android:letterSpacing="0.1"
-                            android:minHeight="56dp"
-                            android:paddingHorizontal="16dp" />
+                            android:paddingHorizontal="16dp"
+                            android:textColorHint="@color/text_dark_150" />
 
                     </LinearLayout>
 
@@ -162,7 +105,172 @@
                             android:hint="@string/enter_mobile_no"
                             android:letterSpacing="0.1"
                             android:minHeight="56dp"
-                            android:paddingHorizontal="16dp" />
+                            android:paddingHorizontal="16dp"
+                            android:textColorHint="@color/text_dark_150" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:letterSpacing="0.05"
+                            android:text="Choose From Map (Optional)"
+                            android:textColor="@color/text_dark"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:id="@+id/chooseOnMap"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_faq_question"
+                            android:gravity="center"
+                            android:minHeight="56dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/bg_faq_question"
+                                android:gravity="center"
+                                android:letterSpacing="0.1"
+                                android:minHeight="56dp"
+                                android:paddingHorizontal="16dp"
+                                android:text="Click Here To Open Map"
+                                android:textColor="@color/text_dark_150"
+                                android:textSize="16dp"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:contentDescription="@string/location_icon"
+                                android:padding="@dimen/padding_medium"
+                                android:src="@drawable/ic_location" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_medium"
+                        android:text="OR"
+                        android:textAlignment="center" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:letterSpacing="0.05"
+                            android:text="Province"
+                            android:textColor="@color/text_dark"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <Spinner
+                            android:id="@+id/province"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:background="@drawable/bg_faq_question"
+                            android:paddingHorizontal="@dimen/padding_medium" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:letterSpacing="0.05"
+                            android:text="District"
+                            android:textColor="@color/text_dark"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <Spinner
+                            android:id="@+id/district"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:background="@drawable/bg_faq_question"
+                            android:paddingHorizontal="@dimen/padding_medium" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:letterSpacing="0.05"
+                            android:text="City"
+                            android:textColor="@color/text_dark"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/city"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_faq_question"
+                            android:hint="Enter City"
+                            android:letterSpacing="0.1"
+                            android:minHeight="56dp"
+                            android:paddingHorizontal="16dp"
+                            android:textColorHint="@color/text_dark_150" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:letterSpacing="0.05"
+                            android:text="Postal Code"
+                            android:textColor="@color/text_dark"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/postalCode"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_faq_question"
+                            android:hint="Enter Postal Code"
+                            android:letterSpacing="0.1"
+                            android:minHeight="56dp"
+                            android:paddingHorizontal="16dp"
+                            android:textColorHint="@color/text_dark_150" />
 
                     </LinearLayout>
 
@@ -182,34 +290,16 @@
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
-                        <LinearLayout
+                        <EditText
+                            android:id="@+id/etAddress"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_faq_question"
-                            android:gravity="center"
+                            android:hint="@string/enter_address"
+                            android:letterSpacing="0.1"
                             android:minHeight="56dp"
-                            android:orientation="horizontal">
-
-                            <EditText
-                                android:id="@+id/etAddress"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:background="@drawable/bg_faq_question"
-                                android:hint="@string/enter_address"
-                                android:letterSpacing="0.1"
-                                android:minHeight="56dp"
-                                android:paddingHorizontal="16dp" />
-
-                            <ImageView
-                                android:id="@+id/addLocationIcon"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:contentDescription="@string/location_icon"
-                                android:padding="@dimen/padding_medium"
-                                android:src="@drawable/ic_location" />
-
-                        </LinearLayout>
+                            android:paddingHorizontal="16dp"
+                            android:textColorHint="@color/text_dark_150" />
 
                     </LinearLayout>
 

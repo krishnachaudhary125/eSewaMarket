@@ -22,7 +22,8 @@ class MapActivity : AppCompatActivity() {
             MapScreen(
                 onLocationSelected = {},
                 latitude = latitude,
-                longitude = longitude
+                longitude = longitude,
+                onSelectClick = {}
             )
         }
     }
