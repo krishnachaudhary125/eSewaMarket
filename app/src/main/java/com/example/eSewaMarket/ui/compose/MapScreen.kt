@@ -263,6 +263,34 @@ fun MapScreen(
         }
     }
 
+    fun performLocationSearch() {
+        val query = addressState.text.toString().trim()
+
+        if (query.length <= 3) {
+            return
+        }
+
+        keyboardController?.hide()
+
+        scope.launch {
+            val latLng = searchLocation(
+                context = context,
+                query = query
+            )
+
+            latLng?.let {
+                predictions = emptyList()
+
+                cameraPositionState.animate(
+                    CameraUpdateFactory.newLatLngZoom(
+                        it,
+                        17f
+                    )
+                )
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -382,7 +410,7 @@ fun MapScreen(
                 ),
 
                 onKeyboardAction = {
-
+                    performLocationSearch()
                 },
                 state = addressState,
                 placeholder = {
@@ -409,29 +437,7 @@ fun MapScreen(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClick = {
-                            val query = addressState.text.toString().trim()
-
-                            if (query.length >= 3){
-                                keyboardController?.hide()
-
-                                scope.launch {
-                                    val latLng = searchLocation(
-                                        context = context,
-                                        query = query
-                                    )
-
-                                    latLng?.let {
-                                        predictions = emptyList()
-
-                                        cameraPositionState.animate(
-                                            CameraUpdateFactory.newLatLngZoom(
-                                                it,
-                                                17f
-                                            )
-                                        )
-                                    }
-                                }
-                            }
+                            performLocationSearch()
                         }
                     )
                     .padding(16.dp)
