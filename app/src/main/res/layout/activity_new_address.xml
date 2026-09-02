@@ -182,26 +182,12 @@
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
-                        <com.google.android.material.textfield.TextInputLayout
+                        <Spinner
+                            android:id="@+id/province"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Choose Province"
-                            android:minHeight="56dp"
-                            android:textColorHint="@color/text_dark_150">
-
-                            <AutoCompleteTextView
-                                android:id="@+id/province"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/bg_faq_question"
-                                android:focusable="false"
-                                android:inputType="none"
-                                android:letterSpacing="0.1"
-                                android:minHeight="56dp"
-                                android:paddingHorizontal="@dimen/padding_medium"
-                                android:textSize="18sp" />
-
-                        </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_height="56dp"
+                            android:background="@drawable/bg_faq_question"
+                            android:paddingHorizontal="@dimen/padding_medium" />
 
                     </LinearLayout>
 
@@ -221,26 +207,12 @@
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
-                        <com.google.android.material.textfield.TextInputLayout
+                        <Spinner
+                            android:id="@+id/district"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Choose District"
-                            android:minHeight="56dp"
-                            android:textColorHint="@color/text_dark_150">
-
-                            <AutoCompleteTextView
-                                android:id="@+id/district"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/bg_faq_question"
-                                android:focusable="false"
-                                android:inputType="none"
-                                android:letterSpacing="0.1"
-                                android:minHeight="56dp"
-                                android:paddingHorizontal="@dimen/padding_medium"
-                                android:textSize="18sp" />
-
-                        </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_height="56dp"
+                            android:background="@drawable/bg_faq_question"
+                            android:paddingHorizontal="@dimen/padding_medium" />
 
                     </LinearLayout>
 

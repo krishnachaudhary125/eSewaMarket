@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -11,14 +12,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.eSewaMarket.data.models.AddressRequest
 import com.example.eSewaMarket.databinding.ActivityNewAddressBinding
+import com.example.eSewaMarket.ui.adapters.SpinnerAdapter
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
 import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
+import com.example.eSewaMarket.ui.viewmodel.LocationViewModel
 import com.example.eSewaMarket.utils.LocationPermissionHandler
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlin.collections.mutableListOf
 
 class NewAddressActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewAddressBinding
@@ -26,6 +32,9 @@ class NewAddressActivity : AppCompatActivity() {
     private lateinit var locationPermissionHandler: LocationPermissionHandler
     private val addressViewModel: AddressViewModel by viewModels {
         ViewModelFactoryProvider.addressFactory(this)
+    }
+    private val locationViewModel: LocationViewModel by viewModels {
+        ViewModelFactoryProvider.locationFactory(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +62,11 @@ class NewAddressActivity : AppCompatActivity() {
         fusedLocationClient =
             LocationServices.getFusedLocationProviderClient(this)
 
+        setupLocationDropdowns()
+        setupDistrictDropdown()
+
+        locationViewModel.loadProvinces()
+
         binding.toolbarNewShippingAddress.toolbarTitle.text = "Add your new address"
         binding.toolbarNewShippingAddress.toolbarIcon.setImageResource(R.drawable.ic_close)
         binding.toolbarNewShippingAddress.toolbarIcon.setBackgroundResource(R.drawable.bg_faq_question)
@@ -63,6 +77,7 @@ class NewAddressActivity : AppCompatActivity() {
 
             binding.etFName.text?.clear()
             binding.etPhone.text?.clear()
+            binding.province.setSelection(0)
             binding.etAddress.text?.clear()
             binding.addrLabelGroup.clearCheck()
             binding.switchShippingAddress.isChecked = false
@@ -79,6 +94,10 @@ class NewAddressActivity : AppCompatActivity() {
 
             val fullName = binding.etFName.text.toString().trim()
             val phone = binding.etPhone.text.toString().trim()
+            val province = binding.province.selectedItem.toString().trim()
+            val district = binding.district.selectedItem.toString().trim()
+            val city = binding.city.text.toString().trim()
+            val postalCode = binding.postalCode.text.toString().trim()
             val address = binding.etAddress.text.toString().trim()
 
             val selectedRadioButton =
@@ -143,8 +162,11 @@ class NewAddressActivity : AppCompatActivity() {
                     val request = AddressRequest(
                         fullName = fullName,
                         phone = phone,
+                        province = province,
+                        district = district,
+                        city = city,
+                        postalCode = postalCode,
                         addressName = address,
-                        formattedAddress = null,
                         isDefaultAddress = isDefaultAddress,
                         isBillingAddress = isBillingAddress,
                         label = label
@@ -153,7 +175,8 @@ class NewAddressActivity : AppCompatActivity() {
                     addressViewModel.createAddress(
                         request = request,
                         onSuccess = {
-                            Toast.makeText(this, "Address saved successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Address saved successfully", Toast.LENGTH_SHORT)
+                                .show()
                             finish()
                         }
                     )
@@ -187,5 +210,90 @@ class NewAddressActivity : AppCompatActivity() {
 
                 Log.e("LOCATION", "Failed to get location", exception)
             }
+    }
+
+    private fun setupLocationDropdowns() {
+
+        val provinceNames = mutableListOf("")
+
+        val provinceAdapter = SpinnerAdapter(
+            this,
+            provinceNames,
+            "Choose Province"
+        )
+
+        binding.province.adapter = provinceAdapter
+
+        locationViewModel.provinces
+            .onEach { provinces ->
+
+                provinceNames.clear()
+                provinceNames.add("")
+                provinceNames.addAll(
+                    provinces.map { it.name }
+                )
+
+                provinceAdapter.notifyDataSetChanged()
+            }
+            .launchIn(lifecycleScope)
+
+        binding.province.onItemSelectedListener =
+            object : android.widget.AdapterView.OnItemSelectedListener {
+
+                override fun onItemSelected(
+                    parent: android.widget.AdapterView<*>?,
+                    view: android.view.View?,
+                    position: Int,
+                    id: Long
+                ) {
+
+                    if (position == 0) {
+                        binding.district.isEnabled = false
+                        binding.district.setSelection(0)
+                        return
+                    }
+
+                    val selectedProvince =
+                        locationViewModel.provinces.value[position - 1]
+
+                    binding.district.setSelection(0)
+                    binding.district.isEnabled = true
+
+                    locationViewModel.loadDistricts(selectedProvince.id)
+                }
+
+                override fun onNothingSelected(
+                    parent: android.widget.AdapterView<*>?
+                ) {
+                }
+            }
+    }
+
+    private fun setupDistrictDropdown() {
+
+        val districtNames = mutableListOf("Choose District")
+
+        val districtAdapter = SpinnerAdapter(
+            this,
+            districtNames,
+            "Choose District"
+        )
+
+        binding.district.adapter = districtAdapter
+        binding.district.isEnabled = false
+
+        locationViewModel.districts
+            .onEach { districts ->
+
+                districtNames.clear()
+                districtNames.add("")
+                districtNames.addAll(
+                    districts.map { it.name }
+                )
+
+                districtAdapter.notifyDataSetChanged()
+
+            }
+            .launchIn(lifecycleScope)
     }
 }
