@@ -50,6 +50,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.example.eSewaMarket.R
+import com.example.eSewaMarket.utils.searchLocation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompletePrediction
@@ -408,7 +409,29 @@ fun MapScreen(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClick = {
+                            val query = addressState.text.toString().trim()
 
+                            if (query.length >= 3){
+                                keyboardController?.hide()
+
+                                scope.launch {
+                                    val latLng = searchLocation(
+                                        context = context,
+                                        query = query
+                                    )
+
+                                    latLng?.let {
+                                        predictions = emptyList()
+
+                                        cameraPositionState.animate(
+                                            CameraUpdateFactory.newLatLngZoom(
+                                                it,
+                                                17f
+                                            )
+                                        )
+                                    }
+                                }
+                            }
                         }
                     )
                     .padding(16.dp)
