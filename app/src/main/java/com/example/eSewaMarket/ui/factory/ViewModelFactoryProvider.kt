@@ -6,6 +6,7 @@ import com.example.eSewaMarket.data.api.RetrofitInstance
 import com.example.eSewaMarket.data.repository.AddressRepository
 import com.example.eSewaMarket.data.repository.CartRepository
 import com.example.eSewaMarket.data.repository.FavouriteRepository
+import com.example.eSewaMarket.data.repository.LocationRepository
 import com.example.eSewaMarket.data.repository.UserSessionRepository
 
 object ViewModelFactoryProvider {
@@ -43,6 +44,15 @@ object ViewModelFactoryProvider {
             AddressRepository(
                 app.database.addressDao(),
                 UserSessionRepository(app.applicationContext),
+                RetrofitInstance.api
+            )
+        )
+    }
+
+    fun locationFactory(context: Context) : LocationViewModelFactory{
+
+        return LocationViewModelFactory(
+            LocationRepository(
                 RetrofitInstance.api
             )
         )
