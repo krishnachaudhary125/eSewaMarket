@@ -69,7 +69,7 @@ class NewAddressActivity : AppCompatActivity() {
             binding.switchBillingAddress.isChecked = false
         }
 
-        binding.addLocationIcon.setOnClickListener {
+        binding.chooseOnMap.setOnClickListener {
             locationPermissionHandler.runWithLocationPermission {
                 fetchCurrentLocationAndOpenMap()
             }

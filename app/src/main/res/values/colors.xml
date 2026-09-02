@@ -8,6 +8,7 @@
     <color name="red">#FF0000</color>
     <color name="addToCartSoldOut">#E3E4EB</color>
     <color name="text_dark_100">#C7C8D9</color>
+    <color name="text_dark_150">#ABACC0</color>
     <color name="text_dark_200">#8E90A6</color>
     <color name="text_dark_300">#555770</color>
     <color name="text_dark_400">#28293D</color>
