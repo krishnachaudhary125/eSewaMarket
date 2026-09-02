@@ -62,7 +62,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="4dp"
                             android:letterSpacing="0.05"
-                            android:text="First Name"
+                            android:text="@string/full_name"
                             android:textColor="@color/text_dark"
                             android:textSize="12sp"
                             android:textStyle="bold" />
@@ -72,65 +72,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_faq_question"
-                            android:hint="Enter First Name"
-                            android:inputType="text"
-                            android:letterSpacing="0.1"
-                            android:minHeight="56dp"
-                            android:paddingHorizontal="16dp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:letterSpacing="0.05"
-                            android:text="Middle Name (Optional)"
-                            android:textColor="@color/text_dark"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <EditText
-                            android:id="@+id/etMName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_faq_question"
-                            android:hint="Enter Middle Name"
-                            android:inputType="text"
-                            android:letterSpacing="0.1"
-                            android:minHeight="56dp"
-                            android:paddingHorizontal="16dp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:letterSpacing="0.05"
-                            android:text="Last Name"
-                            android:textColor="@color/text_dark"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <EditText
-                            android:id="@+id/etLName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_faq_question"
-                            android:hint="Enter Last Name"
+                            android:hint="@string/enter_full_name"
                             android:inputType="text"
                             android:letterSpacing="0.1"
                             android:minHeight="56dp"

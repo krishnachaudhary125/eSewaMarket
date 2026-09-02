@@ -67,7 +67,8 @@ import kotlinx.coroutines.launch
 fun MapScreen(
     onLocationSelected: (LatLng) -> Unit,
     latitude: Double,
-    longitude: Double
+    longitude: Double,
+    onSelectClick: () -> Unit
 ) {
 
     val cameraPositionState = rememberCameraPositionState {
@@ -331,7 +332,7 @@ fun MapScreen(
         }
 
         Button(
-            onClick = {},
+            onClick = onSelectClick,
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.green),

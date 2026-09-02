@@ -62,8 +62,6 @@ class NewAddressActivity : AppCompatActivity() {
         binding.toolbarNewShippingAddress.toolbarIcon.setOnClickListener {
 
             binding.etFName.text?.clear()
-            binding.etMName.text?.clear()
-            binding.etLName.text?.clear()
             binding.etPhone.text?.clear()
             binding.etAddress.text?.clear()
             binding.addrLabelGroup.clearCheck()
@@ -79,9 +77,7 @@ class NewAddressActivity : AppCompatActivity() {
 
         binding.saveBtn.setOnClickListener {
 
-            val firstName = binding.etFName.text.toString().trim()
-            val middleName = binding.etMName.text.toString().trim()
-            val lastName = binding.etLName.text.toString().trim()
+            val fullName = binding.etFName.text.toString().trim()
             val phone = binding.etPhone.text.toString().trim()
             val address = binding.etAddress.text.toString().trim()
 
@@ -94,40 +90,21 @@ class NewAddressActivity : AppCompatActivity() {
             val isDefaultAddress = binding.switchShippingAddress.isChecked
             val isBillingAddress = binding.switchBillingAddress.isChecked
 
-            val nameRegex = Regex("^[A-Za-z.]+$")
-            val fullName = listOf(firstName, middleName, lastName)
-                .filter { it.isNotBlank() }
-                .joinToString(" ")
+            val nameRegex = Regex("^[A-Za-z]+(?: [A-Za-z]+){0,3}$")
+            val phoneRegex = Regex("^(?:(\\+977[-.\\s]?)?9[78]\\d{8}|\\+(?!977)[1-9]\\d{6,14})$")
+            val addressRegex = Regex("^[\\p{L}\\p{N}\\s.,/#'()-]{1,200}$")
 
             when {
 
-                firstName.isEmpty() -> {
+                fullName.isEmpty() -> {
                     binding.etFName.error = "First name is required"
                     binding.etFName.requestFocus()
                     return@setOnClickListener
                 }
 
-                !firstName.matches(nameRegex) -> {
+                !fullName.matches(nameRegex) -> {
                     binding.etFName.error = "Invalid input"
                     binding.etFName.requestFocus()
-                    return@setOnClickListener
-                }
-
-                middleName.isNotBlank() && !middleName.matches(nameRegex) -> {
-                    binding.etMName.error = "Invalid input"
-                    binding.etMName.requestFocus()
-                    return@setOnClickListener
-                }
-
-                lastName.isEmpty() -> {
-                    binding.etLName.error = "Last name is required"
-                    binding.etLName.requestFocus()
-                    return@setOnClickListener
-                }
-
-                !lastName.matches(nameRegex) -> {
-                    binding.etLName.error = "Invalid input"
-                    binding.etLName.requestFocus()
                     return@setOnClickListener
                 }
 
@@ -137,7 +114,7 @@ class NewAddressActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
-                !phone.matches(Regex("^(?:(\\+977[-.\\s]?)?9[78]\\d{8}|\\+(?!977)[1-9]\\d{6,14})$")) -> {
+                !phone.matches(phoneRegex) -> {
                     binding.etPhone.error = "Enter valid phone number"
                     binding.etPhone.requestFocus()
                     return@setOnClickListener
@@ -151,6 +128,12 @@ class NewAddressActivity : AppCompatActivity() {
 
                 address.isEmpty() -> {
                     binding.etAddress.error = "Address is required"
+                    binding.etAddress.requestFocus()
+                    return@setOnClickListener
+                }
+
+                !address.matches(addressRegex) -> {
+                    binding.etAddress.error = "Enter valid address"
                     binding.etAddress.requestFocus()
                     return@setOnClickListener
                 }
