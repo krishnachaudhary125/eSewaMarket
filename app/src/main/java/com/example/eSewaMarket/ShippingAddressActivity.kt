@@ -2,43 +2,29 @@ package com.example.eSewaMarket
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.eSewaMarket.databinding.ActivityShipptingAddressBinding
+import com.example.eSewaMarket.ui.compose.ShippingAddressScreen
 
 class ShippingAddressActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityShipptingAddressBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.enableEdgeToEdge(window)
 
-        binding = ActivityShipptingAddressBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbarShippingAddress.toolbarBackTitle) { view, insets ->
-            val top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-
-            view.setPadding(
-                view.paddingLeft,
-                top,
-                view.paddingRight,
-                view.paddingBottom
+        setContent {
+            ShippingAddressScreen (
+                onBackClick = {
+                    onBackPressedDispatcher
+                        .onBackPressed()
+                },
+                noOfAddress = 0,
+                addAddressNow = {
+                    val intent = Intent(this, NewAddressActivity::class.java)
+                    startActivity(intent)
+                }
             )
-
-            insets
-        }
-
-        binding.toolbarShippingAddress.toolbarTitle.text = "Shipping Address"
-        binding.toolbarShippingAddress.backBtn.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
-
-        binding.addAddressNow.setOnClickListener {
-            val intent = Intent(this, NewAddressActivity::class.java)
-            startActivity(intent)
         }
     }
 }
