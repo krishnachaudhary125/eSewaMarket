@@ -18,7 +18,9 @@ fun ShippingAddressScreen(
     shippingAddresses: List<AddressResponse>,
     onBackClick: () -> Unit,
     noOfAddress: Int,
-    addAddressNow: () -> Unit
+    addAddressNow: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onEditClick: () -> Unit
 ) {
     Scaffold(
         containerColor = colorResource(id = R.color.background),
@@ -53,7 +55,13 @@ fun ShippingAddressScreen(
                     }
                 ) { addresses ->
 
-                    ShippingAddressCard(
+                    ShippingAddressDraggable(
+                        onDeleteClick = {
+                            onDeleteClick()
+                        },
+                        onEditClick = {
+                            onEditClick()
+                        },
                         fullName = addresses.fullName,
                         label = addresses.label.toString(),
                         addressName = "${addresses.addressName}, ${addresses.district}, ${addresses.city} ${addresses.postalCode}",
