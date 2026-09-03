@@ -23,7 +23,9 @@ class MapActivity : AppCompatActivity() {
                 onLocationSelected = {},
                 latitude = latitude,
                 longitude = longitude,
-                onConfirmClick = {}
+                onConfirmClick = {
+                    finish()
+                }
             )
         }
     }

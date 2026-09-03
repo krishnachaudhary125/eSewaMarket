@@ -102,7 +102,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_faq_question"
+                            android:digits="0123456789+-. "
                             android:hint="@string/enter_mobile_no"
+                            android:inputType="text"
                             android:letterSpacing="0.1"
                             android:minHeight="56dp"
                             android:paddingHorizontal="16dp"
@@ -182,12 +184,28 @@
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
-                        <Spinner
-                            android:id="@+id/province"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="56dp"
+                            android:layout_height="wrap_content"
                             android:background="@drawable/bg_faq_question"
-                            android:paddingHorizontal="@dimen/padding_medium" />
+                            android:orientation="horizontal">
+
+                            <Spinner
+                                android:id="@+id/province"
+                                android:layout_width="0dp"
+                                android:layout_height="56dp"
+                                android:layout_weight="1"/>
+
+                            <EditText
+                                android:id="@+id/etProvinceError"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.3"
+                                android:background="@drawable/bg_faq_question"
+                                android:paddingEnd="@dimen/padding_medium"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
@@ -207,12 +225,28 @@
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
-                        <Spinner
-                            android:id="@+id/district"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="56dp"
+                            android:layout_height="wrap_content"
                             android:background="@drawable/bg_faq_question"
-                            android:paddingHorizontal="@dimen/padding_medium" />
+                            android:orientation="horizontal">
+
+                            <Spinner
+                                android:id="@+id/district"
+                                android:layout_width="0dp"
+                                android:layout_height="56dp"
+                                android:layout_weight="1" />
+
+                            <EditText
+                                android:id="@+id/etDistrictError"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.3"
+                                android:background="@drawable/bg_faq_question"
+                                android:paddingEnd="@dimen/padding_medium"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
@@ -238,6 +272,7 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_faq_question"
                             android:hint="Enter City"
+                            android:inputType="text"
                             android:letterSpacing="0.1"
                             android:minHeight="56dp"
                             android:paddingHorizontal="16dp"
@@ -267,6 +302,7 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_faq_question"
                             android:hint="Enter Postal Code"
+                            android:inputType="number"
                             android:letterSpacing="0.1"
                             android:minHeight="56dp"
                             android:paddingHorizontal="16dp"
@@ -296,6 +332,7 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_faq_question"
                             android:hint="@string/enter_address"
+                            android:inputType="text"
                             android:letterSpacing="0.1"
                             android:minHeight="56dp"
                             android:paddingHorizontal="16dp"

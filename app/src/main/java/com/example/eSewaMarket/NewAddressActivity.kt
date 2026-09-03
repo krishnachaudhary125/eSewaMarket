@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import android.widget.Toast
@@ -110,13 +111,14 @@ class NewAddressActivity : AppCompatActivity() {
             val isBillingAddress = binding.switchBillingAddress.isChecked
 
             val nameRegex = Regex("^[A-Za-z]+(?: [A-Za-z]+){0,3}$")
-            val phoneRegex = Regex("^(?:(\\+977[-.\\s]?)?9[78]\\d{8}|\\+(?!977)[1-9]\\d{6,14})$")
+            val phoneRegex = Regex("""^(?:9[78]\d{8}|\+977[-.\s]?9[78]\d{8}|\+(?!977)[1-9]\d{6,14})$""")
             val addressRegex = Regex("^[\\p{L}\\p{N}\\s.,/#'()-]{1,200}$")
+            val postalCodeRegex = Regex("""^\d{5}$""")
 
             when {
 
                 fullName.isEmpty() -> {
-                    binding.etFName.error = "First name is required"
+                    binding.etFName.error = "Full name is required"
                     binding.etFName.requestFocus()
                     return@setOnClickListener
                 }
@@ -139,9 +141,41 @@ class NewAddressActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
-                phone.length != 10 -> {
-                    binding.etPhone.error = "Enter valid phone number"
-                    binding.etPhone.requestFocus()
+                binding.province.selectedItemPosition == 0 -> {
+                    binding.etProvinceError.error = "Province is required"
+                    binding.etProvinceError.visibility = View.VISIBLE
+                    binding.etProvinceError.requestFocus()
+                    return@setOnClickListener
+                }
+
+                binding.district.selectedItemPosition == 0 -> {
+                    binding.etDistrictError.error = "District is required"
+                    binding.etDistrictError.visibility = View.VISIBLE
+                    binding.etDistrictError.requestFocus()
+                    return@setOnClickListener
+                }
+
+                city.isEmpty() -> {
+                    binding.city.error = "City is required"
+                    binding.city.requestFocus()
+                    return@setOnClickListener
+                }
+
+                !city.matches(addressRegex) -> {
+                    binding.city.error = "Enter valid city"
+                    binding.city.requestFocus()
+                    return@setOnClickListener
+                }
+
+                postalCode.isEmpty() -> {
+                    binding.postalCode.error = "Postal Code is required"
+                    binding.postalCode.requestFocus()
+                    return@setOnClickListener
+                }
+
+                !postalCode.matches(postalCodeRegex) -> {
+                    binding.postalCode.error = "Enter a valid postal code"
+                    binding.postalCode.requestFocus()
                     return@setOnClickListener
                 }
 
