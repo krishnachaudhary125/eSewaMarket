@@ -1,5 +1,6 @@
 package com.example.eSewaMarket.ui.compose
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,8 +10,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,6 +27,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -50,6 +54,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.example.eSewaMarket.R
+import com.example.eSewaMarket.utils.resolveLocationName
 import com.example.eSewaMarket.utils.searchLocation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.libraries.places.api.Places
@@ -62,13 +67,15 @@ import com.google.maps.android.compose.MapUiSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun MapScreen(
     onLocationSelected: (LatLng) -> Unit,
     latitude: Double,
     longitude: Double,
-    onSelectClick: () -> Unit
+    onConfirmClick: () -> Unit
 ) {
 
     val cameraPositionState = rememberCameraPositionState {
@@ -201,10 +208,16 @@ fun MapScreen(
             }
     }
 
+    var isReverseGeocoding by remember { mutableStateOf(false) }
+
     LaunchedEffect(cameraPositionState.isMoving) {
         if (!cameraPositionState.isMoving) {
             selectedLocation = cameraPositionState.position.target
             onLocationSelected(selectedLocation)
+
+            isReverseGeocoding = true
+            selectedAddress = resolveLocationName(context, placesClient, selectedLocation)
+            isReverseGeocoding = false
         }
     }
 
@@ -227,7 +240,7 @@ fun MapScreen(
                 return@collectLatest
             }
 
-            delay(300)
+            delay(300.milliseconds)
 
             val request = FindAutocompletePredictionsRequest.builder()
                 .setQuery(query)
@@ -307,48 +320,99 @@ fun MapScreen(
             )
         )
 
-        Box(
+        Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp)
-                .size(50.dp)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = {
-                        cameraPositionState.position = CameraPosition.Builder(
-                            cameraPositionState.position
-                        )
-                            .bearing(0f)
-                            .build()
-                    }
-                )
+                .padding(
+                    bottom = 32.dp,
+                    start = 16.dp,
+                    end = 16.dp
+                ),
+            horizontalAlignment = Alignment.End
         ) {
-            Image(
-                painter = painterResource(R.drawable.ic_gps_btn),
-                contentDescription = "Compass",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = {
+                            cameraPositionState.position =
+                                CameraPosition.Builder(
+                                    cameraPositionState.position
+                                )
+                                    .bearing(0f)
+                                    .build()
+                        }
+                    )
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_gps_btn),
+                    contentDescription = "Compass",
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
 
-        Button(
-            onClick = onSelectClick,
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.green),
-                contentColor = Color.White
-            ),
-            modifier = Modifier
-                .align(Alignment.Center)
-                .offset(
-                    y = (-56).dp
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 16.dp
+                    )
+            ) {
+
+                Text(
+                    text = "Selected Location",
+                    style = MaterialTheme.typography.titleMedium
                 )
-        ) {
-            Text(
-                "Select",
-                letterSpacing = 2.sp,
-                fontSize = 14.sp
-            )
+
+                Text(
+                    text = when {
+                        cameraPositionState.isMoving -> "Selecting location..."
+                        isReverseGeocoding -> "Loading address..."
+                        else -> selectedAddress
+                    },
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Text(
+                    text = String.format(
+                        "%.6f, %.6f",
+                        selectedLocation.latitude,
+                        selectedLocation.longitude
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
+
+                Button(
+                    onClick = onConfirmClick,
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(id = R.color.green),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            vertical = 16.dp
+                        )
+                ) {
+                    Text(
+                        "Confirm Location",
+                        letterSpacing = 2.sp,
+                        fontSize = 14.sp
+                    )
+                }
+            }
         }
 
         Icon(
