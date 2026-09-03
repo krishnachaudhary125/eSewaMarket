@@ -305,239 +305,32 @@ fun MapScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-    ) {
-
-        GoogleMap(
-            modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            uiSettings = MapUiSettings(
-                zoomControlsEnabled = false,
-                compassEnabled = false
-            )
-        )
-
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(
-                    bottom = 32.dp,
-                    start = 16.dp,
-                    end = 16.dp
-                ),
-            horizontalAlignment = Alignment.End
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = {
-                            cameraPositionState.position =
-                                CameraPosition.Builder(
-                                    cameraPositionState.position
-                                )
-                                    .bearing(0f)
-                                    .build()
-                        }
-                    )
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_gps_btn),
-                    contentDescription = "Compass",
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 16.dp
-                    )
-            ) {
-
-                Text(
-                    text = "Selected Location",
-                    style = MaterialTheme.typography.titleMedium
-                )
-
-                Text(
-                    text = when {
-                        cameraPositionState.isMoving -> "Selecting location..."
-                        isReverseGeocoding -> "Loading address..."
-                        else -> selectedAddress
-                    },
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                Text(
-                    text = String.format(
-                        "%.6f, %.6f",
-                        selectedLocation.latitude,
-                        selectedLocation.longitude
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
-                )
-
-                Button(
-                    onClick = onConfirmClick,
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.green),
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            vertical = 16.dp
-                        )
-                ) {
-                    Text(
-                        "Confirm Location",
-                        letterSpacing = 2.sp,
-                        fontSize = 14.sp
-                    )
-                }
-            }
+    MapCard(
+        cameraPositionState = cameraPositionState,
+        selectedAddress = when {
+            cameraPositionState.isMoving -> "Selecting location..."
+            isReverseGeocoding -> "Loading address..."
+            else -> selectedAddress
+        },
+        latLng = String.format(
+            "%.6f, %.6f",
+            selectedLocation.latitude,
+            selectedLocation.longitude
+        ),
+        addressState = addressState,
+        predictions = predictions,
+        onConfirmClick = onConfirmClick,
+        clearClick = {
+            addressState.clearText()
+        },
+        onKeyboardAction = {
+            performLocationSearch()
+        },
+        onSearchClick = {
+            performLocationSearch()
+        },
+        onPredictionClick = { prediction ->
+            selectPlace(prediction)
         }
-
-        Icon(
-            painter = painterResource(R.drawable.ic_map_pointer),
-            contentDescription = "Selected location",
-            tint = Color.Unspecified,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .size(24.dp)
-                .offset(
-                    y = (-16).dp
-                )
-        )
-
-        Row(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(16.dp)
-                .fillMaxWidth()
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(16.dp)
-                ),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Icon(
-                painter = painterResource(R.drawable.ic_close),
-                contentDescription = "Remove address",
-                modifier = Modifier
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = {
-                            addressState.clearText()
-                        }
-                    )
-                    .padding(16.dp)
-            )
-
-            OutlinedTextField(
-                contentPadding = PaddingValues(
-                    horizontal = 0.dp,
-                    vertical = 0.dp
-                ),
-                modifier = Modifier
-                    .weight(1f)
-                    .background(
-                        color = Color.White
-                    ),
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 16.sp,
-                    lineHeight = 24.sp,
-                    letterSpacing = 1.sp,
-                    color = colorResource(R.color.text_dark_300)
-                ),
-                lineLimits = TextFieldLineLimits.SingleLine,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Search
-                ),
-
-                onKeyboardAction = {
-                    performLocationSearch()
-                },
-                state = addressState,
-                placeholder = {
-                    Text(
-                        text = "Choose a shipping address",
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp,
-                        letterSpacing = 1.sp,
-                        color = colorResource(R.color.text_dark_100)
-                    )
-                },
-                shape = RoundedCornerShape(16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color.Transparent,
-                    unfocusedBorderColor = Color.Transparent
-                )
-            )
-
-            Icon(
-                painter = painterResource(R.drawable.ic_search),
-                contentDescription = "Search Location",
-                modifier = Modifier
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = {
-                            performLocationSearch()
-                        }
-                    )
-                    .padding(16.dp)
-            )
-        }
-
-        if (predictions.isNotEmpty()) {
-
-            Column(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(
-                        top = 80.dp,
-                        start = 16.dp,
-                        end = 16.dp
-                    )
-                    .fillMaxWidth()
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-            ) {
-                predictions.forEach { prediction ->
-
-                    Text(
-                        text = prediction.getFullText(null).toString(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                selectPlace(prediction)
-                            }
-                            .padding(16.dp)
-                    )
-                }
-            }
-        }
-    }
+    )
 }
