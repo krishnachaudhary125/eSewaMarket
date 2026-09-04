@@ -13,7 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.eSewaMarket.data.models.AddressRequest
 import com.example.eSewaMarket.databinding.ActivityNewAddressBinding
 import com.example.eSewaMarket.ui.adapters.SpinnerAdapter
@@ -25,6 +27,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlin.collections.mutableListOf
 
 class NewAddressActivity : AppCompatActivity() {
@@ -65,6 +68,7 @@ class NewAddressActivity : AppCompatActivity() {
 
         setupLocationDropdowns()
         setupDistrictDropdown()
+        observeAddress()
 
         locationViewModel.loadProvinces()
 
@@ -228,6 +232,11 @@ class NewAddressActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        addressViewModel.getAddresses()
+    }
+
     @SuppressLint("MissingPermission")
     private fun fetchCurrentLocationAndOpenMap() {
 
@@ -338,5 +347,17 @@ class NewAddressActivity : AppCompatActivity() {
 
             }
             .launchIn(lifecycleScope)
+    }
+
+    private fun observeAddress(){
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                addressViewModel.hasAddresses().collect { exists ->
+
+                    binding.switchShippingAddress.isChecked = !exists
+                }
+            }
+        }
     }
 }
