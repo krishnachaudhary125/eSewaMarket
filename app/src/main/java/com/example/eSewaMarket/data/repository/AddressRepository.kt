@@ -57,7 +57,8 @@ class AddressRepository(
                     addressName = response.addressName,
                     isDefaultAddress = response.isDefaultAddress,
                     isBillingAddress = response.isBillingAddress,
-                    label = response.label
+                    label = response.label,
+                    landmark = response.landmark
                 )
             )
 
@@ -92,7 +93,8 @@ class AddressRepository(
                     addressName = address.addressName,
                     isDefaultAddress = address.isDefaultAddress,
                     isBillingAddress = address.isBillingAddress,
-                    label = address.label
+                    label = address.label,
+                    landmark = address.landmark
                 )
             }
 
@@ -129,7 +131,8 @@ class AddressRepository(
                     addressName = response.addressName,
                     isDefaultAddress = response.isDefaultAddress,
                     isBillingAddress = response.isBillingAddress,
-                    label = response.label
+                    label = response.label,
+                    landmark = response.landmark
                 )
             )
 
@@ -159,7 +162,8 @@ class AddressRepository(
                 addressName = it.addressName,
                 isDefaultAddress = it.isDefaultAddress,
                 isBillingAddress = it.isBillingAddress,
-                label = it.label
+                label = it.label,
+                landmark = it.landmark
             )
         }
 

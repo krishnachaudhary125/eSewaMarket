@@ -11,5 +11,6 @@ data class AddressRequest(
     val addressName: String,
     val isDefaultAddress: Boolean,
     val isBillingAddress: Boolean,
-    val label: String?
+    val label: String?,
+    val landmark: String?
 )

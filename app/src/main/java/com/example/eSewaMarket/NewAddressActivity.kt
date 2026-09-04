@@ -83,6 +83,7 @@ class NewAddressActivity : AppCompatActivity() {
             binding.addrLabelGroup.clearCheck()
             binding.switchShippingAddress.isChecked = false
             binding.switchBillingAddress.isChecked = false
+            binding.landmark.text.clear()
         }
 
         binding.chooseOnMap.setOnClickListener {
@@ -100,6 +101,7 @@ class NewAddressActivity : AppCompatActivity() {
             val city = binding.city.text.toString().trim()
             val postalCode = binding.postalCode.text.toString().trim()
             val address = binding.etAddress.text.toString().trim()
+            val landmark = binding.landmark.text.toString().trim()
 
             val selectedRadioButton =
                 binding.addrLabelGroup.findViewById<RadioButton>(
@@ -191,6 +193,12 @@ class NewAddressActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
+                landmark.isNotEmpty() && !landmark.matches(addressRegex) -> {
+                    binding.landmark.error = "Invalid input"
+                    binding.landmark.requestFocus()
+                    return@setOnClickListener
+                }
+
                 else -> {
 
                     val request = AddressRequest(
@@ -203,7 +211,8 @@ class NewAddressActivity : AppCompatActivity() {
                         addressName = address,
                         isDefaultAddress = isDefaultAddress,
                         isBillingAddress = isBillingAddress,
-                        label = label
+                        label = label,
+                        landmark = landmark
                     )
 
                     addressViewModel.createAddress(
