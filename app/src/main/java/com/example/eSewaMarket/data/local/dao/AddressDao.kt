@@ -39,4 +39,7 @@ interface AddressDao {
 
     @Query("DELETE FROM addresses WHERE userId = :userId AND id NOT IN (:serverIds)")
     suspend fun deleteNotInServer(userId: Long, serverIds: List<Long>)
+
+    @Query("SELECT EXISTS(SELECT 1 FROM addresses WHERE userId = :userId)")
+    fun hasAddresses(userId: Long): Flow<Boolean>
 }

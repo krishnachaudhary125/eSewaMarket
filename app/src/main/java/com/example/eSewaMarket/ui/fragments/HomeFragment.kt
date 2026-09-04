@@ -36,6 +36,7 @@ import com.example.eSewaMarket.ui.adapters.HotDealCategoryAdapter
 import com.example.eSewaMarket.ui.adapters.ProductAdapter
 import com.example.eSewaMarket.ui.adapters.RecommendedProductAdapter
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
+import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
 import com.example.eSewaMarket.ui.viewmodel.FavouriteViewModel
 import com.example.eSewaMarket.ui.viewmodel.HomeViewModel
@@ -61,6 +62,9 @@ class HomeFragment : Fragment() {
 
     private val favouriteViewModel: FavouriteViewModel by activityViewModels {
         ViewModelFactoryProvider.favouriteFactory(requireContext())
+    }
+    private val addressViewModel: AddressViewModel by viewModels {
+        ViewModelFactoryProvider.addressFactory(requireContext())
     }
     private lateinit var bannerAdapter: BannerPagerAdapter
     private lateinit var categoryAdapter: CategoryAdapter
@@ -107,6 +111,7 @@ class HomeFragment : Fragment() {
         setupHotDealProductRecyclerView()
         setupRecommendedRecyclerView()
         observeData()
+        observeAddress()
 
         binding.homeAppBar.notification.setOnClickListener {
             val intent = Intent(requireContext(), NotificationActivity::class.java)
@@ -452,5 +457,21 @@ class HomeFragment : Fragment() {
                 }
             }
         )
+    }
+
+    private fun observeAddress() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                addressViewModel.hasAddresses().collect { exists ->
+
+                    if (exists) {
+                        binding.setAddressLayout.visibility = View.GONE
+                    } else {
+                        binding.setAddressLayout.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
     }
 }

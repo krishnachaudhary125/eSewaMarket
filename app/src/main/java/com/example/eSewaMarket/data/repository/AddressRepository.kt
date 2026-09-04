@@ -7,7 +7,10 @@ import com.example.eSewaMarket.data.local.entity.AddressEntity
 import com.example.eSewaMarket.data.models.AddressRequest
 import com.example.eSewaMarket.data.models.AddressResponse
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.tasks.await
 
 class AddressRepository(
@@ -180,6 +183,13 @@ class AddressRepository(
             )
 
             addressDao.insertAddresses(addresses)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun hasAddresses(): Flow<Boolean> {
+        return userRepository.user.flatMapLatest { user ->
+            addressDao.hasAddresses(user.id)
         }
     }
 }

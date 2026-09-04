@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.eSewaMarket.data.models.AddressRequest
 import com.example.eSewaMarket.data.models.AddressResponse
 import com.example.eSewaMarket.data.repository.AddressRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -94,6 +95,8 @@ class AddressViewModel(
             }
         }
     }
+
+    fun hasAddresses() = repository.hasAddresses()
 
     fun clearError() {
         _error.value = null
