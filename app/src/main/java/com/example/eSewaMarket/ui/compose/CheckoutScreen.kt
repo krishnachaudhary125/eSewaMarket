@@ -63,7 +63,9 @@ fun CheckoutScreen(
     shippingCharge: Double,
     address: String,
     onProductClick: (ProductResponse) -> Unit,
-    onSetAddressClick: () -> Unit
+    onSetAddressClick: () -> Unit,
+    addressExist: Boolean,
+    chooseAddress: () -> Unit
 ) {
     var isExpanded by rememberSaveable {
         mutableStateOf(false)
@@ -134,8 +136,13 @@ fun CheckoutScreen(
                     )
                 },
                 onAddMapClick = {
-                    showPromoSheetAddress = true
-                }
+                    if (addressExist){
+                        chooseAddress()
+                    }else{
+                        showPromoSheetAddress = true
+                    }
+                },
+                addressExist = addressExist
             )
 
             Text(

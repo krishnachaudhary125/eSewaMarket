@@ -48,6 +48,11 @@ class CheckoutActivity : AppCompatActivity() {
                     initialValue = 0.0
                 )
 
+            val addressExist by addressViewModel.hasAddresses()
+                .collectAsStateWithLifecycle(
+                    initialValue = false
+                )
+
             val addresses by addressViewModel.addresses
                 .collectAsStateWithLifecycle(
                     initialValue = emptyList()
@@ -60,7 +65,7 @@ class CheckoutActivity : AppCompatActivity() {
             } ?: "Add Shipping Address"
 
             val priceProductOnly = productPrice ?: 0.00
-            val taxAmount = (priceProductOnly * 13)/100
+            val taxAmount = (priceProductOnly * 13) / 100
             val shippingCharge = 70.00
 
             val totalAmount = priceProductOnly + taxAmount + shippingCharge
@@ -84,6 +89,11 @@ class CheckoutActivity : AppCompatActivity() {
                 onProductClick = {},
                 onSetAddressClick = {
                     val intent = Intent(this, NewAddressActivity::class.java)
+                    startActivity(intent)
+                },
+                addressExist = addressExist,
+                chooseAddress = {
+                    val intent = Intent(this, ShippingAddressActivity::class.java)
                     startActivity(intent)
                 }
             )

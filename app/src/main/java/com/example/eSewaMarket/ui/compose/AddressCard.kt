@@ -28,7 +28,8 @@ import com.example.eSewaMarket.R
 @Composable
 fun AddressCard(
     address: @Composable () -> Unit,
-    onAddMapClick: () -> Unit
+    onAddMapClick: () -> Unit,
+    addressExist: Boolean
 ) {
     Box(
         modifier = Modifier
@@ -95,7 +96,11 @@ fun AddressCard(
                 contentAlignment = Alignment.Center
             ){
                 Icon(
-                    painter = painterResource(R.drawable.ic_plus),
+                    painter = if(addressExist){
+                        painterResource(R.drawable.ic_edit)
+                    }else {
+                        painterResource(R.drawable.ic_plus)
+                    },
                     contentDescription = "Location",
                     tint = Color.Unspecified,
                     modifier = Modifier
