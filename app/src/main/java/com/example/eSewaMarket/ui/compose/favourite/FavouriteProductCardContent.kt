@@ -137,10 +137,6 @@ fun FavouriteProductCardContent(
                 onClick = tickClick,
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .offset(
-                        x = (-6).dp,
-                        y = (-6).dp
-                    )
             )
         }
     }
