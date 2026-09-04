@@ -136,9 +136,9 @@ fun CheckoutScreen(
                     )
                 },
                 onAddMapClick = {
-                    if (addressExist){
+                    if (addressExist) {
                         chooseAddress()
-                    }else{
+                    } else {
                         showPromoSheetAddress = true
                     }
                 },
@@ -228,7 +228,7 @@ fun CheckoutScreen(
                 modifier = Modifier
                     .padding(
                         start = 16.dp,
-                        top  = 8.dp,
+                        top = 8.dp,
                         bottom = 8.dp
                     )
             )
@@ -241,7 +241,7 @@ fun CheckoutScreen(
                         color = Color.White,
                         shape = RoundedCornerShape(16.dp)
                     )
-            ){
+            ) {
                 Row(
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 24.dp)
@@ -345,13 +345,16 @@ fun CheckoutScreen(
         }
     }
 
-    if (showPromoSheetAddress){
+    if (showPromoSheetAddress) {
         BottomSheetSetAddress(
             onDismiss = {
                 showPromoSheetAddress = false
             },
             sheetState = promoSheetState,
-            onSetAddressClick = onSetAddressClick,
+            onSetAddressClick = {
+                onSetAddressClick()
+                showPromoSheetAddress = false
+            },
             onCancelClick = {
                 scope.launch {
                     promoSheetState.hide()

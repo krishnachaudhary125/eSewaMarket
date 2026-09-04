@@ -99,4 +99,9 @@ class CheckoutActivity : AppCompatActivity() {
             )
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        addressViewModel.getAddresses()
+    }
 }
