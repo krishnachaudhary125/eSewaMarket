@@ -63,7 +63,7 @@ fun ShippingAddressScreen(
                             onEditClick()
                         },
                         fullName = addresses.fullName,
-                        label = addresses.label.toString(),
+                        label = addresses.label,
                         addressName = "${addresses.addressName}, ${addresses.district}, ${addresses.city} ${addresses.postalCode}",
                         province = addresses.province
                     )

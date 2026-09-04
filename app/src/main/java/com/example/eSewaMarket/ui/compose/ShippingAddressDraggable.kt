@@ -48,7 +48,7 @@ fun ShippingAddressDraggable(
     onDeleteClick: () -> Unit,
     onEditClick: () -> Unit,
     fullName: String,
-    label: String,
+    label: String?,
     addressName: String,
     province: String
 ) {

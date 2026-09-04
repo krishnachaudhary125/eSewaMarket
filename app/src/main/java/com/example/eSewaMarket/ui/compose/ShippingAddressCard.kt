@@ -27,7 +27,7 @@ import com.example.eSewaMarket.R
 @Composable
 fun ShippingAddressCard(
     fullName: String,
-    label: String,
+    label: String?,
     addressName: String,
     province: String
 ) {
@@ -88,31 +88,33 @@ fun ShippingAddressCard(
                         modifier = Modifier.padding(end = 8.dp)
                     )
 
-                    Text(
-                        text = label,
-                        maxLines = 1,
-                        fontSize = 14.sp,
-                        letterSpacing = 1.sp,
-                        lineHeight = 24.sp,
-                        color = if (label.lowercase() == "home") {
-                            Color.White
-                        } else {
-                            colorResource(R.color.green)
-                        },
-                        modifier = Modifier
-                            .background(
-                                color = if (label.lowercase() == "home") {
-                                    colorResource(R.color.green)
-                                } else {
-                                    colorResource(R.color.primary_green)
-                                },
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(
-                                vertical = 4.dp,
-                                horizontal = 16.dp
-                            )
-                    )
+                    if (label != null) {
+                        Text(
+                            text = label,
+                            maxLines = 1,
+                            fontSize = 14.sp,
+                            letterSpacing = 1.sp,
+                            lineHeight = 24.sp,
+                            color = if (label.lowercase() == "home") {
+                                Color.White
+                            } else {
+                                colorResource(R.color.green)
+                            },
+                            modifier = Modifier
+                                .background(
+                                    color = if (label.lowercase() == "home") {
+                                        colorResource(R.color.green)
+                                    } else {
+                                        colorResource(R.color.primary_green)
+                                    },
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .padding(
+                                    vertical = 4.dp,
+                                    horizontal = 16.dp
+                                )
+                        )
+                    }
                 }
 
                 Text(
