@@ -334,6 +334,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/floatingSellButton"
         style="@style/Widget.Card.Wrap"
         android:layout_marginEnd="@dimen/margin_medium"

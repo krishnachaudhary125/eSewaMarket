@@ -112,5 +112,5 @@ interface ApiService {
     suspend fun getProvinces(): List<ProvinceResponse>
 
     @GET("locations/provinces/{provinceId}/districts")
-    suspend fun getDistricts(provinceId: Long): List<DistrictResponse>
+    suspend fun getDistricts(@Path("provinceId") provinceId: Long): List<DistrictResponse>
 }

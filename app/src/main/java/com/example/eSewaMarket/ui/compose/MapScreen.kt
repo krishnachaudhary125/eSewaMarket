@@ -1,5 +1,6 @@
 package com.example.eSewaMarket.ui.compose
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,8 +10,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,6 +27,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -50,6 +54,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.example.eSewaMarket.R
+import com.example.eSewaMarket.utils.resolveLocationName
 import com.example.eSewaMarket.utils.searchLocation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.libraries.places.api.Places
@@ -62,13 +67,15 @@ import com.google.maps.android.compose.MapUiSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun MapScreen(
     onLocationSelected: (LatLng) -> Unit,
     latitude: Double,
     longitude: Double,
-    onSelectClick: () -> Unit
+    onConfirmClick: () -> Unit
 ) {
 
     val cameraPositionState = rememberCameraPositionState {
@@ -201,10 +208,16 @@ fun MapScreen(
             }
     }
 
+    var isReverseGeocoding by remember { mutableStateOf(false) }
+
     LaunchedEffect(cameraPositionState.isMoving) {
         if (!cameraPositionState.isMoving) {
             selectedLocation = cameraPositionState.position.target
             onLocationSelected(selectedLocation)
+
+            isReverseGeocoding = true
+            selectedAddress = resolveLocationName(context, placesClient, selectedLocation)
+            isReverseGeocoding = false
         }
     }
 
@@ -227,7 +240,7 @@ fun MapScreen(
                 return@collectLatest
             }
 
-            delay(300)
+            delay(300.milliseconds)
 
             val request = FindAutocompletePredictionsRequest.builder()
                 .setQuery(query)
@@ -292,188 +305,32 @@ fun MapScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-    ) {
-
-        GoogleMap(
-            modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            uiSettings = MapUiSettings(
-                zoomControlsEnabled = false,
-                compassEnabled = false
-            )
-        )
-
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-                .size(50.dp)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = {
-                        cameraPositionState.position = CameraPosition.Builder(
-                            cameraPositionState.position
-                        )
-                            .bearing(0f)
-                            .build()
-                    }
-                )
-        ) {
-            Image(
-                painter = painterResource(R.drawable.ic_gps_btn),
-                contentDescription = "Compass",
-                modifier = Modifier.fillMaxSize()
-            )
+    MapCard(
+        cameraPositionState = cameraPositionState,
+        selectedAddress = when {
+            cameraPositionState.isMoving -> "Selecting location..."
+            isReverseGeocoding -> "Loading address..."
+            else -> selectedAddress
+        },
+        latLng = String.format(
+            "%.6f, %.6f",
+            selectedLocation.latitude,
+            selectedLocation.longitude
+        ),
+        addressState = addressState,
+        predictions = predictions,
+        onConfirmClick = onConfirmClick,
+        clearClick = {
+            addressState.clearText()
+        },
+        onKeyboardAction = {
+            performLocationSearch()
+        },
+        onSearchClick = {
+            performLocationSearch()
+        },
+        onPredictionClick = { prediction ->
+            selectPlace(prediction)
         }
-
-        Button(
-            onClick = onSelectClick,
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.green),
-                contentColor = Color.White
-            ),
-            modifier = Modifier
-                .align(Alignment.Center)
-                .offset(
-                    y = (-56).dp
-                )
-        ) {
-            Text(
-                "Select",
-                letterSpacing = 2.sp,
-                fontSize = 14.sp
-            )
-        }
-
-        Icon(
-            painter = painterResource(R.drawable.ic_map_pointer),
-            contentDescription = "Selected location",
-            tint = Color.Unspecified,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .size(24.dp)
-                .offset(
-                    y = (-16).dp
-                )
-        )
-
-        Row(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(16.dp)
-                .fillMaxWidth()
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(16.dp)
-                ),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Icon(
-                painter = painterResource(R.drawable.ic_close),
-                contentDescription = "Remove address",
-                modifier = Modifier
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = {
-                            addressState.clearText()
-                        }
-                    )
-                    .padding(16.dp)
-            )
-
-            OutlinedTextField(
-                contentPadding = PaddingValues(
-                    horizontal = 0.dp,
-                    vertical = 0.dp
-                ),
-                modifier = Modifier
-                    .weight(1f)
-                    .background(
-                        color = Color.White
-                    ),
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 16.sp,
-                    lineHeight = 24.sp,
-                    letterSpacing = 1.sp,
-                    color = colorResource(R.color.text_dark_300)
-                ),
-                lineLimits = TextFieldLineLimits.SingleLine,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Search
-                ),
-
-                onKeyboardAction = {
-                    performLocationSearch()
-                },
-                state = addressState,
-                placeholder = {
-                    Text(
-                        text = "Choose a shipping address",
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp,
-                        letterSpacing = 1.sp,
-                        color = colorResource(R.color.text_dark_100)
-                    )
-                },
-                shape = RoundedCornerShape(16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color.Transparent,
-                    unfocusedBorderColor = Color.Transparent
-                )
-            )
-
-            Icon(
-                painter = painterResource(R.drawable.ic_search),
-                contentDescription = "Search Location",
-                modifier = Modifier
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = {
-                            performLocationSearch()
-                        }
-                    )
-                    .padding(16.dp)
-            )
-        }
-
-        if (predictions.isNotEmpty()) {
-
-            Column(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(
-                        top = 80.dp,
-                        start = 16.dp,
-                        end = 16.dp
-                    )
-                    .fillMaxWidth()
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-            ) {
-                predictions.forEach { prediction ->
-
-                    Text(
-                        text = prediction.getFullText(null).toString(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                selectPlace(prediction)
-                            }
-                            .padding(16.dp)
-                    )
-                }
-            }
-        }
-    }
+    )
 }
