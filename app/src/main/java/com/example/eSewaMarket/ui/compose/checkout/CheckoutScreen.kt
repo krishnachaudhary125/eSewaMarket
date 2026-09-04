@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,12 +31,15 @@ import androidx.compose.ui.unit.sp
 import com.example.eSewaMarket.R
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -243,10 +247,13 @@ fun CheckoutScreen(
                 ) {
                     Row(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 24.dp)
+                            .clip(shape = RoundedCornerShape(16.dp))
                             .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = ripple(),
                                 onClick = {}
-                            ),
+                            )
+                            .padding(horizontal = 16.dp, vertical = 24.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(
@@ -288,10 +295,13 @@ fun CheckoutScreen(
 
                     Row(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 24.dp)
+                            .clip(shape = RoundedCornerShape(16.dp))
                             .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = ripple(),
                                 onClick = {}
-                            ),
+                            )
+                            .padding(horizontal = 16.dp, vertical = 24.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(
