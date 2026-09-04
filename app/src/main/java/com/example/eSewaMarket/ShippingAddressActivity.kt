@@ -9,7 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.eSewaMarket.data.repository.UserSessionRepository
-import com.example.eSewaMarket.ui.compose.ShippingAddressScreen
+import com.example.eSewaMarket.ui.compose.shippingAddress.ShippingAddressScreen
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
 import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
 import com.example.eSewaMarket.utils.AuthNavigator

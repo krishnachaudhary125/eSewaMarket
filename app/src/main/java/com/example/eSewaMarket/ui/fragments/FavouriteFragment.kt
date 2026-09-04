@@ -22,11 +22,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.example.eSewaMarket.LoginActivity
 import com.example.eSewaMarket.MainActivity
-import com.example.eSewaMarket.ProductDetailActivity
 import com.example.eSewaMarket.R
 import com.example.eSewaMarket.data.models.FavouriteResponse
 import com.example.eSewaMarket.data.repository.UserSessionRepository
-import com.example.eSewaMarket.ui.compose.FavouriteFragmentScreen
+import com.example.eSewaMarket.ui.compose.favourite.FavouriteFragmentScreen
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
 import com.example.eSewaMarket.ui.viewmodel.FavouriteViewModel
