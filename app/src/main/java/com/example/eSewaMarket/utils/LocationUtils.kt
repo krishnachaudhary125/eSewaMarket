@@ -4,6 +4,7 @@ import android.content.Context
 import android.location.Geocoder
 import android.location.Location
 import android.util.Log
+import com.example.eSewaMarket.data.models.SelectedLocation
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.CircularBounds
 import com.google.android.libraries.places.api.model.Place
@@ -47,28 +48,44 @@ suspend fun searchLocation(
 }
 
 
-suspend fun reverseGeocode(context: Context, latLng: LatLng): String {
+suspend fun reverseGeocode(
+    context: Context,
+    latLng: LatLng
+): SelectedLocation? {
     return withContext(Dispatchers.IO) {
         try {
             val geocoder = Geocoder(context)
 
             @Suppress("DEPRECATION")
-            val results = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+            val results = geocoder.getFromLocation(
+                latLng.latitude,
+                latLng.longitude,
+                1
+            )
+
             val address = results?.firstOrNull()
 
             if (address != null) {
-                listOfNotNull(
-                    address.subLocality,
-                    address.locality,
-                    address.adminArea
-                ).distinct().joinToString(", ").ifEmpty {
-                    address.getAddressLine(0) ?: "Unknown location"
-                }
+                SelectedLocation(
+                    province = address.adminArea,
+                    district = address.subAdminArea,
+                    city = address.subLocality ?: address.locality,
+                    postalCode = address.postalCode,
+                    addressName = listOfNotNull(
+                        address.subLocality,
+                        address.locality
+                    ).distinct().joinToString(", ")
+                        .ifEmpty {
+                            address.getAddressLine(0) ?: "Unknown location"
+                        }
+                )
             } else {
-                "Unknown location"
+                null
             }
+
         } catch (e: Exception) {
-            "Unknown location"
+            Log.e("LOCATION", "Reverse geocoding failed", e)
+            null
         }
     }
 }
@@ -114,13 +131,26 @@ suspend fun findNearByPlaceName(
 }
 
 
-suspend fun resolveLocationName(
+suspend fun resolveLocationDetails(
     context: Context,
     placesClient: PlacesClient,
     latLng: LatLng
-): String {
-    findNearByPlaceName(placesClient, latLng)?.let { return it }
-    return reverseGeocode(context, latLng)
+): SelectedLocation? {
+
+    val nearbyPlaceName = findNearByPlaceName(
+        placesClient,
+        latLng,
+        60.0
+    )
+
+    val location = reverseGeocode(
+        context,
+        latLng
+    )
+
+    return location?.copy(
+        addressName = nearbyPlaceName ?: location.addressName
+    )
 }
 
 

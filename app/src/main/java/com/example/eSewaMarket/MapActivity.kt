@@ -18,12 +18,22 @@ class MapActivity : AppCompatActivity() {
             "longitude", 0.0
         )
 
-        setContent{
+        setContent {
             MapScreen(
                 onLocationSelected = {},
                 latitude = latitude,
                 longitude = longitude,
-                onConfirmClick = {
+                onConfirmClick = { location ->
+
+                    val resultIntent = intent.apply {
+                        putExtra("province", location.province)
+                        putExtra("district", location.district)
+                        putExtra("city", location.city)
+                        putExtra("postalCode", location.postalCode)
+                        putExtra("addressName", location.addressName)
+                    }
+
+                    setResult(RESULT_OK, resultIntent)
                     finish()
                 }
             )

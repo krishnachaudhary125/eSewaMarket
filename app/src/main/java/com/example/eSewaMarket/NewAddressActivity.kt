@@ -5,9 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -25,6 +25,7 @@ import com.example.eSewaMarket.ui.viewmodel.LocationViewModel
 import com.example.eSewaMarket.utils.LocationPermissionHandler
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -117,7 +118,8 @@ class NewAddressActivity : AppCompatActivity() {
             val isBillingAddress = binding.switchBillingAddress.isChecked
 
             val nameRegex = Regex("^[A-Za-z]+(?: [A-Za-z]+){0,3}$")
-            val phoneRegex = Regex("""^(?:9[78]\d{8}|\+977[-.\s]?9[78]\d{8}|\+(?!977)[1-9]\d{6,14})$""")
+            val phoneRegex =
+                Regex("""^(?:9[78]\d{8}|\+977[-.\s]?9[78]\d{8}|\+(?!977)[1-9]\d{6,14})$""")
             val addressRegex = Regex("^[\\p{L}\\p{N}\\s.,/#'()-]{1,200}$")
             val postalCodeRegex = Regex("""^\d{5}$""")
 
@@ -256,7 +258,7 @@ class NewAddressActivity : AppCompatActivity() {
                     putExtra("longitude", longitude)
                 }
 
-                startActivity(intent)
+                mapResultLauncher.launch(intent)
             }
             .addOnFailureListener { exception ->
 
@@ -349,7 +351,7 @@ class NewAddressActivity : AppCompatActivity() {
             .launchIn(lifecycleScope)
     }
 
-    private fun observeAddress(){
+    private fun observeAddress() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
 
@@ -360,4 +362,69 @@ class NewAddressActivity : AppCompatActivity() {
             }
         }
     }
+
+    private val mapResultLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+
+            if (result.resultCode != RESULT_OK) return@registerForActivityResult
+
+            val data = result.data ?: return@registerForActivityResult
+
+            val province = data.getStringExtra("province")
+            val district = data.getStringExtra("district")
+            val city = data.getStringExtra("city")
+            val postalCode = data.getStringExtra("postalCode")
+            val addressName = data.getStringExtra("addressName")
+
+            binding.city.setText(city ?: "")
+            binding.postalCode.setText(postalCode ?: "")
+            binding.etAddress.setText(addressName ?: "")
+
+            selectProvinceAndDistrict(
+                province,
+                district
+            )
+        }
+
+    private fun selectProvinceAndDistrict(
+        provinceName: String?,
+        districtName: String?
+    ) {
+        if (provinceName == null) return
+
+        val provinces = locationViewModel.provinces.value
+
+        val provinceIndex = provinces.indexOfFirst {
+            it.name.equals(provinceName, ignoreCase = true)
+        }
+
+        if (provinceIndex == -1) return
+
+        binding.province.setSelection(provinceIndex + 1)
+
+        lifecycleScope.launch {
+            val districts = locationViewModel.districts.first { list ->
+                list.any {
+                    it.name.equals(
+                        districtName,
+                        ignoreCase = true
+                    )
+                }
+            }
+
+            val districtIndex = districts.indexOfFirst {
+                it.name.equals(
+                    districtName,
+                    ignoreCase = true
+                )
+            }
+
+            if (districtIndex != -1) {
+                binding.district.setSelection(districtIndex + 1)
+            }
+        }
+    }
+
 }
