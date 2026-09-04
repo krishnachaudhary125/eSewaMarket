@@ -53,7 +53,7 @@ fun ShippingAddressDraggable(
     province: String
 ) {
 
-    val deleteWidth = 96.dp
+    val deleteWidth = 76.dp
     val density = LocalDensity.current
     val actionsWidth = deleteWidth * 2
     val actionsWidthPx = with(density) { actionsWidth.toPx() }
