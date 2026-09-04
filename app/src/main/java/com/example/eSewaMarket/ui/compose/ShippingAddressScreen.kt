@@ -64,7 +64,7 @@ fun ShippingAddressScreen(
                         },
                         fullName = addresses.fullName,
                         label = addresses.label,
-                        addressName = "${addresses.addressName}, ${addresses.district}, ${addresses.city} ${addresses.postalCode}",
+                        addressName = "${addresses.addressName}, ${addresses.district} ${addresses.postalCode}",
                         province = addresses.province
                     )
                 }

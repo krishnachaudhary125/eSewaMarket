@@ -69,7 +69,6 @@ suspend fun reverseGeocode(
                 SelectedLocation(
                     province = address.adminArea,
                     district = address.subAdminArea,
-                    city = address.subLocality ?: address.locality,
                     postalCode = address.postalCode,
                     addressName = listOfNotNull(
                         address.subLocality,

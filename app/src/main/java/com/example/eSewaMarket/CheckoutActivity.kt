@@ -61,7 +61,7 @@ class CheckoutActivity : AppCompatActivity() {
             val shippingAddress = addresses.firstOrNull { it.isDefaultAddress }
 
             val shippingAddressText = shippingAddress?.let {
-                "${it.addressName}, ${it.city}, ${it.district} ${it.postalCode}"
+                "${it.addressName}, ${it.district} ${it.postalCode}"
             } ?: "Add Shipping Address"
 
             val priceProductOnly = productPrice ?: 0.00

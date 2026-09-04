@@ -133,24 +133,9 @@ fun MapScreen(
                         }
                         ?.name
 
-                    val city = components
-                        ?.firstOrNull {
-                            it.types.contains("sublocality_level_1")
-                        }
-                        ?.name
-
                     val postalCode = components
                         ?.firstOrNull {
                             it.types.contains("postal_code")
-                        }
-                        ?.name
-
-                    val sublocality = components
-                        ?.firstOrNull {
-                            it.types.any { type ->
-                                type == "sublocality" ||
-                                        type == "sublocality_level_1"
-                            }
                         }
                         ?.name
 
@@ -159,7 +144,6 @@ fun MapScreen(
                     selectedLocationData = SelectedLocation(
                         province = province,
                         district = district,
-                        city = city,
                         postalCode = postalCode,
                         addressName = addressName
                     )

@@ -261,36 +261,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="4dp"
                             android:letterSpacing="0.05"
-                            android:text="City"
-                            android:textColor="@color/text_dark"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <EditText
-                            android:id="@+id/city"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_faq_question"
-                            android:hint="Enter City"
-                            android:inputType="text"
-                            android:letterSpacing="0.1"
-                            android:minHeight="56dp"
-                            android:paddingHorizontal="16dp"
-                            android:textColorHint="@color/text_dark_150" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:letterSpacing="0.05"
                             android:text="Postal Code"
                             android:textColor="@color/text_dark"
                             android:textSize="12sp"

@@ -103,7 +103,6 @@ class NewAddressActivity : AppCompatActivity() {
             val phone = binding.etPhone.text.toString().trim()
             val province = binding.province.selectedItem.toString().trim()
             val district = binding.district.selectedItem.toString().trim()
-            val city = binding.city.text.toString().trim()
             val postalCode = binding.postalCode.text.toString().trim()
             val address = binding.etAddress.text.toString().trim()
             val landmark = binding.landmark.text.toString().trim()
@@ -163,18 +162,6 @@ class NewAddressActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
-                city.isEmpty() -> {
-                    binding.city.error = "City is required"
-                    binding.city.requestFocus()
-                    return@setOnClickListener
-                }
-
-                !city.matches(addressRegex) -> {
-                    binding.city.error = "Enter valid city"
-                    binding.city.requestFocus()
-                    return@setOnClickListener
-                }
-
                 postalCode.isEmpty() -> {
                     binding.postalCode.error = "Postal Code is required"
                     binding.postalCode.requestFocus()
@@ -212,7 +199,6 @@ class NewAddressActivity : AppCompatActivity() {
                         phone = phone,
                         province = province,
                         district = district,
-                        city = city,
                         postalCode = postalCode,
                         addressName = address,
                         isDefaultAddress = isDefaultAddress,
@@ -374,11 +360,9 @@ class NewAddressActivity : AppCompatActivity() {
 
             val province = data.getStringExtra("province")
             val district = data.getStringExtra("district")
-            val city = data.getStringExtra("city")
             val postalCode = data.getStringExtra("postalCode")
             val addressName = data.getStringExtra("addressName")
 
-            binding.city.setText(city ?: "")
             binding.postalCode.setText(postalCode ?: "")
             binding.etAddress.setText(addressName ?: "")
 

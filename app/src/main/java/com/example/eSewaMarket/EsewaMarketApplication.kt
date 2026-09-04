@@ -2,6 +2,7 @@ package com.example.eSewaMarket
 
 import MIGRATION_4_5
 import MIGRATION_5_6
+import MIGRATION_6_7
 import android.app.Application
 import androidx.room3.Room
 import com.example.eSewaMarket.data.local.AppDatabase
@@ -22,7 +23,8 @@ class EsewaMarketApplication : Application() {
         )
             .addMigrations(
                 MIGRATION_4_5,
-                MIGRATION_5_6
+                MIGRATION_5_6,
+                MIGRATION_6_7
             )
             .build()
 

@@ -28,7 +28,6 @@ class MapActivity : AppCompatActivity() {
                     val resultIntent = intent.apply {
                         putExtra("province", location.province)
                         putExtra("district", location.district)
-                        putExtra("city", location.city)
                         putExtra("postalCode", location.postalCode)
                         putExtra("addressName", location.addressName)
                     }
