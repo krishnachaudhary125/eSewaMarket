@@ -45,7 +45,8 @@ class ConfirmationActivity : AppCompatActivity() {
                 paymentOption = intent.getStringExtra("paymentOption").toString(),
                 taxAmount = intent.getDoubleExtra("totalTax", 0.0),
                 totalAmount = intent.getDoubleExtra("totalPrice", 0.0),
-                deliveryCharge = intent.getDoubleExtra("deliveryCharge", 0.0)
+                deliveryCharge = intent.getDoubleExtra("deliveryCharge", 0.0),
+                grandTotal = intent.getDoubleExtra("grandTotal", 0.0)
             )
         }
     }
