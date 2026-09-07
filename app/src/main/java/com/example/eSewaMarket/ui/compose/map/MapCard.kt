@@ -1,4 +1,4 @@
-package com.example.eSewaMarket.ui.compose
+package com.example.eSewaMarket.ui.compose.map
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

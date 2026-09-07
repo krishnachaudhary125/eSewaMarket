@@ -7,7 +7,10 @@ import com.example.eSewaMarket.data.local.entity.AddressEntity
 import com.example.eSewaMarket.data.models.AddressRequest
 import com.example.eSewaMarket.data.models.AddressResponse
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.tasks.await
 
 class AddressRepository(
@@ -52,12 +55,12 @@ class AddressRepository(
                     phone = response.phone,
                     province = response.province,
                     district = response.district,
-                    city = response.city,
                     postalCode = response.postalCode,
                     addressName = response.addressName,
                     isDefaultAddress = response.isDefaultAddress,
                     isBillingAddress = response.isBillingAddress,
-                    label = response.label
+                    label = response.label,
+                    landmark = response.landmark
                 )
             )
 
@@ -87,12 +90,12 @@ class AddressRepository(
                     phone = address.phone,
                     province = address.province,
                     district = address.district,
-                    city = address.city,
                     postalCode = address.postalCode,
                     addressName = address.addressName,
                     isDefaultAddress = address.isDefaultAddress,
                     isBillingAddress = address.isBillingAddress,
-                    label = address.label
+                    label = address.label,
+                    landmark = address.landmark
                 )
             }
 
@@ -124,12 +127,12 @@ class AddressRepository(
                     phone = response.phone,
                     province = response.province,
                     district = response.district,
-                    city = response.city,
                     postalCode = response.postalCode,
                     addressName = response.addressName,
                     isDefaultAddress = response.isDefaultAddress,
                     isBillingAddress = response.isBillingAddress,
-                    label = response.label
+                    label = response.label,
+                    landmark = response.landmark
                 )
             )
 
@@ -154,12 +157,12 @@ class AddressRepository(
                 phone = it.phone,
                 province = it.province,
                 district = it.district,
-                city = it.city,
                 postalCode = it.postalCode,
                 addressName = it.addressName,
                 isDefaultAddress = it.isDefaultAddress,
                 isBillingAddress = it.isBillingAddress,
-                label = it.label
+                label = it.label,
+                landmark = it.landmark
             )
         }
 
@@ -176,6 +179,13 @@ class AddressRepository(
             )
 
             addressDao.insertAddresses(addresses)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun hasAddresses(): Flow<Boolean> {
+        return userRepository.user.flatMapLatest { user ->
+            addressDao.hasAddresses(user.id)
         }
     }
 }

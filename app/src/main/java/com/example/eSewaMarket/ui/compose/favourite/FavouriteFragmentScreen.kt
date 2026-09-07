@@ -1,4 +1,4 @@
-package com.example.eSewaMarket.ui.compose
+package com.example.eSewaMarket.ui.compose.favourite
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,6 +39,9 @@ import com.example.eSewaMarket.R
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.eSewaMarket.data.models.FavouriteResponse
+import com.example.eSewaMarket.ui.compose.AppToolBar
+import com.example.eSewaMarket.ui.compose.CleanIconButton
+import com.example.eSewaMarket.ui.compose.CustomCheckbox
 
 @Composable
 fun FavouriteFragmentScreen(
@@ -124,7 +127,11 @@ fun FavouriteFragmentScreen(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(16.dp)
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 16.dp
+                )
         ) {
             if (noOfItems > 0) {
                 CustomCheckbox(

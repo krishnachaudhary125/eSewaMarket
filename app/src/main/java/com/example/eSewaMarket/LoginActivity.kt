@@ -24,6 +24,8 @@ import com.example.eSewaMarket.ui.viewmodel.CartViewModel
 import com.example.eSewaMarket.ui.viewmodel.FavouriteViewModel
 import com.example.eSewaMarket.ui.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 
 class LoginActivity : AppCompatActivity() {
 
@@ -265,9 +267,27 @@ class LoginActivity : AppCompatActivity() {
 
             if (!task.isSuccessful) {
 
-                handleLoginError(
-                    "Account is not registered yet."
-                )
+                when (task.exception) {
+
+                    is FirebaseAuthInvalidCredentialsException -> {
+                        handleLoginError(
+                            "Incorrect email or password."
+                        )
+                    }
+
+                    is FirebaseAuthInvalidUserException -> {
+                        handleLoginError(
+                            "Account does not exist."
+                        )
+                    }
+
+                    else -> {
+                        handleLoginError(
+                            task.exception?.localizedMessage
+                                ?: "Login failed."
+                        )
+                    }
+                }
 
                 return@addOnCompleteListener
             }
@@ -277,7 +297,7 @@ class LoginActivity : AppCompatActivity() {
             if (user == null) {
 
                 handleLoginError(
-                    "User with provided credential not found."
+                    "User authentication failed."
                 )
 
                 return@addOnCompleteListener

@@ -5,15 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.eSewaMarket.data.models.AddressRequest
 import com.example.eSewaMarket.databinding.ActivityNewAddressBinding
 import com.example.eSewaMarket.ui.adapters.SpinnerAdapter
@@ -23,8 +25,10 @@ import com.example.eSewaMarket.ui.viewmodel.LocationViewModel
 import com.example.eSewaMarket.utils.LocationPermissionHandler
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlin.collections.mutableListOf
 
 class NewAddressActivity : AppCompatActivity() {
@@ -65,6 +69,7 @@ class NewAddressActivity : AppCompatActivity() {
 
         setupLocationDropdowns()
         setupDistrictDropdown()
+        observeAddress()
 
         locationViewModel.loadProvinces()
 
@@ -83,6 +88,7 @@ class NewAddressActivity : AppCompatActivity() {
             binding.addrLabelGroup.clearCheck()
             binding.switchShippingAddress.isChecked = false
             binding.switchBillingAddress.isChecked = false
+            binding.landmark.text.clear()
         }
 
         binding.chooseOnMap.setOnClickListener {
@@ -97,9 +103,9 @@ class NewAddressActivity : AppCompatActivity() {
             val phone = binding.etPhone.text.toString().trim()
             val province = binding.province.selectedItem.toString().trim()
             val district = binding.district.selectedItem.toString().trim()
-            val city = binding.city.text.toString().trim()
             val postalCode = binding.postalCode.text.toString().trim()
             val address = binding.etAddress.text.toString().trim()
+            val landmark = binding.landmark.text.toString().trim()
 
             val selectedRadioButton =
                 binding.addrLabelGroup.findViewById<RadioButton>(
@@ -111,7 +117,8 @@ class NewAddressActivity : AppCompatActivity() {
             val isBillingAddress = binding.switchBillingAddress.isChecked
 
             val nameRegex = Regex("^[A-Za-z]+(?: [A-Za-z]+){0,3}$")
-            val phoneRegex = Regex("""^(?:9[78]\d{8}|\+977[-.\s]?9[78]\d{8}|\+(?!977)[1-9]\d{6,14})$""")
+            val phoneRegex =
+                Regex("""^(?:9[78]\d{8}|\+977[-.\s]?9[78]\d{8}|\+(?!977)[1-9]\d{6,14})$""")
             val addressRegex = Regex("^[\\p{L}\\p{N}\\s.,/#'()-]{1,200}$")
             val postalCodeRegex = Regex("""^\d{5}$""")
 
@@ -155,18 +162,6 @@ class NewAddressActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
-                city.isEmpty() -> {
-                    binding.city.error = "City is required"
-                    binding.city.requestFocus()
-                    return@setOnClickListener
-                }
-
-                !city.matches(addressRegex) -> {
-                    binding.city.error = "Enter valid city"
-                    binding.city.requestFocus()
-                    return@setOnClickListener
-                }
-
                 postalCode.isEmpty() -> {
                     binding.postalCode.error = "Postal Code is required"
                     binding.postalCode.requestFocus()
@@ -191,6 +186,12 @@ class NewAddressActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
+                landmark.isNotEmpty() && !landmark.matches(addressRegex) -> {
+                    binding.landmark.error = "Invalid input"
+                    binding.landmark.requestFocus()
+                    return@setOnClickListener
+                }
+
                 else -> {
 
                     val request = AddressRequest(
@@ -198,12 +199,12 @@ class NewAddressActivity : AppCompatActivity() {
                         phone = phone,
                         province = province,
                         district = district,
-                        city = city,
                         postalCode = postalCode,
                         addressName = address,
                         isDefaultAddress = isDefaultAddress,
                         isBillingAddress = isBillingAddress,
-                        label = label
+                        label = label,
+                        landmark = landmark
                     )
 
                     addressViewModel.createAddress(
@@ -217,6 +218,11 @@ class NewAddressActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        addressViewModel.getAddresses()
     }
 
     @SuppressLint("MissingPermission")
@@ -238,7 +244,7 @@ class NewAddressActivity : AppCompatActivity() {
                     putExtra("longitude", longitude)
                 }
 
-                startActivity(intent)
+                mapResultLauncher.launch(intent)
             }
             .addOnFailureListener { exception ->
 
@@ -330,4 +336,79 @@ class NewAddressActivity : AppCompatActivity() {
             }
             .launchIn(lifecycleScope)
     }
+
+    private fun observeAddress() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                addressViewModel.hasAddresses().collect { exists ->
+
+                    binding.switchShippingAddress.isChecked = !exists
+                }
+            }
+        }
+    }
+
+    private val mapResultLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+
+            if (result.resultCode != RESULT_OK) return@registerForActivityResult
+
+            val data = result.data ?: return@registerForActivityResult
+
+            val province = data.getStringExtra("province")
+            val district = data.getStringExtra("district")
+            val postalCode = data.getStringExtra("postalCode")
+            val addressName = data.getStringExtra("addressName")
+
+            binding.postalCode.setText(postalCode ?: "")
+            binding.etAddress.setText(addressName ?: "")
+
+            selectProvinceAndDistrict(
+                province,
+                district
+            )
+        }
+
+    private fun selectProvinceAndDistrict(
+        provinceName: String?,
+        districtName: String?
+    ) {
+        if (provinceName == null) return
+
+        val provinces = locationViewModel.provinces.value
+
+        val provinceIndex = provinces.indexOfFirst {
+            it.name.equals(provinceName, ignoreCase = true)
+        }
+
+        if (provinceIndex == -1) return
+
+        binding.province.setSelection(provinceIndex + 1)
+
+        lifecycleScope.launch {
+            val districts = locationViewModel.districts.first { list ->
+                list.any {
+                    it.name.equals(
+                        districtName,
+                        ignoreCase = true
+                    )
+                }
+            }
+
+            val districtIndex = districts.indexOfFirst {
+                it.name.equals(
+                    districtName,
+                    ignoreCase = true
+                )
+            }
+
+            if (districtIndex != -1) {
+                binding.district.setSelection(districtIndex + 1)
+            }
+        }
+    }
+
 }

@@ -8,9 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.eSewaMarket.ui.compose.CheckoutScreen
+import com.example.eSewaMarket.data.repository.UserSessionRepository
+import com.example.eSewaMarket.ui.compose.checkout.CheckoutScreen
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
+import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
+import com.example.eSewaMarket.utils.AuthNavigator
 import kotlin.getValue
 
 class CheckoutActivity : AppCompatActivity() {
@@ -19,9 +22,20 @@ class CheckoutActivity : AppCompatActivity() {
         ViewModelFactoryProvider.cartFactory(this)
     }
 
+    private val addressViewModel: AddressViewModel by viewModels {
+        ViewModelFactoryProvider.addressFactory(this)
+    }
+
+    private lateinit var userSessionRepository: UserSessionRepository
+    private lateinit var authNavigator: AuthNavigator
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.enableEdgeToEdge(window)
+
+        userSessionRepository = UserSessionRepository(this)
+        authNavigator = AuthNavigator(userSessionRepository)
+        addressViewModel.getAddresses()
 
         setContent {
             val products by cartViewModel.cartProducts()
@@ -33,8 +47,25 @@ class CheckoutActivity : AppCompatActivity() {
                 .collectAsStateWithLifecycle(
                     initialValue = 0.0
                 )
+
+            val addressExist by addressViewModel.hasAddresses()
+                .collectAsStateWithLifecycle(
+                    initialValue = false
+                )
+
+            val addresses by addressViewModel.addresses
+                .collectAsStateWithLifecycle(
+                    initialValue = emptyList()
+                )
+
+            val shippingAddress = addresses.firstOrNull { it.isDefaultAddress }
+
+            val shippingAddressText = shippingAddress?.let {
+                "${it.addressName}, ${it.district} ${it.postalCode}"
+            } ?: "Add Shipping Address"
+
             val priceProductOnly = productPrice ?: 0.00
-            val taxAmount = (priceProductOnly * 13)/100
+            val taxAmount = (priceProductOnly * 13) / 100
             val shippingCharge = 70.00
 
             val totalAmount = priceProductOnly + taxAmount + shippingCharge
@@ -54,13 +85,34 @@ class CheckoutActivity : AppCompatActivity() {
                 productPrice = priceProductOnly,
                 totalTax = taxAmount,
                 shippingCharge = shippingCharge,
-                address = "Add Shipping Address",
+                address = shippingAddressText,
                 onProductClick = {},
                 onSetAddressClick = {
                     val intent = Intent(this, NewAddressActivity::class.java)
                     startActivity(intent)
+                },
+                addressExist = addressExist,
+                chooseAddress = {
+                    val intent = Intent(this, ShippingAddressActivity::class.java)
+                    startActivity(intent)
+                },
+                cashOnDelivery = {
+                    val intent = Intent(this, ConfirmationActivity::class.java).apply {
+                        putExtra("shippingAddress", shippingAddressText)
+                        putExtra("paymentOption", "Cash on Delivery")
+                        putExtra("deliveryCharge", shippingCharge)
+                        putExtra("totalTax", taxAmount)
+                        putExtra("totalPrice", priceProductOnly)
+                        putExtra("grandTotal", totalAmount)
+                    }
+                    startActivity(intent)
                 }
             )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        addressViewModel.getAddresses()
     }
 }

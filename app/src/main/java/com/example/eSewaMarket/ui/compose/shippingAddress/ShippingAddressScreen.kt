@@ -1,4 +1,4 @@
-package com.example.eSewaMarket.ui.compose
+package com.example.eSewaMarket.ui.compose.shippingAddress
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -12,6 +12,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.sp
 import com.example.eSewaMarket.R
 import com.example.eSewaMarket.data.models.AddressResponse
+import com.example.eSewaMarket.ui.compose.AppToolBar
 
 @Composable
 fun ShippingAddressScreen(
@@ -63,8 +64,8 @@ fun ShippingAddressScreen(
                             onEditClick()
                         },
                         fullName = addresses.fullName,
-                        label = addresses.label.toString(),
-                        addressName = "${addresses.addressName}, ${addresses.district}, ${addresses.city} ${addresses.postalCode}",
+                        label = addresses.label,
+                        addressName = "${addresses.addressName}, ${addresses.district} ${addresses.postalCode}",
                         province = addresses.province
                     )
                 }

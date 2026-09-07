@@ -1,4 +1,4 @@
-package com.example.eSewaMarket.ui.compose
+package com.example.eSewaMarket.ui.compose.checkout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,12 +28,17 @@ import com.example.eSewaMarket.R
 @Composable
 fun AddressCard(
     address: @Composable () -> Unit,
-    onAddMapClick: () -> Unit
+    onAddMapClick: () -> Unit,
+    addressExist: Boolean
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 16.dp
+            )
             .background(
                 color = Color.White,
                 shape = RoundedCornerShape(16.dp)
@@ -95,7 +100,11 @@ fun AddressCard(
                 contentAlignment = Alignment.Center
             ){
                 Icon(
-                    painter = painterResource(R.drawable.ic_plus),
+                    painter = if(addressExist){
+                        painterResource(R.drawable.ic_edit)
+                    }else {
+                        painterResource(R.drawable.ic_plus)
+                    },
                     contentDescription = "Location",
                     tint = Color.Unspecified,
                     modifier = Modifier

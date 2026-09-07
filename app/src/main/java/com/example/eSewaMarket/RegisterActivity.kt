@@ -30,7 +30,7 @@ class RegisterActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.esewaLogo) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.registerLayout) { view, insets ->
             val top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
 
             view.setPadding(

@@ -1,4 +1,4 @@
-package com.example.eSewaMarket.ui.compose
+package com.example.eSewaMarket.ui.compose.checkout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

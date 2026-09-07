@@ -1,4 +1,4 @@
-package com.example.eSewaMarket.ui.compose
+package com.example.eSewaMarket.ui.compose.favourite
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +23,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.eSewaMarket.R
+import com.example.eSewaMarket.ui.compose.CleanIconButton
 
 @Composable
 fun FavouriteProductCardContent(
@@ -136,10 +137,6 @@ fun FavouriteProductCardContent(
                 onClick = tickClick,
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .offset(
-                        x = (-6).dp,
-                        y = (-6).dp
-                    )
             )
         }
     }

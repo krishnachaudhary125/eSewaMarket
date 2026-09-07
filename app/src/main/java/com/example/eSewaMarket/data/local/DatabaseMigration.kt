@@ -68,3 +68,20 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
         )
     }
 }
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("""
+            ALTER TABLE addresses
+            ADD COLUMN landmark TEXT
+        """.trimIndent())
+    }
+}
+
+val MIGRATION_6_7 = object : Migration(6,7) {
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("""
+             ALTER TABLE addresses DROP COLUMN city
+        """.trimIndent())
+    }
+}

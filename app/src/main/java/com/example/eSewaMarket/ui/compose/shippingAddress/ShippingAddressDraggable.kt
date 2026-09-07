@@ -1,4 +1,4 @@
-package com.example.eSewaMarket.ui.compose
+package com.example.eSewaMarket.ui.compose.shippingAddress
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -48,12 +48,12 @@ fun ShippingAddressDraggable(
     onDeleteClick: () -> Unit,
     onEditClick: () -> Unit,
     fullName: String,
-    label: String,
+    label: String?,
     addressName: String,
     province: String
 ) {
 
-    val deleteWidth = 96.dp
+    val deleteWidth = 76.dp
     val density = LocalDensity.current
     val actionsWidth = deleteWidth * 2
     val actionsWidthPx = with(density) { actionsWidth.toPx() }
