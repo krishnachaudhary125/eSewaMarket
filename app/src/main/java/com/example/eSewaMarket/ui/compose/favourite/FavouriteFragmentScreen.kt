@@ -127,7 +127,11 @@ fun FavouriteFragmentScreen(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(16.dp)
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 16.dp
+                )
         ) {
             if (noOfItems > 0) {
                 CustomCheckbox(

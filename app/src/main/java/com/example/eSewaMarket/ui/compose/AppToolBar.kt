@@ -23,7 +23,8 @@ fun AppToolBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(64.dp)
+            .height(80.dp)
+            .padding(bottom = 16.dp)
             .background(color = Color.White)
             .padding(horizontal = 16.dp, vertical = 4.dp)
     ){

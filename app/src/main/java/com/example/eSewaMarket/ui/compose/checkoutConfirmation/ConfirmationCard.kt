@@ -24,12 +24,17 @@ fun ConfirmationCard(
     checkoutProducts: List<ProductResponse>
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
     ) {
         item {
             Box(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 16.dp
+                    )
                     .fillMaxWidth()
                     .background(
                         color = Color.White,
