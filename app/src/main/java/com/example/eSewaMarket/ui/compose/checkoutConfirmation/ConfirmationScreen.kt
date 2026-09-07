@@ -9,12 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.sp
 import com.example.eSewaMarket.R
+import com.example.eSewaMarket.data.models.ProductResponse
 import com.example.eSewaMarket.ui.compose.AppToolBar
 
 @Composable
 fun ConfirmationScreen(
-    onBackClick: () -> Unit,
-    singleProductQuantity: Int
+    checkoutProducts: List<ProductResponse>,
+    onBackClick: () -> Unit
 ) {
     Scaffold(
         containerColor = colorResource(R.color.background),
@@ -37,7 +38,7 @@ fun ConfirmationScreen(
         ConfirmationCard(
             modifier = Modifier
                 .padding(innerPadding),
-            singleProductQuantity = singleProductQuantity
+            checkoutProducts = checkoutProducts
         )
     }
 }

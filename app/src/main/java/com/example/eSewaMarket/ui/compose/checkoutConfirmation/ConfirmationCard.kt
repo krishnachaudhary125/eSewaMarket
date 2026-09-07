@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -17,46 +16,50 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.eSewaMarket.R
+import com.example.eSewaMarket.data.models.ProductResponse
 
 @Composable
 fun ConfirmationCard(
-    modifier: Modifier,
-    singleProductQuantity: Int
+    modifier: Modifier = Modifier,
+    checkoutProducts: List<ProductResponse>
 ) {
-    Box(
-        modifier = modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .background(
-                color = Color.White,
-                shape = RoundedCornerShape(16.dp)
-            )
+    LazyColumn(
+        modifier = modifier.fillMaxWidth()
     ) {
-
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-        ) {
-
-            Text(
-                "Payment Details",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                letterSpacing = 1.sp,
-                color = colorResource(R.color.text_dark_400)
-            )
-
-            LazyColumn(
+        item {
+            Box(
                 modifier = Modifier
-                    .padding(top = 8.dp)
-            ) {
-                item {
-
-                    ConfirmationProductDetails(
-                        singleProductQuantity = singleProductQuantity
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(16.dp)
                     )
+                    .padding(16.dp)
+            ) {
+                Column {
+                    Text(
+                        text = "Payment Details",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        lineHeight = 24.sp,
+                        letterSpacing = 1.sp,
+                        color = colorResource(R.color.text_dark_400)
+                    )
+
+                    Column(
+                        modifier = Modifier.padding(top = 16.dp)
+                    ) {
+                        checkoutProducts.forEach { product ->
+
+                            ConfirmationProductDetails(
+                                singleProductQuantity = product.quantity,
+                                productName = product.title,
+                                productTotalPrice =
+                                    product.price * product.quantity
+                            )
+                        }
+                    }
                 }
             }
         }
