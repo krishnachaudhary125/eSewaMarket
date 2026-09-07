@@ -95,6 +95,16 @@ class CheckoutActivity : AppCompatActivity() {
                 chooseAddress = {
                     val intent = Intent(this, ShippingAddressActivity::class.java)
                     startActivity(intent)
+                },
+                cashOnDelivery = {
+                    val intent = Intent(this, ConfirmationActivity::class.java).apply {
+                        putExtra("shippingAddress", shippingAddressText)
+                        putExtra("paymentOption", "cod")
+                        putExtra("deliveryCharge", shippingCharge)
+                        putExtra("totalTax", taxAmount)
+                        putExtra("totalPrice", totalAmount)
+                    }
+                    startActivity(intent)
                 }
             )
         }

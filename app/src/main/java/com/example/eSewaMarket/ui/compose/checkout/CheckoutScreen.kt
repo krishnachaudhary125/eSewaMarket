@@ -67,7 +67,8 @@ fun CheckoutScreen(
     onProductClick: (ProductResponse) -> Unit,
     onSetAddressClick: () -> Unit,
     addressExist: Boolean,
-    chooseAddress: () -> Unit
+    chooseAddress: () -> Unit,
+    cashOnDelivery: () -> Unit
 ) {
     var isExpanded by rememberSaveable {
         mutableStateOf(false)
@@ -251,7 +252,7 @@ fun CheckoutScreen(
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = ripple(),
-                                onClick = {}
+                                onClick = cashOnDelivery
                             )
                             .padding(horizontal = 16.dp, vertical = 24.dp),
                         verticalAlignment = Alignment.CenterVertically
