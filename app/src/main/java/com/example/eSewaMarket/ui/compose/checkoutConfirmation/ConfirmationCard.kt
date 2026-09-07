@@ -1,10 +1,8 @@
 package com.example.eSewaMarket.ui.compose.checkoutConfirmation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,7 +22,8 @@ import com.example.eSewaMarket.data.models.ProductResponse
 fun ConfirmationCard(
     modifier: Modifier = Modifier,
     checkoutProducts: List<ProductResponse>,
-    shippingAddress: String
+    shippingAddress: String,
+    paymentOption: String
 ) {
     LazyColumn(
         modifier = modifier
@@ -36,7 +35,7 @@ fun ConfirmationCard(
                     .padding(
                         start = 16.dp,
                         end = 16.dp,
-                        bottom = 16.dp
+                        bottom = 8.dp
                     )
                     .fillMaxWidth()
                     .background(
@@ -56,7 +55,8 @@ fun ConfirmationCard(
                     )
 
                     Column(
-                        modifier = Modifier.padding(top = 16.dp)
+                        modifier = Modifier
+                            .padding(top = 16.dp)
                     ) {
                         checkoutProducts.forEach { product ->
 
@@ -69,20 +69,15 @@ fun ConfirmationCard(
                         }
                     }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
+                    TextRow(
+                        firstText = "Delivery Address",
+                        secondText = shippingAddress
+                    )
 
-                        Text(
-                            "Delivery Address"
-                        )
-
-                        Text(
-                            shippingAddress
-                        )
-                    }
+                    TextRow(
+                        firstText = "Payment Option",
+                        secondText = paymentOption
+                    )
                 }
             }
         }

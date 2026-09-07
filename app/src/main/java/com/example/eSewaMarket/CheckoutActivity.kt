@@ -99,7 +99,7 @@ class CheckoutActivity : AppCompatActivity() {
                 cashOnDelivery = {
                     val intent = Intent(this, ConfirmationActivity::class.java).apply {
                         putExtra("shippingAddress", shippingAddressText)
-                        putExtra("paymentOption", "cod")
+                        putExtra("paymentOption", "Cash on Delivery")
                         putExtra("deliveryCharge", shippingCharge)
                         putExtra("totalTax", taxAmount)
                         putExtra("totalPrice", totalAmount)

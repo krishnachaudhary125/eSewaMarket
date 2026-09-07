@@ -16,7 +16,8 @@ import com.example.eSewaMarket.ui.compose.AppToolBar
 fun ConfirmationScreen(
     checkoutProducts: List<ProductResponse>,
     onBackClick: () -> Unit,
-    shippingAddress: String
+    shippingAddress: String,
+    paymentOption: String
 ) {
     Scaffold(
         containerColor = colorResource(R.color.background),
@@ -40,7 +41,8 @@ fun ConfirmationScreen(
             modifier = Modifier
                 .padding(innerPadding),
             checkoutProducts = checkoutProducts,
-            shippingAddress = shippingAddress
+            shippingAddress = shippingAddress,
+            paymentOption = paymentOption
         )
     }
 }
