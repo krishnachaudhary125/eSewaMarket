@@ -17,7 +17,8 @@ fun ConfirmationScreen(
     checkoutProducts: List<ProductResponse>,
     onBackClick: () -> Unit,
     shippingAddress: String,
-    paymentOption: String
+    paymentOption: String,
+    taxAmount: Double
 ) {
     Scaffold(
         containerColor = colorResource(R.color.background),
@@ -42,7 +43,8 @@ fun ConfirmationScreen(
                 .padding(innerPadding),
             checkoutProducts = checkoutProducts,
             shippingAddress = shippingAddress,
-            paymentOption = paymentOption
+            paymentOption = paymentOption,
+            taxAmount = taxAmount
         )
     }
 }
