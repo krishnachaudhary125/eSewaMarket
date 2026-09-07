@@ -43,7 +43,8 @@ class ConfirmationActivity : AppCompatActivity() {
                 checkoutProducts = products,
                 shippingAddress = intent.getStringExtra("shippingAddress").toString(),
                 paymentOption = intent.getStringExtra("paymentOption").toString(),
-                taxAmount = intent.getDoubleExtra("totalTax", 0.0)
+                taxAmount = intent.getDoubleExtra("totalTax", 0.0),
+                totalAmount = intent.getDoubleExtra("totalPrice", 0.0)
             )
         }
     }

@@ -24,6 +24,7 @@ fun ConfirmationCard(
     checkoutProducts: List<ProductResponse>,
     shippingAddress: String,
     paymentOption: String,
+    totalAmount: Double,
     taxAmount: Double
 ) {
     LazyColumn(
@@ -35,8 +36,7 @@ fun ConfirmationCard(
                 modifier = Modifier
                     .padding(
                         start = 16.dp,
-                        end = 16.dp,
-                        bottom = 8.dp
+                        end = 16.dp
                     )
                     .fillMaxWidth()
                     .background(
@@ -78,6 +78,11 @@ fun ConfirmationCard(
                     TextRow(
                         firstText = "Payment Option",
                         secondText = paymentOption
+                    )
+
+                    TextRow(
+                        firstText = "Total Amount",
+                        secondText = "Rs. ${"%.2f".format(totalAmount)}"
                     )
 
                     TextRow(

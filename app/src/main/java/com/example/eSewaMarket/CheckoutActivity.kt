@@ -102,7 +102,8 @@ class CheckoutActivity : AppCompatActivity() {
                         putExtra("paymentOption", "Cash on Delivery")
                         putExtra("deliveryCharge", shippingCharge)
                         putExtra("totalTax", taxAmount)
-                        putExtra("totalPrice", totalAmount)
+                        putExtra("totalPrice", priceProductOnly)
+                        putExtra("grandTotal", totalAmount)
                     }
                     startActivity(intent)
                 }

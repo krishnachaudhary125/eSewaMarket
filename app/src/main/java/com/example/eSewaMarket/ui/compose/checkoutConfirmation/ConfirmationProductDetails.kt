@@ -30,7 +30,7 @@ fun ConfirmationProductDetails(
             fontWeight = FontWeight.Bold,
             color = colorResource(R.color.text_dark_300),
             modifier = Modifier
-                .padding(bottom = 8.dp)
+                .padding(bottom = 16.dp)
         )
 
        TextRow(
@@ -49,7 +49,6 @@ fun ConfirmationProductDetails(
             color = colorResource(id = R.color.text_dark_100),
             modifier = Modifier
                 .padding(
-                    top = 8.dp,
                     bottom = 16.dp
                 )
         )

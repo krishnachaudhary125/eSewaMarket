@@ -18,6 +18,7 @@ fun ConfirmationScreen(
     onBackClick: () -> Unit,
     shippingAddress: String,
     paymentOption: String,
+    totalAmount: Double,
     taxAmount: Double
 ) {
     Scaffold(
@@ -44,7 +45,8 @@ fun ConfirmationScreen(
             checkoutProducts = checkoutProducts,
             shippingAddress = shippingAddress,
             paymentOption = paymentOption,
-            taxAmount = taxAmount
+            taxAmount = taxAmount,
+            totalAmount = totalAmount
         )
     }
 }

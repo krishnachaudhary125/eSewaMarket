@@ -23,7 +23,7 @@ fun TextRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 8.dp),
+            .padding(bottom = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
