@@ -1,8 +1,10 @@
 package com.example.eSewaMarket.ui.compose.checkoutConfirmation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,7 +23,8 @@ import com.example.eSewaMarket.data.models.ProductResponse
 @Composable
 fun ConfirmationCard(
     modifier: Modifier = Modifier,
-    checkoutProducts: List<ProductResponse>
+    checkoutProducts: List<ProductResponse>,
+    shippingAddress: String
 ) {
     LazyColumn(
         modifier = modifier
@@ -64,6 +67,21 @@ fun ConfirmationCard(
                                     product.price * product.quantity
                             )
                         }
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+
+                        Text(
+                            "Delivery Address"
+                        )
+
+                        Text(
+                            shippingAddress
+                        )
                     }
                 }
             }

@@ -40,7 +40,8 @@ class ConfirmationActivity : AppCompatActivity() {
                     onBackPressedDispatcher
                         .onBackPressed()
                 },
-                checkoutProducts = products
+                checkoutProducts = products,
+                shippingAddress = intent.getStringExtra("shippingAddress").toString()
             )
         }
     }
