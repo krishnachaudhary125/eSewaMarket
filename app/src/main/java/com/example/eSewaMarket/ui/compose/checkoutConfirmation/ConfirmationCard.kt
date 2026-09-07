@@ -25,7 +25,8 @@ fun ConfirmationCard(
     shippingAddress: String,
     paymentOption: String,
     totalAmount: Double,
-    taxAmount: Double
+    taxAmount: Double,
+    deliveryCharge: Double
 ) {
     LazyColumn(
         modifier = modifier
@@ -88,6 +89,11 @@ fun ConfirmationCard(
                     TextRow(
                         firstText = "Tax Amount",
                         secondText = "Rs. ${"%.2f".format(taxAmount)}"
+                    )
+
+                    TextRow(
+                        firstText = "Delivery Charge",
+                        secondText = "Rs. ${"%.2f".format(deliveryCharge)}"
                     )
                 }
             }

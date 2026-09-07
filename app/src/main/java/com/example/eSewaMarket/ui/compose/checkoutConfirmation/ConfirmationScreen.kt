@@ -19,7 +19,8 @@ fun ConfirmationScreen(
     shippingAddress: String,
     paymentOption: String,
     totalAmount: Double,
-    taxAmount: Double
+    taxAmount: Double,
+    deliveryCharge: Double
 ) {
     Scaffold(
         containerColor = colorResource(R.color.background),
@@ -46,7 +47,8 @@ fun ConfirmationScreen(
             shippingAddress = shippingAddress,
             paymentOption = paymentOption,
             taxAmount = taxAmount,
-            totalAmount = totalAmount
+            totalAmount = totalAmount,
+            deliveryCharge = deliveryCharge
         )
     }
 }
