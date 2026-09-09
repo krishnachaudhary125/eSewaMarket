@@ -44,6 +44,7 @@ class ConfirmationActivity : AppCompatActivity() {
                 .collectAsStateWithLifecycle()
 
             val confirmationData = ConfirmationData(
+                checkoutProducts = products,
                 shippingAddress = intent.getStringExtra("shippingAddress").orEmpty(),
                 paymentOption = intent.getStringExtra("paymentOption").orEmpty(),
                 totalAmount = intent.getDoubleExtra("totalPrice", 0.0),
@@ -55,7 +56,6 @@ class ConfirmationActivity : AppCompatActivity() {
             LaunchedEffect(products) {
 
                 confirmationViewModel.loadConfirmation(
-                    products = products,
                     confirmationData = confirmationData
                 )
             }

@@ -21,10 +21,8 @@ class ConfirmationViewModel : ViewModel() {
     private var confirmationData: ConfirmationData? = null
 
     fun loadConfirmation(
-        products: List<ProductResponse>,
         confirmationData: ConfirmationData
     ) {
-        this.products = products
         this.confirmationData = confirmationData
 
         viewModelScope.launch {
@@ -45,7 +43,6 @@ class ConfirmationViewModel : ViewModel() {
         val data = confirmationData ?: return
 
         loadConfirmation(
-            products = products,
             confirmationData = data
         )
     }
