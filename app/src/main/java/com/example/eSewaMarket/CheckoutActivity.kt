@@ -5,11 +5,13 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.eSewaMarket.data.repository.UserSessionRepository
 import com.example.eSewaMarket.ui.compose.checkout.CheckoutScreen
+import com.example.eSewaMarket.ui.compose.checkout.CheckoutViewModel
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
 import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
@@ -26,6 +28,8 @@ class CheckoutActivity : AppCompatActivity() {
         ViewModelFactoryProvider.addressFactory(this)
     }
 
+    private val checkoutViewModel: CheckoutViewModel by viewModels()
+
     private lateinit var userSessionRepository: UserSessionRepository
     private lateinit var authNavigator: AuthNavigator
 
@@ -38,6 +42,9 @@ class CheckoutActivity : AppCompatActivity() {
         addressViewModel.getAddresses()
 
         setContent {
+            val uiState by checkoutViewModel.uiState
+                .collectAsStateWithLifecycle()
+
             val products by cartViewModel.cartProducts()
                 .collectAsStateWithLifecycle(
                     initialValue = emptyList()
@@ -58,54 +65,97 @@ class CheckoutActivity : AppCompatActivity() {
                     initialValue = emptyList()
                 )
 
-            val shippingAddress = addresses.firstOrNull { it.isDefaultAddress }
+            val shippingAddress = addresses.firstOrNull {
+                it.isDefaultAddress
+            }
 
             val shippingAddressText = shippingAddress?.let {
                 "${it.addressName}, ${it.district} ${it.postalCode}"
             } ?: "Add Shipping Address"
-
-            val priceProductOnly = productPrice ?: 0.00
-            val taxAmount = (priceProductOnly * 13) / 100
-            val shippingCharge = 70.00
-
-            val totalAmount = priceProductOnly + taxAmount + shippingCharge
 
             val count by cartViewModel.cartCount()
                 .collectAsStateWithLifecycle(
                     initialValue = 0
                 )
 
+            LaunchedEffect(
+                products,
+                productPrice,
+                count,
+                shippingAddressText,
+                addressExist
+            ) {
+                checkoutViewModel.loadCheckout(
+                    products = products,
+                    productPrice = productPrice ?: 0.0,
+                    itemCount = count,
+                    address = shippingAddressText,
+                    addressExist = addressExist
+                )
+            }
+
             CheckoutScreen(
-                checkoutProducts = products,
+                uiState = uiState,
+
                 onBackClick = {
                     onBackPressedDispatcher.onBackPressed()
                 },
-                totalPrice = totalAmount,
-                itemCount = count,
-                productPrice = priceProductOnly,
-                totalTax = taxAmount,
-                shippingCharge = shippingCharge,
-                address = shippingAddressText,
+
                 onProductClick = {},
+
                 onSetAddressClick = {
-                    val intent = Intent(this, NewAddressActivity::class.java)
+                    val intent = Intent(
+                        this,
+                        NewAddressActivity::class.java
+                    )
                     startActivity(intent)
                 },
-                addressExist = addressExist,
+
                 chooseAddress = {
-                    val intent = Intent(this, ShippingAddressActivity::class.java)
+                    val intent = Intent(
+                        this,
+                        ShippingAddressActivity::class.java
+                    )
                     startActivity(intent)
                 },
-                cashOnDelivery = {
-                    val intent = Intent(this, ConfirmationActivity::class.java).apply {
-                        putExtra("shippingAddress", shippingAddressText)
-                        putExtra("paymentOption", "Cash on Delivery")
-                        putExtra("deliveryCharge", shippingCharge)
-                        putExtra("totalTax", taxAmount)
-                        putExtra("totalPrice", priceProductOnly)
-                        putExtra("grandTotal", totalAmount)
+
+                cashOnDelivery = { checkoutData ->
+
+                    val intent = Intent(
+                        this,
+                        ConfirmationActivity::class.java
+                    ).apply {
+                        putExtra(
+                            "shippingAddress",
+                            shippingAddressText
+                        )
+                        putExtra(
+                            "paymentOption",
+                            "Cash on Delivery"
+                        )
+                        putExtra(
+                            "deliveryCharge",
+                            checkoutData.shippingCharge
+                        )
+                        putExtra(
+                            "totalTax",
+                            checkoutData.totalTax
+                        )
+                        putExtra(
+                            "totalPrice",
+                            checkoutData.productPrice * count
+                        )
+                        putExtra(
+                            "grandTotal",
+                            checkoutData.totalAmount
+                        )
                     }
+
                     startActivity(intent)
+                },
+
+                onRetry = {
+                    checkoutViewModel.retry()
                 }
             )
         }
