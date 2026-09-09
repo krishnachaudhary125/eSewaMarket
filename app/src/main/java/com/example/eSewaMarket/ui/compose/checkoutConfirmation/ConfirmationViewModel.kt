@@ -36,7 +36,6 @@ class ConfirmationViewModel : ViewModel() {
             }
 
             _uiState.value = ConfirmationUiState.Success(
-                checkoutProducts = products,
                 confirmationData = confirmationData
             )
         }

@@ -48,7 +48,7 @@ fun ConfirmationScreen(
                 ConfirmationCard(
                     modifier = Modifier
                         .padding(innerPadding),
-                    checkoutProducts = state.checkoutProducts,
+                    checkoutProducts = state.confirmationData.checkoutProducts,
                     shippingAddress = state.confirmationData.shippingAddress,
                     paymentOption = state.confirmationData.paymentOption,
                     taxAmount = state.confirmationData.taxAmount,

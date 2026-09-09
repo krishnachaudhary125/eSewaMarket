@@ -7,7 +7,6 @@ sealed interface ConfirmationUiState {
     data object Loading : ConfirmationUiState
 
     data class Success(
-        val checkoutProducts: List<ProductResponse>,
         val confirmationData: ConfirmationData
     ) : ConfirmationUiState
 

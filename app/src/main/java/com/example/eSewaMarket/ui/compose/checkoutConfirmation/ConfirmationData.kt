@@ -4,6 +4,7 @@ import com.example.eSewaMarket.data.models.ProductResponse
 
 data class ConfirmationData(
 
+    val checkoutProducts: List<ProductResponse>,
     val shippingAddress: String,
     val paymentOption: String,
     val totalAmount: Double,
