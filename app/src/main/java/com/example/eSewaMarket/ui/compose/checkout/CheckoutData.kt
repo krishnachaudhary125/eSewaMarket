@@ -9,7 +9,7 @@ data class CheckoutData(
     val totalTax: Double,
     val shippingCharge: Double,
     val totalAmount: Double,
-    val itemCount: Double,
+    val itemCount: Int,
     val shippingAddress: String,
     val addressExist: Boolean
 )
