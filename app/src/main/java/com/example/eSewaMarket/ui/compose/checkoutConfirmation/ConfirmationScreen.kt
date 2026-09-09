@@ -9,19 +9,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.sp
 import com.example.eSewaMarket.R
-import com.example.eSewaMarket.data.models.ProductResponse
 import com.example.eSewaMarket.ui.compose.AppToolBar
+import com.example.eSewaMarket.ui.compose.component.CommonError
+import com.example.eSewaMarket.ui.compose.component.CommonLoading
 
 @Composable
 fun ConfirmationScreen(
-    checkoutProducts: List<ProductResponse>,
+    state: ConfirmationUiState,
     onBackClick: () -> Unit,
-    shippingAddress: String,
-    paymentOption: String,
-    totalAmount: Double,
-    taxAmount: Double,
-    deliveryCharge: Double,
-    grandTotal: Double
+    onRetry: () -> Unit
 ) {
     Scaffold(
         containerColor = colorResource(R.color.background),
@@ -39,18 +35,35 @@ fun ConfirmationScreen(
                 }
             )
         }
-    ) { innerPadding->
+    ) { innerPadding ->
 
-        ConfirmationCard(
-            modifier = Modifier
-                .padding(innerPadding),
-            checkoutProducts = checkoutProducts,
-            shippingAddress = shippingAddress,
-            paymentOption = paymentOption,
-            taxAmount = taxAmount,
-            totalAmount = totalAmount,
-            deliveryCharge = deliveryCharge,
-            grandTotal = grandTotal
-        )
+        when (state) {
+
+            is ConfirmationUiState.Loading -> {
+                CommonLoading()
+            }
+
+            is ConfirmationUiState.Success -> {
+
+                ConfirmationCard(
+                    modifier = Modifier
+                        .padding(innerPadding),
+                    checkoutProducts = state.checkoutProducts,
+                    shippingAddress = state.confirmationData.shippingAddress,
+                    paymentOption = state.confirmationData.paymentOption,
+                    taxAmount = state.confirmationData.taxAmount,
+                    totalAmount = state.confirmationData.totalAmount,
+                    deliveryCharge = state.confirmationData.deliveryCharge,
+                    grandTotal = state.confirmationData.grandTotal
+                )
+            }
+
+            is ConfirmationUiState.Error -> {
+                CommonError(
+                    message = state.message,
+                    onRetry = onRetry
+                )
+            }
+        }
     }
 }
