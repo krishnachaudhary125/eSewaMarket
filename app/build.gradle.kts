@@ -154,9 +154,4 @@ dependencies {
     implementation("com.google.android.libraries.places:places:5.1.1")
 
     implementation("androidx.compose.material:material-icons-extended")
-
-//    eSewa dependency
-    implementation(files("libs/eSewaPaymentSdk-debug.aar"))
-    implementation("com.android.support:cardview-v7:27.1.1")
-    implementation("com.android.support:design:27.1.1")
 }
