@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.eSewaMarket.data.repository.UserSessionRepository
+import com.example.eSewaMarket.ui.compose.checkout.CheckoutData
 import com.example.eSewaMarket.ui.compose.checkout.CheckoutScreen
 import com.example.eSewaMarket.ui.compose.checkout.CheckoutViewModel
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
@@ -17,6 +18,11 @@ import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
 import com.example.eSewaMarket.utils.AuthNavigator
 import kotlin.getValue
+
+enum class PaymentOption {
+    CASH_ON_DELIVERY,
+    ESEWA
+}
 
 class CheckoutActivity : AppCompatActivity() {
 
@@ -121,37 +127,22 @@ class CheckoutActivity : AppCompatActivity() {
 
                 cashOnDelivery = { checkoutData ->
 
-                    val intent = Intent(
-                        this,
-                        ConfirmationActivity::class.java
-                    ).apply {
-                        putExtra(
-                            "shippingAddress",
-                            shippingAddressText
-                        )
-                        putExtra(
-                            "paymentOption",
-                            "Cash on Delivery"
-                        )
-                        putExtra(
-                            "deliveryCharge",
-                            checkoutData.shippingCharge
-                        )
-                        putExtra(
-                            "totalTax",
-                            checkoutData.totalTax
-                        )
-                        putExtra(
-                            "totalPrice",
-                            checkoutData.productPrice * count
-                        )
-                        putExtra(
-                            "grandTotal",
-                            checkoutData.totalAmount
-                        )
-                    }
+                    goToConfirmation(
+                        PaymentOption.CASH_ON_DELIVERY,
+                        checkoutData,
+                        shippingAddressText,
+                        count
+                    )
+                },
 
-                    startActivity(intent)
+                payWithEsewa = { checkoutData ->
+
+                    goToConfirmation(
+                        PaymentOption.ESEWA,
+                        checkoutData,
+                        shippingAddressText,
+                        count
+                    )
                 },
 
                 onRetry = {
@@ -164,5 +155,28 @@ class CheckoutActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         addressViewModel.getAddresses()
+    }
+
+    private fun goToConfirmation(
+        paymentOption: PaymentOption,
+        checkoutData: CheckoutData,
+        shippingAddress: String,
+        count: Int
+    ){
+
+        val paymentOptionText = when (paymentOption) {
+            PaymentOption.CASH_ON_DELIVERY -> "Cash on Delivery"
+            PaymentOption.ESEWA -> "eSewa"
+        }
+
+        val intent = Intent(this, ConfirmationActivity::class.java).apply {
+            putExtra("shippingAddress", shippingAddress)
+            putExtra("paymentOption", paymentOptionText)
+            putExtra("deliveryCharge", checkoutData.shippingCharge)
+            putExtra("totalTax", checkoutData.totalTax)
+            putExtra("totalPrice", checkoutData.productPrice)
+            putExtra("grandTotal", checkoutData.totalAmount)
+        }
+        startActivity(intent)
     }
 }
