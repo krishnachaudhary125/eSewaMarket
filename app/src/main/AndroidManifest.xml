@@ -55,6 +55,8 @@
         <activity android:name=".EmailVerificationActivity"/>
         <activity android:name=".MapActivity"/>
         <activity android:name=".ConfirmationActivity"/>
+        <activity android:name=".ui.payment.EsewaPayment"
+            android:exported="false"/>
     </application>
 
 </manifest>

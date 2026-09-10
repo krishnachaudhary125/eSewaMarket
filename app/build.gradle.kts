@@ -12,6 +12,10 @@ if (localPropertiesFile.exists()) {
 
 val mapsApiKey = localProperties.getProperty("MAPS_API_KEY")
 
+val eSewaClientId = localProperties.getProperty("ESEWA_CLIENT_ID") ?: ""
+
+val eSewaSecretKey = localProperties.getProperty("ESEWA_SECRET_KEY") ?: ""
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -54,11 +58,24 @@ android {
             "maps_api_key",
             mapsApiKey ?: ""
         )
+
+        buildConfigField(
+            "String",
+            "ESEWA_CLIENT_ID",
+            "\"$eSewaClientId\""
+        )
+
+        buildConfigField(
+            "String",
+            "ESEWA_SECRET_KEY",
+            "\"$eSewaSecretKey\""
+        )
     }
 
     buildFeatures {
         viewBinding = true
         compose = true
+        buildConfig = true
     }
 
     buildTypes {
@@ -159,4 +176,6 @@ dependencies {
     implementation(files("libs/eSewaPaymentSdk-debug.aar"))
     implementation("com.android.support:cardview-v7:27.1.1")
     implementation("com.android.support:design:27.1.1")
+
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }

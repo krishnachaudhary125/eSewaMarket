@@ -1,5 +1,6 @@
 package com.example.eSewaMarket
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -14,6 +15,7 @@ import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationData
 import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationScreen
 import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationViewModel
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
+import com.example.eSewaMarket.ui.payment.EsewaPayment
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
 import com.example.eSewaMarket.utils.AuthNavigator
 import kotlin.getValue
@@ -75,7 +77,13 @@ class ConfirmationActivity : AppCompatActivity() {
                     confirmationViewModel.retry()
                 },
                 onConfirmOrder = {},
-                onPayWithEsewa = {}
+                onPayWithEsewa = {
+                    val intent = Intent(this, EsewaPayment::class.java).apply {
+                        putExtra("grandTotal", 7.0)
+                        putExtra("orderId", "ORDER_${System.currentTimeMillis()}")
+                    }
+                    startActivity(intent)
+                }
             )
         }
     }
