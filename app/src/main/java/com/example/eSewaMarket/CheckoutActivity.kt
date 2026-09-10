@@ -17,12 +17,8 @@ import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
 import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
 import com.example.eSewaMarket.utils.AuthNavigator
+import com.example.eSewaMarket.data.models.PaymentOptions
 import kotlin.getValue
-
-enum class PaymentOption {
-    CASH_ON_DELIVERY,
-    ESEWA
-}
 
 class CheckoutActivity : AppCompatActivity() {
 
@@ -128,7 +124,7 @@ class CheckoutActivity : AppCompatActivity() {
                 cashOnDelivery = { checkoutData ->
 
                     goToConfirmation(
-                        PaymentOption.CASH_ON_DELIVERY,
+                        PaymentOptions.CASH_ON_DELIVERY,
                         checkoutData,
                         shippingAddressText,
                         count
@@ -138,7 +134,7 @@ class CheckoutActivity : AppCompatActivity() {
                 payWithEsewa = { checkoutData ->
 
                     goToConfirmation(
-                        PaymentOption.ESEWA,
+                        PaymentOptions.ESEWA,
                         checkoutData,
                         shippingAddressText,
                         count
@@ -158,20 +154,15 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     private fun goToConfirmation(
-        paymentOption: PaymentOption,
+        paymentOption: PaymentOptions,
         checkoutData: CheckoutData,
         shippingAddress: String,
         count: Int
     ){
 
-        val paymentOptionText = when (paymentOption) {
-            PaymentOption.CASH_ON_DELIVERY -> "Cash on Delivery"
-            PaymentOption.ESEWA -> "eSewa"
-        }
-
         val intent = Intent(this, ConfirmationActivity::class.java).apply {
             putExtra("shippingAddress", shippingAddress)
-            putExtra("paymentOption", paymentOptionText)
+            putExtra("paymentOption", paymentOption.name)
             putExtra("deliveryCharge", checkoutData.shippingCharge)
             putExtra("totalTax", checkoutData.totalTax)
             putExtra("totalPrice", checkoutData.productPrice)

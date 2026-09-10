@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.eSewaMarket.data.models.PaymentOptions
 import com.example.eSewaMarket.data.repository.UserSessionRepository
 import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationData
 import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationScreen
@@ -43,10 +44,15 @@ class ConfirmationActivity : AppCompatActivity() {
             val uiState by confirmationViewModel.uiState
                 .collectAsStateWithLifecycle()
 
+            val paymentOption = PaymentOptions.valueOf(
+                intent.getStringExtra("paymentOption")
+                    ?: PaymentOptions.CASH_ON_DELIVERY.name
+            )
+
             val confirmationData = ConfirmationData(
                 checkoutProducts = products,
                 shippingAddress = intent.getStringExtra("shippingAddress").orEmpty(),
-                paymentOption = intent.getStringExtra("paymentOption").orEmpty(),
+                paymentOption = paymentOption,
                 totalAmount = intent.getDoubleExtra("totalPrice", 0.0),
                 taxAmount = intent.getDoubleExtra("totalTax", 0.0),
                 deliveryCharge = intent.getDoubleExtra("deliveryCharge", 0.0),
@@ -67,7 +73,9 @@ class ConfirmationActivity : AppCompatActivity() {
                 },
                 onRetry = {
                     confirmationViewModel.retry()
-                }
+                },
+                onConfirmOrder = {},
+                onPayWithEsewa = {}
             )
         }
     }
