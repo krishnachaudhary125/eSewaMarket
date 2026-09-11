@@ -89,7 +89,6 @@ fun ShippingAddressDraggable(
                     .fillMaxHeight()
                     .padding(
                         start = 16.dp,
-                        top = 16.dp,
                         end = 16.dp
                     )
                     .background(
