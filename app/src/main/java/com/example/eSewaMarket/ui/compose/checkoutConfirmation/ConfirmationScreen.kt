@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.sp
 import com.example.eSewaMarket.R
+import com.example.eSewaMarket.data.models.OrderResponse
 import com.example.eSewaMarket.data.models.PaymentOptions
 import com.example.eSewaMarket.ui.compose.AppToolBar
 import com.example.eSewaMarket.ui.compose.component.CommonError
@@ -17,10 +18,14 @@ import com.example.eSewaMarket.ui.compose.component.CommonLoading
 @Composable
 fun ConfirmationScreen(
     state: ConfirmationUiState,
+    placedOrder: OrderResponse?,
+    isPlacingOrder: Boolean,
     onBackClick: () -> Unit,
     onRetry: () -> Unit,
     onConfirmOrder: () -> Unit,
-    onPayWithEsewa: () -> Unit
+    onPayWithEsewa: () -> Unit,
+    onViewOrderClick: (OrderResponse) -> Unit,
+    onGoToHomeClick: () -> Unit
 ) {
     Scaffold(
         containerColor = colorResource(R.color.background),
@@ -40,13 +45,26 @@ fun ConfirmationScreen(
         }
     ) { innerPadding ->
 
-        when (state) {
+        when {
 
-            is ConfirmationUiState.Loading -> {
+            placedOrder != null -> {
+                OrderPlacedSuccessView(
+                    modifier = Modifier.padding(innerPadding),
+                    order = placedOrder,
+                    onViewOrderClick = {
+                        onViewOrderClick(placedOrder)
+                    },
+                    onGoToHomeClick = {
+                        onGoToHomeClick()
+                    }
+                )
+            }
+
+            state is ConfirmationUiState.Loading -> {
                 CommonLoading()
             }
 
-            is ConfirmationUiState.Success -> {
+            state is ConfirmationUiState.Success -> {
 
                 val isEsewaPayment = state.confirmationData.paymentOption == PaymentOptions.ESEWA
 
@@ -60,11 +78,12 @@ fun ConfirmationScreen(
                     totalAmount = state.confirmationData.totalAmount,
                     deliveryCharge = state.confirmationData.deliveryCharge,
                     grandTotal = state.confirmationData.grandTotal,
-                    buttonText = if (isEsewaPayment) {
-                        "PAY NOW"
-                    } else {
-                        "CONFIRM"
+                    buttonText = when {
+                        isPlacingOrder -> "PLACING ORDER..."
+                        isEsewaPayment -> "PAY NOW"
+                        else -> "CONFIRM"
                     },
+                    buttonEnabled = !isPlacingOrder,
                     onConfirmClick = {
                         if (isEsewaPayment) {
                             onPayWithEsewa()
@@ -75,7 +94,7 @@ fun ConfirmationScreen(
                 )
             }
 
-            is ConfirmationUiState.Error -> {
+            state is ConfirmationUiState.Error -> {
                 CommonError(
                     message = state.message,
                     onRetry = onRetry

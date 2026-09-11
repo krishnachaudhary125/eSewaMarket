@@ -7,6 +7,7 @@ data class ConfirmationData(
 
     val checkoutProducts: List<ProductResponse>,
     val shippingAddress: String,
+    val addressId: Long,
     val paymentOption: PaymentOptions,
     val totalAmount: Double,
     val taxAmount: Double,

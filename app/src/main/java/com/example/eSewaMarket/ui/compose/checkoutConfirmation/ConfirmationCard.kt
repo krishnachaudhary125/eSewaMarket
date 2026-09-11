@@ -37,6 +37,7 @@ fun ConfirmationCard(
     deliveryCharge: Double,
     grandTotal: Double,
     buttonText: String,
+    buttonEnabled: Boolean = true,
     onConfirmClick: () -> Unit
 ) {
     LazyColumn(
@@ -149,6 +150,7 @@ fun ConfirmationCard(
 
             Button(
                 onClick = onConfirmClick,
+                enabled = buttonEnabled,
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.green),

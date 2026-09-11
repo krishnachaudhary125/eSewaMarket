@@ -7,6 +7,7 @@ import com.example.eSewaMarket.data.repository.AddressRepository
 import com.example.eSewaMarket.data.repository.CartRepository
 import com.example.eSewaMarket.data.repository.FavouriteRepository
 import com.example.eSewaMarket.data.repository.LocationRepository
+import com.example.eSewaMarket.data.repository.OrderRepository
 import com.example.eSewaMarket.data.repository.UserSessionRepository
 
 object ViewModelFactoryProvider {
@@ -53,6 +54,20 @@ object ViewModelFactoryProvider {
 
         return LocationViewModelFactory(
             LocationRepository(
+                RetrofitInstance.api
+            )
+        )
+    }
+
+    fun confirmationFactory(context: Context): ConfirmationViewModelFactory {
+        val app = context.applicationContext as EsewaMarketApplication
+
+        return ConfirmationViewModelFactory(
+            orderRepository = OrderRepository(RetrofitInstance.api),
+            cartRepository = CartRepository(
+                app.database.cartDao(),
+                app.database.productDao(),
+                UserSessionRepository(app.applicationContext),
                 RetrofitInstance.api
             )
         )
