@@ -12,6 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.eSewaMarket.data.models.PaymentOptions
 import com.example.eSewaMarket.data.repository.UserSessionRepository
 import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationData
+import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationNavigationEvent
 import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationScreen
 import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationViewModel
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
@@ -26,7 +27,9 @@ class ConfirmationActivity : AppCompatActivity() {
         ViewModelFactoryProvider.cartFactory(this)
     }
 
-    private val confirmationViewModel: ConfirmationViewModel by viewModels()
+    private val confirmationViewModel: ConfirmationViewModel by viewModels {
+        ViewModelFactoryProvider.confirmationFactory(this)
+    }
 
     private lateinit var userSessionRepository: UserSessionRepository
     private lateinit var authNavigator: AuthNavigator
@@ -54,12 +57,33 @@ class ConfirmationActivity : AppCompatActivity() {
             val confirmationData = ConfirmationData(
                 checkoutProducts = products,
                 shippingAddress = intent.getStringExtra("shippingAddress").orEmpty(),
+                addressId = intent.getLongExtra("shippingAddressId", -1L),
                 paymentOption = paymentOption,
                 totalAmount = intent.getDoubleExtra("totalPrice", 0.0),
                 taxAmount = intent.getDoubleExtra("totalTax", 0.0),
                 deliveryCharge = intent.getDoubleExtra("deliveryCharge", 0.0),
                 grandTotal = intent.getDoubleExtra("grandTotal", 0.0)
             )
+
+            LaunchedEffect(Unit) {
+                confirmationViewModel.navigationEvent.collect { event ->
+                    when (event) {
+                        is ConfirmationNavigationEvent.GoToOrderSuccess -> {
+                            val intent = Intent(this@ConfirmationActivity, OrderActivity::class.java).apply {
+                                putExtra("orderNumber", event.order.orderNumber)
+                                putExtra("totalAmount", event.order.totalAmount)
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                            }
+                            startActivity(intent)
+                            finish()
+                        }
+                        is ConfirmationNavigationEvent.StartEsewaPayment -> {
+
+                        }
+                    }
+                }
+            }
+
 
             LaunchedEffect(products) {
 
@@ -76,13 +100,11 @@ class ConfirmationActivity : AppCompatActivity() {
                 onRetry = {
                     confirmationViewModel.retry()
                 },
-                onConfirmOrder = {},
+                onConfirmOrder = {
+                    confirmationViewModel.createOrder()
+                },
                 onPayWithEsewa = {
-                    val intent = Intent(this, EsewaPayment::class.java).apply {
-                        putExtra("grandTotal", 7.0)
-                        putExtra("orderId", "ORDER_${System.currentTimeMillis()}")
-                    }
-                    startActivity(intent)
+                    confirmationViewModel.createOrder()
                 }
             )
         }

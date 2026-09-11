@@ -75,7 +75,13 @@ class EsewaPayment : AppCompatActivity() {
 
         val amount = intent.getDoubleExtra("grandTotal", 0.0)
 
-        val orderId = intent.getStringExtra("orderId") ?: "ORDER_${System.currentTimeMillis()}"
+        val orderId = intent.getStringExtra("orderNumber")
+
+        if (orderId.isNullOrBlank()) {
+            Toast.makeText(this, "Order information is missing", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
         val eSewaPayment = EsewaPayment(
             amount.toString(),

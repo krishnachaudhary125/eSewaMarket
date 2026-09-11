@@ -123,22 +123,26 @@ class CheckoutActivity : AppCompatActivity() {
 
                 cashOnDelivery = { checkoutData ->
 
-                    goToConfirmation(
-                        PaymentOptions.CASH_ON_DELIVERY,
-                        checkoutData,
-                        shippingAddressText,
-                        count
-                    )
+                    shippingAddress?.let { address ->
+                        goToConfirmation(
+                            PaymentOptions.CASH_ON_DELIVERY,
+                            checkoutData,
+                            shippingAddressText,
+                            address.id
+                        )
+                    }
                 },
 
                 payWithEsewa = { checkoutData ->
 
-                    goToConfirmation(
-                        PaymentOptions.ESEWA,
-                        checkoutData,
-                        shippingAddressText,
-                        count
-                    )
+                    shippingAddress?.let { address ->
+                        goToConfirmation(
+                            PaymentOptions.ESEWA,
+                            checkoutData,
+                            shippingAddressText,
+                            address.id
+                        )
+                    }
                 },
 
                 onRetry = {
@@ -157,11 +161,12 @@ class CheckoutActivity : AppCompatActivity() {
         paymentOption: PaymentOptions,
         checkoutData: CheckoutData,
         shippingAddress: String,
-        count: Int
+        shippingAddressId: Long
     ){
 
         val intent = Intent(this, ConfirmationActivity::class.java).apply {
             putExtra("shippingAddress", shippingAddress)
+            putExtra("shippingAddressId", shippingAddressId)
             putExtra("paymentOption", paymentOption.name)
             putExtra("deliveryCharge", checkoutData.shippingCharge)
             putExtra("totalTax", checkoutData.totalTax)
