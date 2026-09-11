@@ -51,12 +51,14 @@ class EsewaPayment : AppCompatActivity() {
                 val message = data?.getStringExtra(EsewaPayment.EXTRA_RESULT_MESSAGE)
                 Log.d("eSewa_Payment", "Success: $message")
 
-                Toast.makeText(this, "Payment Successful", Toast.LENGTH_SHORT).show()
+                setResult(RESULT_OK, Intent().apply {
+                    putExtra("orderNumber", intent.getStringExtra("orderNumber"))
+                })
+                finish()
             }
 
             RESULT_CANCELED -> {
-
-                Toast.makeText(this, "Payment Canceled", Toast.LENGTH_SHORT).show()
+                setResult(RESULT_CANCELED)
                 finish()
             }
 
@@ -65,7 +67,9 @@ class EsewaPayment : AppCompatActivity() {
                 val message = data?.getStringExtra(EsewaPayment.EXTRA_RESULT_MESSAGE)
                 Log.e("eSewa_Payment", "Payment Error: $message")
 
-                Toast.makeText(this, "Payment Failed", Toast.LENGTH_SHORT).show()
+                setResult(RESULT_CANCELED, Intent().apply {
+                    putExtra("errorMessage", message)
+                })
                 finish()
             }
         }

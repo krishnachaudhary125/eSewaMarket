@@ -3,6 +3,8 @@ package com.example.eSewaMarket
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.LaunchedEffect
@@ -35,10 +37,20 @@ class ConfirmationActivity : AppCompatActivity() {
     private lateinit var userSessionRepository: UserSessionRepository
     private lateinit var authNavigator: AuthNavigator
 
+    private lateinit var esewaLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         WindowCompat.enableEdgeToEdge(window)
+
+        esewaLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            confirmationViewModel.onEsewaPaymentResult(
+                success = result.resultCode == RESULT_OK
+            )
+        }
 
         setContent {
 
@@ -55,6 +67,12 @@ class ConfirmationActivity : AppCompatActivity() {
                     ?: PaymentOptions.CASH_ON_DELIVERY.name
             )
 
+            val placedOrder by confirmationViewModel.placedOrder
+                .collectAsStateWithLifecycle()
+
+            val isPlacingOrder by confirmationViewModel.isPlacingOrder
+                .collectAsStateWithLifecycle()
+
             val confirmationData = ConfirmationData(
                 checkoutProducts = products,
                 shippingAddress = intent.getStringExtra("shippingAddress").orEmpty(),
@@ -69,23 +87,13 @@ class ConfirmationActivity : AppCompatActivity() {
             LaunchedEffect(Unit) {
                 confirmationViewModel.navigationEvent.collect { event ->
                     when (event) {
-                        is ConfirmationNavigationEvent.GoToOrderSuccess -> {
-                            val intent = Intent(this@ConfirmationActivity, OrderActivity::class.java).apply {
-                                putExtra("orderNumber", event.order.orderNumber)
-                                putExtra("totalAmount", event.order.totalAmount)
-                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                            }
-                            startActivity(intent)
-                            finish()
-                        }
                         is ConfirmationNavigationEvent.StartEsewaPayment -> {
                             val intent = Intent(this@ConfirmationActivity, EsewaPayment::class.java).apply {
                                 putExtra("orderNumber", event.order.orderNumber)
                                 putExtra("totalAmount", event.order.totalAmount)
                                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                             }
-                            startActivity(intent)
-                            finish()
+                            esewaLauncher.launch(intent)
                         }
                     }
                 }
@@ -101,6 +109,8 @@ class ConfirmationActivity : AppCompatActivity() {
 
             ConfirmationScreen(
                 state = uiState,
+                placedOrder = placedOrder,
+                isPlacingOrder = isPlacingOrder,
                 onBackClick = {
                     onBackPressedDispatcher.onBackPressed()
                 },
@@ -112,6 +122,14 @@ class ConfirmationActivity : AppCompatActivity() {
                 },
                 onPayWithEsewa = {
                     confirmationViewModel.createOrder()
+                },
+                onViewOrderClick = { order ->
+                    val intent = Intent(this, OrderActivity::class.java).apply {
+                        putExtra("orderNumber", order.orderNumber)
+                        putExtra("totalAmount", order.totalAmount)
+                    }
+                    startActivity(intent)
+                    finish()
                 }
             )
         }

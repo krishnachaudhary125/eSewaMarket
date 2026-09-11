@@ -21,6 +21,9 @@ class ConfirmationViewModel(
     private val _uiState = MutableStateFlow<ConfirmationUiState>(ConfirmationUiState.Loading)
     val uiState: StateFlow<ConfirmationUiState> = _uiState.asStateFlow()
 
+    private val _placedOrder = MutableStateFlow<OrderResponse?>(null)
+    val placedOrder: StateFlow<OrderResponse?> = _placedOrder.asStateFlow()
+
     private val _isPlacingOrder = MutableStateFlow(false)
     val isPlacingOrder: StateFlow<Boolean> = _isPlacingOrder.asStateFlow()
 
@@ -28,6 +31,7 @@ class ConfirmationViewModel(
     val navigationEvent: SharedFlow<ConfirmationNavigationEvent> = _navigationEvent.asSharedFlow()
 
     private var confirmationData: ConfirmationData? = null
+    private var pendingEsewaOrder: OrderResponse? = null
 
     fun loadConfirmation(confirmationData: ConfirmationData) {
         this.confirmationData = confirmationData
@@ -44,21 +48,23 @@ class ConfirmationViewModel(
         viewModelScope.launch {
             _isPlacingOrder.value = true
 
-            val result = orderRepository.createOrder(
-                shippingAddressId = data.addressId,
-                paymentOption = data.paymentOption.name
-            )
+            val result = minimumLoadingTime {
+                orderRepository.createOrder(
+                    shippingAddressId = data.addressId,
+                    paymentOption = data.paymentOption.name
+                )
+            }
 
             _isPlacingOrder.value = false
 
             result.onSuccess { order ->
                 when (data.paymentOption) {
                     PaymentOptions.CASH_ON_DELIVERY -> {
-                        _navigationEvent.emit(
-                            ConfirmationNavigationEvent.GoToOrderSuccess(order)
-                        )
+                        _placedOrder.value = order
                     }
+
                     PaymentOptions.ESEWA -> {
+                        pendingEsewaOrder = order
                         _navigationEvent.emit(
                             ConfirmationNavigationEvent.StartEsewaPayment(order)
                         )
@@ -67,6 +73,17 @@ class ConfirmationViewModel(
             }.onFailure { exception ->
                 showError(exception.message ?: "Failed to create order.")
             }
+        }
+    }
+
+    fun onEsewaPaymentResult(success: Boolean) {
+        val order = pendingEsewaOrder ?: return
+        pendingEsewaOrder = null
+
+        if (success) {
+            _placedOrder.value = order
+        } else {
+            showError("Payment was not completed. Please try again.")
         }
     }
 
@@ -81,6 +98,5 @@ class ConfirmationViewModel(
 }
 
 sealed class ConfirmationNavigationEvent {
-    data class GoToOrderSuccess(val order: OrderResponse) : ConfirmationNavigationEvent()
     data class StartEsewaPayment(val order: OrderResponse) : ConfirmationNavigationEvent()
 }
