@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.sp
 import com.example.eSewaMarket.R
+import com.example.eSewaMarket.data.models.PaymentOptions
 import com.example.eSewaMarket.ui.compose.AppToolBar
 import com.example.eSewaMarket.ui.compose.component.CommonError
 import com.example.eSewaMarket.ui.compose.component.CommonLoading
@@ -17,7 +18,9 @@ import com.example.eSewaMarket.ui.compose.component.CommonLoading
 fun ConfirmationScreen(
     state: ConfirmationUiState,
     onBackClick: () -> Unit,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    onConfirmOrder: () -> Unit,
+    onPayWithEsewa: () -> Unit
 ) {
     Scaffold(
         containerColor = colorResource(R.color.background),
@@ -45,6 +48,8 @@ fun ConfirmationScreen(
 
             is ConfirmationUiState.Success -> {
 
+                val isEsewaPayment = state.confirmationData.paymentOption == PaymentOptions.ESEWA
+
                 ConfirmationCard(
                     modifier = Modifier
                         .padding(innerPadding),
@@ -54,7 +59,19 @@ fun ConfirmationScreen(
                     taxAmount = state.confirmationData.taxAmount,
                     totalAmount = state.confirmationData.totalAmount,
                     deliveryCharge = state.confirmationData.deliveryCharge,
-                    grandTotal = state.confirmationData.grandTotal
+                    grandTotal = state.confirmationData.grandTotal,
+                    buttonText = if (isEsewaPayment) {
+                        "PAY NOW"
+                    } else {
+                        "CONFIRM"
+                    },
+                    onConfirmClick = {
+                        if (isEsewaPayment) {
+                            onPayWithEsewa()
+                        } else {
+                            onConfirmOrder()
+                        }
+                    }
                 )
             }
 

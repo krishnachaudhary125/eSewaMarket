@@ -64,6 +64,7 @@ fun CheckoutScreen(
     onSetAddressClick: () -> Unit,
     chooseAddress: () -> Unit,
     cashOnDelivery: (CheckoutData) -> Unit,
+    payWithEsewa: (CheckoutData) -> Unit,
     onRetry: () -> Unit
 ) {
     var isExpanded by rememberSaveable {
@@ -309,7 +310,9 @@ fun CheckoutScreen(
                                     .clickable(
                                         interactionSource = remember { MutableInteractionSource() },
                                         indication = ripple(),
-                                        onClick = {}
+                                        onClick = {
+                                            payWithEsewa(data)
+                                        }
                                     )
                                     .padding(horizontal = 16.dp, vertical = 24.dp),
                                 verticalAlignment = Alignment.CenterVertically

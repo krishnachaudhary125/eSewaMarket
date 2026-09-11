@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.eSewaMarket.R
+import com.example.eSewaMarket.data.models.PaymentOptions
 import com.example.eSewaMarket.data.models.ProductResponse
 
 @Composable
@@ -30,11 +31,13 @@ fun ConfirmationCard(
     modifier: Modifier = Modifier,
     checkoutProducts: List<ProductResponse>,
     shippingAddress: String,
-    paymentOption: String,
+    paymentOption: PaymentOptions,
     totalAmount: Double,
     taxAmount: Double,
     deliveryCharge: Double,
-    grandTotal: Double
+    grandTotal: Double,
+    buttonText: String,
+    onConfirmClick: () -> Unit
 ) {
     LazyColumn(
         modifier = modifier
@@ -86,7 +89,10 @@ fun ConfirmationCard(
 
                     TextRow(
                         firstText = "Payment Option",
-                        secondText = paymentOption
+                        secondText = when (paymentOption) {
+                            PaymentOptions.CASH_ON_DELIVERY -> "Cash on Delivery"
+                            PaymentOptions.ESEWA -> "eSewa"
+                        }
                     )
 
                     TextRow(
@@ -142,7 +148,7 @@ fun ConfirmationCard(
             }
 
             Button(
-                onClick = {},
+                onClick = onConfirmClick,
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.green),
@@ -153,7 +159,7 @@ fun ConfirmationCard(
                     .padding(16.dp)
             ) {
                 Text(
-                    "CONFIRM",
+                    buttonText,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 16.sp,

@@ -1,5 +1,6 @@
 package com.example.eSewaMarket
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -8,11 +9,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.eSewaMarket.data.models.PaymentOptions
 import com.example.eSewaMarket.data.repository.UserSessionRepository
 import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationData
 import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationScreen
 import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationViewModel
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
+import com.example.eSewaMarket.ui.payment.EsewaPayment
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
 import com.example.eSewaMarket.utils.AuthNavigator
 import kotlin.getValue
@@ -43,10 +46,15 @@ class ConfirmationActivity : AppCompatActivity() {
             val uiState by confirmationViewModel.uiState
                 .collectAsStateWithLifecycle()
 
+            val paymentOption = PaymentOptions.valueOf(
+                intent.getStringExtra("paymentOption")
+                    ?: PaymentOptions.CASH_ON_DELIVERY.name
+            )
+
             val confirmationData = ConfirmationData(
                 checkoutProducts = products,
                 shippingAddress = intent.getStringExtra("shippingAddress").orEmpty(),
-                paymentOption = intent.getStringExtra("paymentOption").orEmpty(),
+                paymentOption = paymentOption,
                 totalAmount = intent.getDoubleExtra("totalPrice", 0.0),
                 taxAmount = intent.getDoubleExtra("totalTax", 0.0),
                 deliveryCharge = intent.getDoubleExtra("deliveryCharge", 0.0),
@@ -67,6 +75,14 @@ class ConfirmationActivity : AppCompatActivity() {
                 },
                 onRetry = {
                     confirmationViewModel.retry()
+                },
+                onConfirmOrder = {},
+                onPayWithEsewa = {
+                    val intent = Intent(this, EsewaPayment::class.java).apply {
+                        putExtra("grandTotal", 7.0)
+                        putExtra("orderId", "ORDER_${System.currentTimeMillis()}")
+                    }
+                    startActivity(intent)
                 }
             )
         }

@@ -12,6 +12,10 @@ if (localPropertiesFile.exists()) {
 
 val mapsApiKey = localProperties.getProperty("MAPS_API_KEY")
 
+val eSewaClientId = localProperties.getProperty("ESEWA_CLIENT_ID") ?: ""
+
+val eSewaSecretKey = localProperties.getProperty("ESEWA_SECRET_KEY") ?: ""
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -54,11 +58,24 @@ android {
             "maps_api_key",
             mapsApiKey ?: ""
         )
+
+        buildConfigField(
+            "String",
+            "ESEWA_CLIENT_ID",
+            "\"$eSewaClientId\""
+        )
+
+        buildConfigField(
+            "String",
+            "ESEWA_SECRET_KEY",
+            "\"$eSewaSecretKey\""
+        )
     }
 
     buildFeatures {
         viewBinding = true
         compose = true
+        buildConfig = true
     }
 
     buildTypes {
@@ -125,7 +142,7 @@ dependencies {
     implementation("androidx.room3:room3-runtime:$room_version")
     ksp("androidx.room3:room3-compiler:$room_version")
 
-    //Expandable textview third part library
+//Expandable textview third part library
     implementation("at.blogc:expandabletextview:1.0.5")
 
     implementation(platform("androidx.compose:compose-bom:2026.06.00"))
@@ -138,20 +155,27 @@ dependencies {
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 
-    // Coil setup
+// Coil setup
     implementation("io.coil-kt.coil3:coil-compose:3.0.4")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
 
-    // To use constraintlayout in compose
+// To use constraintlayout in compose
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.2")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
 
-    //Google Maps integration
+//Google Maps integration
     implementation("com.google.android.gms:play-services-maps:20.0.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("com.google.maps.android:maps-compose:6.12.0")
     implementation("com.google.android.libraries.places:places:5.1.1")
 
     implementation("androidx.compose.material:material-icons-extended")
+
+//    eSewa dependency
+    implementation(files("libs/eSewaPaymentSdk-debug.aar"))
+    implementation("com.android.support:cardview-v7:27.1.1")
+    implementation("com.android.support:design:27.1.1")
+
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }
