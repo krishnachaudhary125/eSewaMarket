@@ -1,9 +1,11 @@
 package com.example.eSewaMarket.ui.compose.checkoutConfirmation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.eSewaMarket.data.models.OrderResponse
 import com.example.eSewaMarket.data.models.PaymentOptions
+import com.example.eSewaMarket.data.repository.CartRepository
 import com.example.eSewaMarket.data.repository.OrderRepository
 import com.example.eSewaMarket.utils.minimumLoadingTime
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,7 +17,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ConfirmationViewModel(
-    private val orderRepository: OrderRepository
+    private val orderRepository: OrderRepository,
+    private val cartRepository: CartRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ConfirmationUiState>(ConfirmationUiState.Loading)
@@ -61,6 +64,7 @@ class ConfirmationViewModel(
                 when (data.paymentOption) {
                     PaymentOptions.CASH_ON_DELIVERY -> {
                         _placedOrder.value = order
+                        syncCartQuietly()
                     }
 
                     PaymentOptions.ESEWA -> {
@@ -68,6 +72,7 @@ class ConfirmationViewModel(
                         _navigationEvent.emit(
                             ConfirmationNavigationEvent.StartEsewaPayment(order)
                         )
+                        // cart NOT cleared here — only after payment is confirmed, below
                     }
                 }
             }.onFailure { exception ->
@@ -82,8 +87,17 @@ class ConfirmationViewModel(
 
         if (success) {
             _placedOrder.value = order
+            viewModelScope.launch { syncCartQuietly() }
         } else {
             showError("Payment was not completed. Please try again.")
+        }
+    }
+
+    private suspend fun syncCartQuietly() {
+        try {
+            cartRepository.syncCartWithServer()
+        } catch (e: Exception) {
+            Log.e("cart_sync", "Failed to sync cart.", e)
         }
     }
 

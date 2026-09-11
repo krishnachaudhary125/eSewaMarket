@@ -60,8 +60,16 @@ object ViewModelFactoryProvider {
     }
 
     fun confirmationFactory(context: Context): ConfirmationViewModelFactory {
+        val app = context.applicationContext as EsewaMarketApplication
+
         return ConfirmationViewModelFactory(
-            OrderRepository(RetrofitInstance.api)
+            orderRepository = OrderRepository(RetrofitInstance.api),
+            cartRepository = CartRepository(
+                app.database.cartDao(),
+                app.database.productDao(),
+                UserSessionRepository(app.applicationContext),
+                RetrofitInstance.api
+            )
         )
     }
 }
