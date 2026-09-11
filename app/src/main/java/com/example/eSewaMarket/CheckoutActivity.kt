@@ -174,5 +174,6 @@ class CheckoutActivity : AppCompatActivity() {
             putExtra("grandTotal", checkoutData.totalAmount)
         }
         startActivity(intent)
+        finish()
     }
 }

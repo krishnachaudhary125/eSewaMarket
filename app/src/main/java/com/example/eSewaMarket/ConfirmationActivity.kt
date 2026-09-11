@@ -130,6 +130,13 @@ class ConfirmationActivity : AppCompatActivity() {
                     }
                     startActivity(intent)
                     finish()
+                },
+                onGoToHomeClick = {
+                    val intent = Intent(this, MainActivity::class.java).apply {
+                        putExtra("openFragment", "home")
+                    }
+                    startActivity(intent)
+                    finish()
                 }
             )
         }
