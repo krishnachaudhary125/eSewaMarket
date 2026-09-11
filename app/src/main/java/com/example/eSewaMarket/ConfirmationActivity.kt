@@ -19,6 +19,7 @@ import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
 import com.example.eSewaMarket.ui.payment.EsewaPayment
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
 import com.example.eSewaMarket.utils.AuthNavigator
+import com.f1soft.esewapaymentsdk.ui.screens.EsewaPaymentActivity
 import kotlin.getValue
 
 class ConfirmationActivity : AppCompatActivity() {
@@ -78,7 +79,13 @@ class ConfirmationActivity : AppCompatActivity() {
                             finish()
                         }
                         is ConfirmationNavigationEvent.StartEsewaPayment -> {
-
+                            val intent = Intent(this@ConfirmationActivity, EsewaPayment::class.java).apply {
+                                putExtra("orderNumber", event.order.orderNumber)
+                                putExtra("totalAmount", event.order.totalAmount)
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                            }
+                            startActivity(intent)
+                            finish()
                         }
                     }
                 }
