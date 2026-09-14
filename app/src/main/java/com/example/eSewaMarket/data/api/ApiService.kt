@@ -17,6 +17,7 @@ import com.example.eSewaMarket.data.models.UserResponse
 import com.example.eSewaMarket.data.models.UserSyncRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -117,6 +118,12 @@ interface ApiService {
         @Path("id") id: Long,
         @Body request: AddressRequest
     ): AddressResponse
+
+    @DELETE("addresses/{id}")
+    suspend fun deleteAddress(
+        @Header("Authorization") token: String,
+        @Path("id") id: Long
+    )
 
     @GET("locations/provinces")
     suspend fun getProvinces(): List<ProvinceResponse>
