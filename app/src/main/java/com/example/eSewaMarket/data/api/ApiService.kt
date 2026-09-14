@@ -21,6 +21,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -108,6 +109,13 @@ interface ApiService {
     suspend fun getAddress(
         @Header("Authorization") token: String,
         @Path("id") id: Long
+    ): AddressResponse
+
+    @PUT("addresses/{id}")
+    suspend fun updateAddress(
+        @Header("Authorization") token: String,
+        @Path("id") id: Long,
+        @Body request: AddressRequest
     ): AddressResponse
 
     @GET("locations/provinces")
