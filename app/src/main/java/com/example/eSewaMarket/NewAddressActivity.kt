@@ -84,24 +84,27 @@ class NewAddressActivity : AppCompatActivity() {
         val isEditMode = addressId != null
 
         val title: String
+        val saveBtnTxt: String
 
         if (isEditMode) {
             title = "Edit Your Address"
+            saveBtnTxt = "UPDATE ADDRESS"
             binding.deleteLine.visibility = View.VISIBLE
             binding.deleteBtn.visibility = View.VISIBLE
         } else {
             title = "Add Your New Address"
+            saveBtnTxt = "SAVE"
             binding.deleteLine.visibility = View.GONE
             binding.deleteBtn.visibility = View.GONE
         }
         binding.deleteIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this,R.color.esewa_red))
-
         binding.toolbarNewShippingAddress.toolbarTitle.text = title
         binding.toolbarNewShippingAddress.toolbarIcon.setImageResource(R.drawable.ic_close)
         binding.toolbarNewShippingAddress.toolbarIcon.setBackgroundResource(R.drawable.bg_faq_question)
         binding.toolbarNewShippingAddress.backBtn.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+        binding.saveBtn.text = saveBtnTxt
         binding.toolbarNewShippingAddress.toolbarIcon.setOnClickListener {
 
             binding.etFName.text?.clear()
