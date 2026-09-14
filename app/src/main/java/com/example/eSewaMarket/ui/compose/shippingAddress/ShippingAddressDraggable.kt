@@ -107,7 +107,7 @@ fun ShippingAddressDraggable(
 
                 IconButton(
                     onClick = {
-                        onDeleteClick()
+                        onEditClick()
 
                         scope.launch {
                             state.animateTo(
@@ -133,7 +133,7 @@ fun ShippingAddressDraggable(
 
                 IconButton(
                     onClick = {
-                        onEditClick()
+                        onDeleteClick()
 
                         scope.launch {
                             state.animateTo(

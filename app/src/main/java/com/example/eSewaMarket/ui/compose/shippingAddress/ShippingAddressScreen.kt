@@ -37,7 +37,7 @@ fun ShippingAddressScreen(
     onBackClick: () -> Unit,
     addAddressNow: () -> Unit,
     onDeleteClick: () -> Unit,
-    onEditClick: () -> Unit,
+    onEditClick: (Long) -> Unit,
     onAddAddressClick: () -> Unit,
     onRetry: () -> Unit
 ) {
@@ -102,7 +102,7 @@ fun ShippingAddressScreen(
                                         onDeleteClick()
                                     },
                                     onEditClick = {
-                                        onEditClick()
+                                        onEditClick(addresses.id)
                                     },
                                     fullName = addresses.fullName,
                                     label = addresses.label,

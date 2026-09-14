@@ -2,6 +2,7 @@ package com.example.eSewaMarket
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -42,6 +44,7 @@ class NewAddressActivity : AppCompatActivity() {
     private val locationViewModel: LocationViewModel by viewModels {
         ViewModelFactoryProvider.locationFactory(this)
     }
+    private var addressId: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +77,26 @@ class NewAddressActivity : AppCompatActivity() {
 
         locationViewModel.loadProvinces()
 
-        binding.toolbarNewShippingAddress.toolbarTitle.text = "Add your new address"
+        addressId = intent
+            .getLongExtra("addressId", -1L)
+            .takeIf { it != -1L }
+
+        val isEditMode = addressId != null
+
+        val title: String
+
+        if (isEditMode) {
+            title = "Edit Your Address"
+            binding.deleteLine.visibility = View.VISIBLE
+            binding.deleteBtn.visibility = View.VISIBLE
+        } else {
+            title = "Add Your New Address"
+            binding.deleteLine.visibility = View.GONE
+            binding.deleteBtn.visibility = View.GONE
+        }
+        binding.deleteIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this,R.color.esewa_red))
+
+        binding.toolbarNewShippingAddress.toolbarTitle.text = title
         binding.toolbarNewShippingAddress.toolbarIcon.setImageResource(R.drawable.ic_close)
         binding.toolbarNewShippingAddress.toolbarIcon.setBackgroundResource(R.drawable.bg_faq_question)
         binding.toolbarNewShippingAddress.backBtn.setOnClickListener {

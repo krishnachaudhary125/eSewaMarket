@@ -46,7 +46,12 @@ class ShippingAddressActivity : AppCompatActivity() {
                     startActivity(intent)
                 },
                 onDeleteClick = {},
-                onEditClick = {},
+                onEditClick = { addressId ->
+                    val intent = Intent(this, NewAddressActivity::class.java).apply {
+                        putExtra("addressId", addressId)
+                    }
+                    startActivity(intent)
+                },
                 onAddAddressClick = {
                     val intent = Intent(this, NewAddressActivity::class.java)
                     startActivity(intent)
