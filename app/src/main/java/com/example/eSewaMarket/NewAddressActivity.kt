@@ -2,6 +2,7 @@ package com.example.eSewaMarket
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -17,14 +19,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.eSewaMarket.data.models.AddressRequest
+import com.example.eSewaMarket.data.models.AddressResponse
 import com.example.eSewaMarket.databinding.ActivityNewAddressBinding
 import com.example.eSewaMarket.ui.adapters.SpinnerAdapter
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
-import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
+import com.example.eSewaMarket.ui.compose.shippingAddress.AddressViewModel
+import com.example.eSewaMarket.ui.compose.shippingAddress.ShippingUiState
 import com.example.eSewaMarket.ui.viewmodel.LocationViewModel
 import com.example.eSewaMarket.utils.LocationPermissionHandler
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -41,6 +46,8 @@ class NewAddressActivity : AppCompatActivity() {
     private val locationViewModel: LocationViewModel by viewModels {
         ViewModelFactoryProvider.locationFactory(this)
     }
+    private var addressId: Long? = null
+    private var editingAddress: AddressResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,12 +80,44 @@ class NewAddressActivity : AppCompatActivity() {
 
         locationViewModel.loadProvinces()
 
-        binding.toolbarNewShippingAddress.toolbarTitle.text = "Add your new address"
+        addressId = intent
+            .getLongExtra("addressId", -1L)
+            .takeIf { it != -1L }
+
+        val isEditMode = addressId != null
+
+        val title: String
+        val saveBtnTxt: String
+
+        if (isEditMode) {
+            observeUpdateState()
+            title = "Edit Your Address"
+            saveBtnTxt = "UPDATE ADDRESS"
+            binding.deleteLine.visibility = View.VISIBLE
+            binding.deleteBtn.visibility = View.VISIBLE
+        } else {
+            title = "Add Your New Address"
+            saveBtnTxt = "SAVE"
+            binding.deleteLine.visibility = View.GONE
+            binding.deleteBtn.visibility = View.GONE
+        }
+
+        binding.deleteIcon.imageTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(this, R.color.esewa_red))
+        binding.toolbarNewShippingAddress.toolbarTitle.text = title
         binding.toolbarNewShippingAddress.toolbarIcon.setImageResource(R.drawable.ic_close)
         binding.toolbarNewShippingAddress.toolbarIcon.setBackgroundResource(R.drawable.bg_faq_question)
+
         binding.toolbarNewShippingAddress.backBtn.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+
+        binding.saveBtn.text = saveBtnTxt
+
+        binding.deleteBtn.setOnClickListener {
+            deleteAddressDialog()
+        }
+
         binding.toolbarNewShippingAddress.toolbarIcon.setOnClickListener {
 
             binding.etFName.text?.clear()
@@ -89,6 +128,17 @@ class NewAddressActivity : AppCompatActivity() {
             binding.switchShippingAddress.isChecked = false
             binding.switchBillingAddress.isChecked = false
             binding.landmark.text.clear()
+            binding.postalCode.text.clear()
+        }
+
+        if (addressId != null) {
+            addressViewModel.getAddress(addressId!!) { address ->
+
+                runOnUiThread {
+                    editingAddress = address
+                    populateAddressForm(address)
+                }
+            }
         }
 
         binding.chooseOnMap.setOnClickListener {
@@ -207,14 +257,24 @@ class NewAddressActivity : AppCompatActivity() {
                         landmark = landmark
                     )
 
-                    addressViewModel.createAddress(
-                        request = request,
-                        onSuccess = {
-                            Toast.makeText(this, "Address saved successfully", Toast.LENGTH_SHORT)
-                                .show()
-                            finish()
-                        }
-                    )
+                    if (addressId == null){
+                        addressViewModel.createAddress(
+                            request = request,
+                            onSuccess = {
+                                Toast.makeText(this, "Address saved successfully", Toast.LENGTH_SHORT).show()
+                                finish()
+                            }
+                        )
+                    } else {
+                        addressViewModel.updateAddress(
+                            id = addressId!!,
+                            request = request,
+                            onSuccess = {
+                                Toast.makeText(this, "Address updated successfully", Toast.LENGTH_SHORT).show()
+                                finish()
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -282,7 +342,7 @@ class NewAddressActivity : AppCompatActivity() {
 
                 override fun onItemSelected(
                     parent: android.widget.AdapterView<*>?,
-                    view: android.view.View?,
+                    view: View?,
                     position: Int,
                     id: Long
                 ) {
@@ -341,9 +401,14 @@ class NewAddressActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                addressViewModel.hasAddresses().collect { exists ->
+                addressViewModel.uiState.collect { state ->
 
-                    binding.switchShippingAddress.isChecked = !exists
+                    if (state is ShippingUiState.Success) {
+                        if (addressId == null) {
+                            binding.switchShippingAddress.isChecked =
+                                state.shippingData.isEmpty()
+                        }
+                    }
                 }
             }
         }
@@ -411,4 +476,119 @@ class NewAddressActivity : AppCompatActivity() {
         }
     }
 
+    private fun populateAddressForm(address: AddressResponse) {
+        editingAddress = address
+
+        binding.etFName.setText(address.fullName)
+        binding.etPhone.setText(address.phone)
+        binding.etAddress.setText(address.addressName)
+        binding.postalCode.setText(address.postalCode)
+        binding.landmark.setText(address.landmark ?: "")
+
+        when (address.label) {
+            "Home" -> binding.addrLabelGroup.check(R.id.rbHome)
+            "Office" -> binding.addrLabelGroup.check(R.id.rbOffice)
+            "Other" -> binding.addrLabelGroup.check(R.id.rbOther)
+        }
+
+        binding.switchShippingAddress.isChecked = address.isDefaultAddress
+        binding.switchBillingAddress.isChecked = address.isBillingAddress
+
+        lifecycleScope.launch {
+            val province = locationViewModel.provinces.first { it.isNotEmpty() }
+
+            val provinceIndex = province.indexOfFirst {
+                it.name.equals(
+                    address.province,
+                    ignoreCase = true
+                )
+            }
+
+            if (provinceIndex == -1) return@launch
+
+            binding.province.setSelection(provinceIndex + 1)
+
+            val districts = locationViewModel.districts.first { it.isNotEmpty() }
+
+            val districtIndex = districts.indexOfFirst {
+                it.name.equals(
+                    address.district,
+                    ignoreCase = true
+                )
+            }
+
+            if (districtIndex != -1) {
+                binding.district.setSelection(districtIndex + 1)
+            }
+        }
+    }
+
+    private fun observeUpdateState() {
+
+        lifecycleScope.launch {
+
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                addressViewModel.uiState.collect { state ->
+
+                    when (state) {
+
+                        ShippingUiState.Loading -> {
+                            showLoading()
+                        }
+
+                        is ShippingUiState.Success -> {
+                            hideLoading()
+                        }
+
+                        is ShippingUiState.Error -> {
+                            hideLoading()
+
+                            Toast.makeText(this@NewAddressActivity, state.message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showLoading() {
+        binding.loadingOverlay.visibility = View.VISIBLE
+    }
+
+    private fun hideLoading() {
+        binding.loadingOverlay.visibility = View.GONE
+    }
+
+    private fun deleteAddressDialog(){
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle("Do you want to delete this address?")
+            .setNegativeButton("No", null)
+            .setPositiveButton("Yes") { _, _ ->
+
+                val id = addressId
+
+                if (id != null) {
+                    addressViewModel.deleteAddress(
+                        id = id,
+                        onSuccess = {
+                            finish()
+                        }
+                    )
+                }
+            }
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE)
+                .setTextColor(ContextCompat.getColor(this, R.color.green)
+                )
+
+            dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(this, R.color.esewa_red)
+            )
+        }
+
+        dialog.show()
+    }
 }

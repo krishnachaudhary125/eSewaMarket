@@ -32,7 +32,7 @@ fun ShippingAddressEmpty(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
             .background(
                 color = Color.White,
                 shape = RoundedCornerShape(16.dp)

@@ -11,9 +11,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.eSewaMarket.data.repository.UserSessionRepository
 import com.example.eSewaMarket.ui.compose.shippingAddress.ShippingAddressScreen
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
-import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
+import com.example.eSewaMarket.ui.compose.shippingAddress.AddressViewModel
 import com.example.eSewaMarket.utils.AuthNavigator
-import kotlin.collections.emptyList
 import kotlin.getValue
 
 class ShippingAddressActivity : AppCompatActivity() {
@@ -33,30 +32,40 @@ class ShippingAddressActivity : AppCompatActivity() {
         addressViewModel.getAddresses()
 
         setContent {
-
-            val addresses by addressViewModel.addresses
-                .collectAsStateWithLifecycle(
-                    initialValue = emptyList()
-                )
+            val uiState by addressViewModel.uiState
+                .collectAsStateWithLifecycle()
 
             ShippingAddressScreen (
-                shippingAddresses = addresses,
+                uiState = uiState,
                 onBackClick = {
                     onBackPressedDispatcher
                         .onBackPressed()
                 },
-                noOfAddress = addresses.size,
                 addAddressNow = {
                     val intent = Intent(this, NewAddressActivity::class.java)
                     startActivity(intent)
                 },
                 onDeleteClick = {},
-                onEditClick = {},
+                onEditClick = { addressId ->
+                    val intent = Intent(this, NewAddressActivity::class.java).apply {
+                        putExtra("addressId", addressId)
+                    }
+                    startActivity(intent)
+                },
                 onAddAddressClick = {
                     val intent = Intent(this, NewAddressActivity::class.java)
                     startActivity(intent)
+                },
+                onRetry = {
+                    addressViewModel.retry()
                 }
             )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        addressViewModel.getAddresses()
     }
 }

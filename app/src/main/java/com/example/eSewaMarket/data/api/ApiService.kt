@@ -17,10 +17,12 @@ import com.example.eSewaMarket.data.models.UserResponse
 import com.example.eSewaMarket.data.models.UserSyncRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -109,6 +111,19 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("id") id: Long
     ): AddressResponse
+
+    @PUT("addresses/{id}")
+    suspend fun updateAddress(
+        @Header("Authorization") token: String,
+        @Path("id") id: Long,
+        @Body request: AddressRequest
+    ): AddressResponse
+
+    @DELETE("addresses/{id}")
+    suspend fun deleteAddress(
+        @Header("Authorization") token: String,
+        @Path("id") id: Long
+    )
 
     @GET("locations/provinces")
     suspend fun getProvinces(): List<ProvinceResponse>
