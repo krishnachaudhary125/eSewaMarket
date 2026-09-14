@@ -29,6 +29,7 @@ import com.example.eSewaMarket.ui.viewmodel.LocationViewModel
 import com.example.eSewaMarket.utils.LocationPermissionHandler
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -109,6 +110,9 @@ class NewAddressActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
         binding.saveBtn.text = saveBtnTxt
+        binding.deleteBtn.setOnClickListener {
+            deleteAddressDialog()
+        }
         binding.toolbarNewShippingAddress.toolbarIcon.setOnClickListener {
 
             binding.etFName.text?.clear()
@@ -549,5 +553,37 @@ class NewAddressActivity : AppCompatActivity() {
 
     private fun hideLoading() {
         binding.loadingOverlay.visibility = View.GONE
+    }
+
+    private fun deleteAddressDialog(){
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle("Do you want to delete this address?")
+            .setNegativeButton("No", null)
+            .setPositiveButton("Yes") { _, _ ->
+
+                val id = addressId
+
+                if (id != null) {
+                    addressViewModel.deleteAddress(
+                        id = id,
+                        onSuccess = {
+                            finish()
+                        }
+                    )
+                }
+            }
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE)
+                .setTextColor(ContextCompat.getColor(this, R.color.green)
+                )
+
+            dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(this, R.color.esewa_red)
+            )
+        }
+
+        dialog.show()
     }
 }

@@ -146,6 +146,43 @@ class AddressViewModel(
         }
     }
 
+    fun deleteAddress(
+        id: Long,
+        onSuccess: () -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                _uiState.value = ShippingUiState.Loading
+
+                minimumLoadingTime {
+                    repository
+                        .deleteAddress(id = id)
+                        .getOrThrow()
+                }
+
+                addresses = addresses.filter {
+                    it.id != id
+                }
+
+                _uiState.value = ShippingUiState.Success(
+                    shippingData = addresses
+                )
+
+                onSuccess()
+
+            } catch (e: CancellationException) {
+                throw e
+
+            }catch (e: Exception) {
+
+                _uiState.value = ShippingUiState.Error(
+                    message = e.message
+                        ?: "Failed to delete address"
+                )
+            }
+        }
+    }
+
     fun syncAddressWithServer() {
         viewModelScope.launch {
             try {

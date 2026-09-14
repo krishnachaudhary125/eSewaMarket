@@ -7,10 +7,7 @@ import com.example.eSewaMarket.data.local.entity.AddressEntity
 import com.example.eSewaMarket.data.models.AddressRequest
 import com.example.eSewaMarket.data.models.AddressResponse
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.tasks.await
 
 class AddressRepository(
@@ -183,7 +180,6 @@ class AddressRepository(
     }
 
     suspend fun updateAddress(
-
         id: Long,
         request: AddressRequest
     ): Result<AddressResponse> {
@@ -195,6 +191,22 @@ class AddressRepository(
                 request = request
             )
             Result.success(response)
+
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun deleteAddress(
+        id: Long
+    ): Result<Unit> {
+        return try {
+            apiService.deleteAddress(
+                token = getAuthToken(),
+                id = id
+            )
+
+            Result.success(Unit)
 
         } catch (e: Exception) {
             Result.failure(e)
