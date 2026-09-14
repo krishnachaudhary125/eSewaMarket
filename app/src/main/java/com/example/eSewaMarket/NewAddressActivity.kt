@@ -90,6 +90,7 @@ class NewAddressActivity : AppCompatActivity() {
             binding.switchShippingAddress.isChecked = false
             binding.switchBillingAddress.isChecked = false
             binding.landmark.text.clear()
+            binding.postalCode.text.clear()
         }
 
         binding.chooseOnMap.setOnClickListener {
