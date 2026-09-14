@@ -100,6 +100,50 @@ class AddressViewModel(
         }
     }
 
+    fun updateAddress(
+        id: Long,
+        request: AddressRequest,
+        onSuccess: (AddressResponse) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+
+            try {
+
+                val result = repository.updateAddress(
+                    id = id,
+                    request = request
+                )
+
+                val response = result.getOrThrow()
+
+                addresses = addresses.map { address ->
+
+                    if (address.id == id) {
+                        response
+                    } else {
+                        address
+                    }
+                }
+
+                _uiState.value = ShippingUiState.Success(
+                    shippingData = addresses
+                )
+
+                onSuccess(response)
+
+            } catch (e: CancellationException) {
+                throw e
+
+            } catch (e: Exception) {
+
+                _uiState.value = ShippingUiState.Error(
+                    message = e.message
+                        ?: "Failed to update address"
+                )
+            }
+        }
+    }
+
     fun syncAddressWithServer() {
         viewModelScope.launch {
             try {

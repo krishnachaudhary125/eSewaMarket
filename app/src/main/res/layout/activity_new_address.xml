@@ -532,6 +532,8 @@
                 android:layout_marginBottom="@dimen/margin_large"
                 android:background="@drawable/bg_sell"
                 android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:letterSpacing="0.1"
                 android:minHeight="48dp"
                 android:textColor="@color/white"

@@ -247,14 +247,24 @@ class NewAddressActivity : AppCompatActivity() {
                         landmark = landmark
                     )
 
-                    addressViewModel.createAddress(
-                        request = request,
-                        onSuccess = {
-                            Toast.makeText(this, "Address saved successfully", Toast.LENGTH_SHORT)
-                                .show()
-                            finish()
-                        }
-                    )
+                    if (addressId == null){
+                        addressViewModel.createAddress(
+                            request = request,
+                            onSuccess = {
+                                Toast.makeText(this, "Address saved successfully", Toast.LENGTH_SHORT).show()
+                                finish()
+                            }
+                        )
+                    } else {
+                        addressViewModel.updateAddress(
+                            id = addressId!!,
+                            request = request,
+                            onSuccess = {
+                                Toast.makeText(this, "Address updated successfully", Toast.LENGTH_SHORT).show()
+                                finish()
+                            }
+                        )
+                    }
                 }
             }
         }

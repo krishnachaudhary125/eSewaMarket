@@ -182,10 +182,22 @@ class AddressRepository(
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun hasAddresses(): Flow<Boolean> {
-        return userRepository.user.flatMapLatest { user ->
-            addressDao.hasAddresses(user.id)
+    suspend fun updateAddress(
+
+        id: Long,
+        request: AddressRequest
+    ): Result<AddressResponse> {
+
+        return try {
+            val response = apiService.updateAddress(
+                token = getAuthToken(),
+                id = id,
+                request = request
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }
