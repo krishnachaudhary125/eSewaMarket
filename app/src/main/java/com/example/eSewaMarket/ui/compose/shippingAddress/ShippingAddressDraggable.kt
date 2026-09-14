@@ -89,7 +89,8 @@ fun ShippingAddressDraggable(
                     .fillMaxHeight()
                     .padding(
                         start = 16.dp,
-                        end = 16.dp
+                        end = 16.dp,
+                        bottom = 16.dp
                     )
                     .background(
                         color = colorResource(id = R.color.light_300),
