@@ -111,12 +111,14 @@ class AddressViewModel(
 
                 _uiState.value = ShippingUiState.Loading
 
-                val result = repository.updateAddress(
-                    id = id,
-                    request = request
-                )
-
-                val response = result.getOrThrow()
+                val response = minimumLoadingTime {
+                    repository
+                        .updateAddress(
+                            id = id,
+                            request = request
+                        )
+                        .getOrThrow()
+                }
 
                 addresses = addresses.map { address ->
 
