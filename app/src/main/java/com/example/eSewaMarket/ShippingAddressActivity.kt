@@ -57,4 +57,10 @@ class ShippingAddressActivity : AppCompatActivity() {
             )
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        addressViewModel.getAddresses()
+    }
 }
