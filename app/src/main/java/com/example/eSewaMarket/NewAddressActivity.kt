@@ -19,6 +19,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.eSewaMarket.data.models.AddressRequest
+import com.example.eSewaMarket.data.models.AddressResponse
 import com.example.eSewaMarket.databinding.ActivityNewAddressBinding
 import com.example.eSewaMarket.ui.adapters.SpinnerAdapter
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
@@ -45,6 +46,7 @@ class NewAddressActivity : AppCompatActivity() {
         ViewModelFactoryProvider.locationFactory(this)
     }
     private var addressId: Long? = null
+    private var editingAddress: AddressResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,7 +99,8 @@ class NewAddressActivity : AppCompatActivity() {
             binding.deleteLine.visibility = View.GONE
             binding.deleteBtn.visibility = View.GONE
         }
-        binding.deleteIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this,R.color.esewa_red))
+        binding.deleteIcon.imageTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(this, R.color.esewa_red))
         binding.toolbarNewShippingAddress.toolbarTitle.text = title
         binding.toolbarNewShippingAddress.toolbarIcon.setImageResource(R.drawable.ic_close)
         binding.toolbarNewShippingAddress.toolbarIcon.setBackgroundResource(R.drawable.bg_faq_question)
@@ -116,6 +119,16 @@ class NewAddressActivity : AppCompatActivity() {
             binding.switchBillingAddress.isChecked = false
             binding.landmark.text.clear()
             binding.postalCode.text.clear()
+        }
+
+        if (addressId != null) {
+            addressViewModel.getAddress(addressId!!) { address ->
+
+                runOnUiThread {
+                    editingAddress = address
+                    populateAddressForm(address)
+                }
+            }
         }
 
         binding.chooseOnMap.setOnClickListener {
@@ -309,7 +322,7 @@ class NewAddressActivity : AppCompatActivity() {
 
                 override fun onItemSelected(
                     parent: android.widget.AdapterView<*>?,
-                    view: android.view.View?,
+                    view: View?,
                     position: Int,
                     id: Long
                 ) {
@@ -371,8 +384,10 @@ class NewAddressActivity : AppCompatActivity() {
                 addressViewModel.uiState.collect { state ->
 
                     if (state is ShippingUiState.Success) {
-                        binding.switchShippingAddress.isChecked =
-                            state.shippingData.isEmpty()
+                        if (addressId == null) {
+                            binding.switchShippingAddress.isChecked =
+                                state.shippingData.isEmpty()
+                        }
                     }
                 }
             }
@@ -431,6 +446,53 @@ class NewAddressActivity : AppCompatActivity() {
             val districtIndex = districts.indexOfFirst {
                 it.name.equals(
                     districtName,
+                    ignoreCase = true
+                )
+            }
+
+            if (districtIndex != -1) {
+                binding.district.setSelection(districtIndex + 1)
+            }
+        }
+    }
+
+    private fun populateAddressForm(address: AddressResponse) {
+        editingAddress = address
+
+        binding.etFName.setText(address.fullName)
+        binding.etPhone.setText(address.phone)
+        binding.etAddress.setText(address.addressName)
+        binding.postalCode.setText(address.postalCode)
+        binding.landmark.setText(address.landmark ?: "")
+
+        when (address.label) {
+            "Home" -> binding.addrLabelGroup.check(R.id.rbHome)
+            "Office" -> binding.addrLabelGroup.check(R.id.rbOffice)
+            "Other" -> binding.addrLabelGroup.check(R.id.rbOther)
+        }
+
+        binding.switchShippingAddress.isChecked = address.isDefaultAddress
+        binding.switchBillingAddress.isChecked = address.isBillingAddress
+
+        lifecycleScope.launch {
+            val province = locationViewModel.provinces.first { it.isNotEmpty() }
+
+            val provinceIndex = province.indexOfFirst {
+                it.name.equals(
+                    address.province,
+                    ignoreCase = true
+                )
+            }
+
+            if (provinceIndex == -1) return@launch
+
+            binding.province.setSelection(provinceIndex + 1)
+
+            val districts = locationViewModel.districts.first { it.isNotEmpty() }
+
+            val districtIndex = districts.indexOfFirst {
+                it.name.equals(
+                    address.district,
                     ignoreCase = true
                 )
             }
