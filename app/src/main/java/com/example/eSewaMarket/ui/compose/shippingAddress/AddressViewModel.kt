@@ -109,6 +109,8 @@ class AddressViewModel(
 
             try {
 
+                _uiState.value = ShippingUiState.Loading
+
                 val result = repository.updateAddress(
                     id = id,
                     request = request

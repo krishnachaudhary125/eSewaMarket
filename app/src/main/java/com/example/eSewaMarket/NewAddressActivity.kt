@@ -76,6 +76,7 @@ class NewAddressActivity : AppCompatActivity() {
         setupLocationDropdowns()
         setupDistrictDropdown()
         observeAddress()
+        observeUpdateState()
 
         locationViewModel.loadProvinces()
 
@@ -511,5 +512,42 @@ class NewAddressActivity : AppCompatActivity() {
                 binding.district.setSelection(districtIndex + 1)
             }
         }
+    }
+
+    private fun observeUpdateState() {
+
+        lifecycleScope.launch {
+
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                addressViewModel.uiState.collect { state ->
+
+                    when (state) {
+
+                        ShippingUiState.Loading -> {
+                            showLoading()
+                        }
+
+                        is ShippingUiState.Success -> {
+                            hideLoading()
+                        }
+
+                        is ShippingUiState.Error -> {
+                            hideLoading()
+
+                            Toast.makeText(this@NewAddressActivity, state.message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showLoading() {
+        binding.loadingOverlay.visibility = View.VISIBLE
+    }
+
+    private fun hideLoading() {
+        binding.loadingOverlay.visibility = View.GONE
     }
 }
