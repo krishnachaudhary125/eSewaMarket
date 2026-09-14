@@ -19,7 +19,7 @@ import com.example.eSewaMarket.databinding.ActivityLoginBinding
 import com.example.eSewaMarket.ui.factory.AddressViewModelFactory
 import com.example.eSewaMarket.ui.factory.CartViewModelFactory
 import com.example.eSewaMarket.ui.factory.FavouriteViewModelFactory
-import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
+import com.example.eSewaMarket.ui.compose.shippingAddress.AddressViewModel
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
 import com.example.eSewaMarket.ui.viewmodel.FavouriteViewModel
 import com.example.eSewaMarket.ui.viewmodel.UserViewModel

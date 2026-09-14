@@ -36,7 +36,8 @@ import com.example.eSewaMarket.ui.adapters.HotDealCategoryAdapter
 import com.example.eSewaMarket.ui.adapters.ProductAdapter
 import com.example.eSewaMarket.ui.adapters.RecommendedProductAdapter
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
-import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
+import com.example.eSewaMarket.ui.compose.shippingAddress.AddressViewModel
+import com.example.eSewaMarket.ui.compose.shippingAddress.ShippingUiState
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
 import com.example.eSewaMarket.ui.viewmodel.FavouriteViewModel
 import com.example.eSewaMarket.ui.viewmodel.HomeViewModel
@@ -112,6 +113,7 @@ class HomeFragment : Fragment() {
         setupRecommendedRecyclerView()
         observeData()
         observeAddress()
+        addressViewModel.getAddresses()
 
         binding.homeAppBar.notification.setOnClickListener {
             val intent = Intent(requireContext(), NotificationActivity::class.java)
@@ -120,7 +122,7 @@ class HomeFragment : Fragment() {
 
         binding.vpBanner.adapter = bannerAdapter
 
-        TabLayoutMediator(binding.tabLayoutIndicator, binding.vpBanner){_,_ -> }.attach()
+        TabLayoutMediator(binding.tabLayoutIndicator, binding.vpBanner) { _, _ -> }.attach()
 
         var animator: ValueAnimator? = null
         var btnExpanded = true
@@ -217,7 +219,8 @@ class HomeFragment : Fragment() {
 
     private fun setupCategoryRecyclerView() {
         binding.categoryRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = categoryAdapter
             isNestedScrollingEnabled = false
         }
@@ -235,17 +238,20 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupPopularBrandRecyclerView() {
-        binding.rvPopularBrand.layoutManager = GridLayoutManager(requireContext(), getProductSpanCount())
+        binding.rvPopularBrand.layoutManager =
+            GridLayoutManager(requireContext(), getProductSpanCount())
         binding.rvPopularBrand.adapter = popularBrandProductAdapter
     }
 
     private fun setupFeaturedProductRecyclerView() {
-        binding.rvFeaturedProduct.layoutManager =  GridLayoutManager(requireContext(), getProductSpanCount())
+        binding.rvFeaturedProduct.layoutManager =
+            GridLayoutManager(requireContext(), getProductSpanCount())
         binding.rvFeaturedProduct.adapter = featuredProductAdapter
     }
 
     private fun setupHotDealProductRecyclerView() {
-        binding.rvHotDealProduct.layoutManager = GridLayoutManager(requireContext(), getProductSpanCount())
+        binding.rvHotDealProduct.layoutManager =
+            GridLayoutManager(requireContext(), getProductSpanCount())
         binding.rvHotDealProduct.adapter = hotDealProductAdapter
     }
 
@@ -256,7 +262,8 @@ class HomeFragment : Fragment() {
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 return if (recommendedAdapter.isLoadingFooterShown() &&
-                    position == recommendedAdapter.itemCount - 1) spanCount else 1
+                    position == recommendedAdapter.itemCount - 1
+                ) spanCount else 1
             }
         }
 
@@ -339,7 +346,7 @@ class HomeFragment : Fragment() {
         return rows * getProductSpanCount()
     }
 
-    private fun createProductAdapter(): ProductAdapter{
+    private fun createProductAdapter(): ProductAdapter {
         return ProductAdapter(
             cartViewModel = cartViewModel,
             favouriteViewModel = favouriteViewModel,
@@ -350,9 +357,9 @@ class HomeFragment : Fragment() {
             },
             onAddToCartClick = { product ->
                 viewLifecycleOwner.lifecycleScope.launch {
-                    if (authNavigator.isLoggedIn()){
+                    if (authNavigator.isLoggedIn()) {
                         cartViewModel.addToCart(product)
-                    }else{
+                    } else {
                         val coordinator = requireActivity().findViewById<View>(R.id.main)
                         val bottomNav = requireActivity().findViewById<View>(R.id.bottomNav)
 
@@ -371,7 +378,7 @@ class HomeFragment : Fragment() {
             },
             onRemoveOneFromCartClick = { productId ->
                 viewLifecycleOwner.lifecycleScope.launch {
-                    if (authNavigator.isLoggedIn()){
+                    if (authNavigator.isLoggedIn()) {
                         cartViewModel.removeOneFromCart(productId)
                     }
                 }
@@ -399,7 +406,7 @@ class HomeFragment : Fragment() {
         )
     }
 
-    private fun createRecommendedProductAdapter(): RecommendedProductAdapter{
+    private fun createRecommendedProductAdapter(): RecommendedProductAdapter {
         return RecommendedProductAdapter(
             cartViewModel = cartViewModel,
             favouriteViewModel = favouriteViewModel,
@@ -410,9 +417,9 @@ class HomeFragment : Fragment() {
             },
             onAddToCartClick = { product ->
                 viewLifecycleOwner.lifecycleScope.launch {
-                    if (authNavigator.isLoggedIn()){
+                    if (authNavigator.isLoggedIn()) {
                         cartViewModel.addToCart(product)
-                    }else{
+                    } else {
                         val coordinator = requireActivity().findViewById<View>(R.id.main)
                         val bottomNav = requireActivity().findViewById<View>(R.id.bottomNav)
 
@@ -431,7 +438,7 @@ class HomeFragment : Fragment() {
             },
             onRemoveOneFromCartClick = { productId ->
                 viewLifecycleOwner.lifecycleScope.launch {
-                    if (authNavigator.isLoggedIn()){
+                    if (authNavigator.isLoggedIn()) {
                         cartViewModel.removeOneFromCart(productId)
                     }
                 }
@@ -463,12 +470,16 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                addressViewModel.hasAddresses().collect { exists ->
+                addressViewModel.uiState.collect { state ->
 
-                    if (exists) {
-                        binding.setAddressLayout.visibility = View.GONE
-                    } else {
-                        binding.setAddressLayout.visibility = View.VISIBLE
+                    if (state is ShippingUiState.Success) {
+
+                        binding.setAddressLayout.visibility =
+                            if (state.shippingData.isEmpty()) {
+                                View.VISIBLE
+                            } else {
+                                View.GONE
+                            }
                     }
                 }
             }

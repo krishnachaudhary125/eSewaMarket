@@ -20,7 +20,8 @@ import com.example.eSewaMarket.data.models.AddressRequest
 import com.example.eSewaMarket.databinding.ActivityNewAddressBinding
 import com.example.eSewaMarket.ui.adapters.SpinnerAdapter
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
-import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
+import com.example.eSewaMarket.ui.compose.shippingAddress.AddressViewModel
+import com.example.eSewaMarket.ui.compose.shippingAddress.ShippingUiState
 import com.example.eSewaMarket.ui.viewmodel.LocationViewModel
 import com.example.eSewaMarket.utils.LocationPermissionHandler
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -341,9 +342,12 @@ class NewAddressActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                addressViewModel.hasAddresses().collect { exists ->
+                addressViewModel.uiState.collect { state ->
 
-                    binding.switchShippingAddress.isChecked = !exists
+                    if (state is ShippingUiState.Success) {
+                        binding.switchShippingAddress.isChecked =
+                            state.shippingData.isEmpty()
+                    }
                 }
             }
         }
@@ -410,5 +414,4 @@ class NewAddressActivity : AppCompatActivity() {
             }
         }
     }
-
 }

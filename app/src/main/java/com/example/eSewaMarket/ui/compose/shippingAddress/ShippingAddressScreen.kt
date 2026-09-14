@@ -28,16 +28,18 @@ import androidx.compose.ui.unit.sp
 import com.example.eSewaMarket.R
 import com.example.eSewaMarket.data.models.AddressResponse
 import com.example.eSewaMarket.ui.compose.AppToolBar
+import com.example.eSewaMarket.ui.compose.component.CommonError
+import com.example.eSewaMarket.ui.compose.component.CommonLoading
 
 @Composable
 fun ShippingAddressScreen(
-    shippingAddresses: List<AddressResponse>,
+    uiState: ShippingUiState,
     onBackClick: () -> Unit,
-    noOfAddress: Int,
     addAddressNow: () -> Unit,
     onDeleteClick: () -> Unit,
     onEditClick: () -> Unit,
-    onAddAddressClick: () -> Unit
+    onAddAddressClick: () -> Unit,
+    onRetry: () -> Unit
 ) {
     Scaffold(
         containerColor = colorResource(id = R.color.background),
@@ -58,85 +60,100 @@ fun ShippingAddressScreen(
 
     ) { innerPadding ->
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxSize()
-                .padding(
-                    innerPadding
-                ),
-            contentAlignment = Alignment.TopStart
-        ) {
-            if (noOfAddress > 0) {
+        when (uiState) {
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                ) {
-
-                    items(
-                        items = shippingAddresses,
-                        key = { addresses ->
-                            addresses.id
-                        }
-                    ) { addresses ->
-
-                        ShippingAddressDraggable(
-                            onDeleteClick = {
-                                onDeleteClick()
-                            },
-                            onEditClick = {
-                                onEditClick()
-                            },
-                            fullName = addresses.fullName,
-                            label = addresses.label,
-                            addressName = "${addresses.addressName}, ${addresses.district} ${addresses.postalCode}",
-                            province = addresses.province
-                        )
-                    }
-                }
-
-            } else {
-
-                ShippingAddressEmpty(
-                    modifier = Modifier
-                        .padding(innerPadding),
-                    addAddressNow = addAddressNow
-                )
+            ShippingUiState.Loading -> {
+                CommonLoading()
             }
 
-            Button(
-                onClick = onAddAddressClick,
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.green),
-                    contentColor = Color.White
-                ),
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(
-                        bottom = 24.dp,
-                        end = 24.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+            is ShippingUiState.Success -> {
+                val data = uiState.shippingData
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxSize()
+                        .padding(
+                            innerPadding
+                        ),
+                    contentAlignment = Alignment.TopStart
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_plus),
-                        contentDescription = "Plus icon",
-                        tint = Color.Unspecified
-                    )
-                    Spacer(
-                        modifier = Modifier
-                            .width(8.dp)
-                    )
-                    Text(
-                        "ADD ADDRESS",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
-                    )
+                    if (data.isEmpty()) {
+
+                        ShippingAddressEmpty(
+                            modifier = Modifier,
+                            addAddressNow = addAddressNow
+                        )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                        ) {
+
+                            items(
+                                items = data,
+                                key = { addresses ->
+                                    addresses.id
+                                }
+                            ) { addresses ->
+
+                                ShippingAddressDraggable(
+                                    onDeleteClick = {
+                                        onDeleteClick()
+                                    },
+                                    onEditClick = {
+                                        onEditClick()
+                                    },
+                                    fullName = addresses.fullName,
+                                    label = addresses.label,
+                                    addressName = "${addresses.addressName}, ${addresses.district} ${addresses.postalCode}",
+                                    province = addresses.province
+                                )
+                            }
+                        }
+                        Button(
+                            onClick = onAddAddressClick,
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.green),
+                                contentColor = Color.White
+                            ),
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(
+                                    bottom = 24.dp,
+                                    end = 24.dp
+                                )
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_plus),
+                                    contentDescription = "Plus icon",
+                                    tint = Color.Unspecified
+                                )
+                                Spacer(
+                                    modifier = Modifier
+                                        .width(8.dp)
+                                )
+                                Text(
+                                    "ADD ADDRESS",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.sp
+                                )
+                            }
+                        }
+                    }
                 }
+            }
+
+            is ShippingUiState.Error -> {
+                CommonError(
+                    message = uiState.message,
+                    onRetry = onRetry
+                )
             }
         }
     }

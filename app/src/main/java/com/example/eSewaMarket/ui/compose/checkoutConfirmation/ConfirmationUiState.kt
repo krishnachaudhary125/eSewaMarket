@@ -1,7 +1,5 @@
 package com.example.eSewaMarket.ui.compose.checkoutConfirmation
 
-import com.example.eSewaMarket.data.models.ProductResponse
-
 sealed interface ConfirmationUiState {
 
     data object Loading : ConfirmationUiState
@@ -11,7 +9,6 @@ sealed interface ConfirmationUiState {
     ) : ConfirmationUiState
 
     data class Error(
-
         val message: String
     ) : ConfirmationUiState
 }

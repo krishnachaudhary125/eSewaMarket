@@ -14,10 +14,11 @@ import com.example.eSewaMarket.ui.compose.checkout.CheckoutData
 import com.example.eSewaMarket.ui.compose.checkout.CheckoutScreen
 import com.example.eSewaMarket.ui.compose.checkout.CheckoutViewModel
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
-import com.example.eSewaMarket.ui.viewmodel.AddressViewModel
+import com.example.eSewaMarket.ui.compose.shippingAddress.AddressViewModel
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
 import com.example.eSewaMarket.utils.AuthNavigator
 import com.example.eSewaMarket.data.models.PaymentOptions
+import com.example.eSewaMarket.ui.compose.shippingAddress.ShippingUiState
 import kotlin.getValue
 
 class CheckoutActivity : AppCompatActivity() {
@@ -57,15 +58,15 @@ class CheckoutActivity : AppCompatActivity() {
                     initialValue = 0.0
                 )
 
-            val addressExist by addressViewModel.hasAddresses()
-                .collectAsStateWithLifecycle(
-                    initialValue = false
-                )
+            val addressUiState by addressViewModel.uiState
+                .collectAsStateWithLifecycle()
 
-            val addresses by addressViewModel.addresses
-                .collectAsStateWithLifecycle(
-                    initialValue = emptyList()
-                )
+            val addresses = when (val state = addressUiState) {
+                is ShippingUiState.Success -> state.shippingData
+                else -> emptyList()
+            }
+
+            val addressExist = addresses.isNotEmpty()
 
             val shippingAddress = addresses.firstOrNull {
                 it.isDefaultAddress
@@ -106,18 +107,12 @@ class CheckoutActivity : AppCompatActivity() {
                 onProductClick = {},
 
                 onSetAddressClick = {
-                    val intent = Intent(
-                        this,
-                        NewAddressActivity::class.java
-                    )
+                    val intent = Intent(this, NewAddressActivity::class.java)
                     startActivity(intent)
                 },
 
                 chooseAddress = {
-                    val intent = Intent(
-                        this,
-                        ShippingAddressActivity::class.java
-                    )
+                    val intent = Intent(this, ShippingAddressActivity::class.java)
                     startActivity(intent)
                 },
 
