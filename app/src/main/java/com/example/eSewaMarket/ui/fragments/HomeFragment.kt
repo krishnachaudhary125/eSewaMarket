@@ -113,7 +113,6 @@ class HomeFragment : Fragment() {
         setupRecommendedRecyclerView()
         observeData()
         observeAddress()
-        addressViewModel.getAddresses()
 
         binding.homeAppBar.notification.setOnClickListener {
             val intent = Intent(requireContext(), NotificationActivity::class.java)
@@ -185,6 +184,11 @@ class HomeFragment : Fragment() {
         binding.setAddressBtn.setOnClickListener {
             startActivity(Intent(requireContext(), NewAddressActivity::class.java))
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        addressViewModel.getAddresses()
     }
 
     private fun initAdapters() {
