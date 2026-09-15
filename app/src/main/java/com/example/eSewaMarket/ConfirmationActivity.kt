@@ -87,8 +87,7 @@ class ConfirmationActivity : AppCompatActivity() {
                         is ConfirmationNavigationEvent.StartEsewaPayment -> {
                             val intent = Intent(this@ConfirmationActivity, EsewaPayment::class.java).apply {
                                 putExtra("orderNumber", event.order.orderNumber)
-                                putExtra("totalAmount", event.order.totalAmount)
-                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                                putExtra("grandTotal", event.order.totalAmount)
                             }
                             esewaLauncher.launch(intent)
                         }
