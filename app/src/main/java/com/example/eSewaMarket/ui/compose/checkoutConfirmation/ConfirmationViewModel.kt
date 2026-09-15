@@ -69,7 +69,7 @@ class ConfirmationViewModel(
                     PaymentOptions.CASH_ON_DELIVERY -> {
                         _orderedProducts.value = data.checkoutProducts
                         _placedOrder.value = order
-                        syncCartQuietly()
+                        clearCartQuietly()
                     }
 
                     PaymentOptions.ESEWA -> {
@@ -92,17 +92,22 @@ class ConfirmationViewModel(
         if (success) {
             _orderedProducts.value = confirmationData?.checkoutProducts.orEmpty()
             _placedOrder.value = order
-            viewModelScope.launch { syncCartQuietly() }
+            viewModelScope.launch {
+                clearCartQuietly()
+            }
         } else {
             showError("Payment was not completed. Please try again.")
         }
     }
 
-    private suspend fun syncCartQuietly() {
-        try {
-            cartRepository.syncCartWithServer()
-        } catch (e: Exception) {
-            Log.e("cart_sync", "Failed to sync cart.", e)
+    private fun clearCartQuietly() {
+        viewModelScope.launch {
+            try {
+                cartRepository.clearCart()
+
+            } catch (e: Exception) {
+                Log.e("clear_cart", "Failed to clear cart.", e)
+            }
         }
     }
 

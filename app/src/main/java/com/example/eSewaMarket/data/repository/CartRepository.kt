@@ -192,4 +192,9 @@ class CartRepository(
         val userId = currentUserId()
         return cartDao.getItemCount(userId)
     }
+
+    suspend fun clearCart(){
+        val userId = currentUserId()
+        cartDao.clearCart(userId)
+    }
 }
