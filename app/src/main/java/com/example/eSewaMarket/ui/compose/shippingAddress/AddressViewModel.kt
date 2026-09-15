@@ -175,11 +175,45 @@ class AddressViewModel(
             } catch (e: CancellationException) {
                 throw e
 
-            }catch (e: Exception) {
+            } catch (e: Exception) {
 
                 _uiState.value = ShippingUiState.Error(
                     message = e.message
                         ?: "Failed to delete address"
+                )
+            }
+        }
+    }
+
+    fun restoreAddress(
+        address: AddressResponse,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val request = AddressRequest(
+                    fullName = address.fullName,
+                    phone = address.phone,
+                    province = address.province,
+                    district = address.district,
+                    postalCode = address.postalCode,
+                    addressName = address.addressName,
+                    isDefaultAddress = address.isDefaultAddress,
+                    isBillingAddress = address.isBillingAddress,
+                    label = address.label,
+                    landmark = address.landmark
+                )
+
+                repository.createAddress(request)
+
+                getAddresses()
+
+                onSuccess()
+
+            } catch (e: Exception) {
+                onError(
+                    e.message ?: "Failed to restore address."
                 )
             }
         }
