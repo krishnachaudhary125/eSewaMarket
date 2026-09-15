@@ -261,7 +261,11 @@ fun CheckoutScreen(
                                         interactionSource = remember { MutableInteractionSource() },
                                         indication = ripple(),
                                         onClick = {
-                                            cashOnDelivery(data)
+                                            if (data.addressExist) {
+                                                cashOnDelivery(data)
+                                            } else {
+                                                showPromoSheetAddress = true
+                                            }
                                         }
                                     )
                                     .padding(horizontal = 16.dp, vertical = 24.dp),
@@ -311,7 +315,11 @@ fun CheckoutScreen(
                                         interactionSource = remember { MutableInteractionSource() },
                                         indication = ripple(),
                                         onClick = {
-                                            payWithEsewa(data)
+                                            if (data.addressExist) {
+                                                payWithEsewa(data)
+                                            } else {
+                                                showPromoSheetAddress = true
+                                            }
                                         }
                                     )
                                     .padding(horizontal = 16.dp, vertical = 24.dp),
