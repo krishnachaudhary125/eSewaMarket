@@ -9,11 +9,13 @@ import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.eSewaMarket.data.models.AddressResponse
 import com.example.eSewaMarket.data.repository.UserSessionRepository
 import com.example.eSewaMarket.ui.compose.shippingAddress.ShippingAddressScreen
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
 import com.example.eSewaMarket.ui.compose.shippingAddress.AddressViewModel
 import com.example.eSewaMarket.utils.AuthNavigator
+import com.example.eSewaMarket.utils.SnackBarUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlin.getValue
 
@@ -47,8 +49,8 @@ class ShippingAddressActivity : AppCompatActivity() {
                     val intent = Intent(this, NewAddressActivity::class.java)
                     startActivity(intent)
                 },
-                onDeleteClick = { addressId ->
-                    deleteAddressDialog(addressId)
+                onDeleteClick = { address ->
+                    deleteAddressDialog(address)
                 },
                 onEditClick = { addressId ->
                     val intent = Intent(this, NewAddressActivity::class.java).apply {
@@ -74,7 +76,7 @@ class ShippingAddressActivity : AppCompatActivity() {
     }
 
     private fun deleteAddressDialog(
-        addressId: Long
+        address: AddressResponse
     ) {
         val dialog = MaterialAlertDialogBuilder(this)
             .setTitle("Do you want to delete this address?")
@@ -82,8 +84,37 @@ class ShippingAddressActivity : AppCompatActivity() {
             .setPositiveButton("Yes") { _, _ ->
 
                 addressViewModel.deleteAddress(
-                    id = addressId,
-                    onSuccess = {}
+                    id = address.id,
+                    onSuccess = {
+                        addressViewModel.getAddresses()
+
+                        SnackBarUtil.show(
+                            view = findViewById(android.R.id.content),
+                            context = this@ShippingAddressActivity,
+                            text = "Address has been deleted.",
+                            duration = 5000,
+                            actionText = "UNDO"
+                        ) {
+
+                            addressViewModel.restoreAddress(
+                                address = address,
+                                onSuccess = {
+                                    SnackBarUtil.show(
+                                        view = findViewById(android.R.id.content),
+                                        context = this@ShippingAddressActivity,
+                                        text = "Address restored successfully."
+                                    )
+                                },
+                                onError = { error ->
+                                    SnackBarUtil.show(
+                                        view = findViewById(android.R.id.content),
+                                        context = this@ShippingAddressActivity,
+                                        text = error
+                                    )
+                                }
+                            )
+                        }
+                    }
                 )
             }
             .create()
