@@ -1,5 +1,9 @@
 package com.example.eSewaMarket.data.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class AddressResponse (
 
     val id: Long,
@@ -13,4 +17,4 @@ data class AddressResponse (
     val isBillingAddress: Boolean,
     val label: String?,
     val landmark: String?
-)
+): Parcelable

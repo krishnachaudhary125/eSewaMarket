@@ -3,6 +3,7 @@ package com.example.eSewaMarket
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
@@ -56,7 +57,7 @@ class ShippingAddressActivity : AppCompatActivity() {
                     val intent = Intent(this, NewAddressActivity::class.java).apply {
                         putExtra("addressId", addressId)
                     }
-                    startActivity(intent)
+                    editAddressLauncher.launch(intent)
                 },
                 onAddAddressClick = {
                     val intent = Intent(this, NewAddressActivity::class.java)
@@ -132,5 +133,45 @@ class ShippingAddressActivity : AppCompatActivity() {
         }
 
         dialog.show()
+    }
+
+    @Suppress("DEPRECATION")
+    private val editAddressLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+
+        if (result.resultCode == RESULT_OK) {
+            val deleted = result.data?.getParcelableExtra<AddressResponse>("deletedAddress")
+            if (deleted != null) {
+                addressViewModel.getAddresses()
+
+                SnackBarUtil.show(
+                    view = findViewById(android.R.id.content),
+                    context = this,
+                    text = "Address has been deleted.",
+                    duration = 5000,
+                    actionText = "UNDO"
+                ) {
+                    addressViewModel.restoreAddress(
+                        address = deleted,
+                        onSuccess = {
+                            addressViewModel.getAddresses()
+                            SnackBarUtil.show(
+                                view = findViewById(android.R.id.content),
+                                context = this,
+                                text = "Address restored successfully."
+                            )
+                        },
+                        onError = { error ->
+                            SnackBarUtil.show(
+                                view = findViewById(android.R.id.content),
+                                context = this,
+                                text = error
+                            )
+                        }
+                    )
+                }
+            }
+        }
     }
 }
