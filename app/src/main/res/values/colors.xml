@@ -25,4 +25,6 @@
     <color name="image_bg_color">#F0F0F0</color>
     <color name="fade_white">#F5F5F5</color>
     <color name="esewa_red">#C0392B</color>
+    <color name="bg_yellow">#FFFDE8</color>
+    <color name="esewa_status_yellow">#E5D538</color>
 </resources>
