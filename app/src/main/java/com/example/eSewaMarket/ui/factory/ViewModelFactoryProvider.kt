@@ -72,4 +72,10 @@ object ViewModelFactoryProvider {
             )
         )
     }
+
+    fun orderFactory(context: Context): OrderViewModelFactory {
+        return OrderViewModelFactory(
+            repository = OrderRepository(RetrofitInstance.api)
+        )
+    }
 }

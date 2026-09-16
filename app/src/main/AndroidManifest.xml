@@ -57,6 +57,8 @@
         <activity android:name=".ConfirmationActivity"/>
         <activity android:name=".ui.payment.EsewaPayment"
             android:exported="false"/>
+        <activity android:name=".OrderActivity"/>
+        <activity android:name=".OrderProductDetailActivity"/>
     </application>
 
 </manifest>

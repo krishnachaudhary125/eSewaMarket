@@ -2,6 +2,7 @@ package com.example.eSewaMarket.data.repository
 
 import com.example.eSewaMarket.data.api.ApiService
 import com.example.eSewaMarket.data.models.CreateOrderRequest
+import com.example.eSewaMarket.data.models.OrderDetailResponse
 import com.example.eSewaMarket.data.models.OrderResponse
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
@@ -46,5 +47,13 @@ class OrderRepository(
 
             Result.failure(e)
         }
+    }
+
+    suspend fun getAllOrders(): List<OrderDetailResponse> {
+        val token = getAuthToken()
+
+        return apiService.getAllOrders(
+            token = token
+        )
     }
 }
