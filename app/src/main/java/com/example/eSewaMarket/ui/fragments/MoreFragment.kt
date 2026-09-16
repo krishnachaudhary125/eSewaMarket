@@ -21,6 +21,7 @@ import com.example.eSewaMarket.EsewaMarketApplication
 import com.example.eSewaMarket.FaqActivity
 import com.example.eSewaMarket.LoginActivity
 import com.example.eSewaMarket.MyReturnActivity
+import com.example.eSewaMarket.OrderActivity
 import com.example.eSewaMarket.R
 import com.example.eSewaMarket.RegisterActivity
 import com.example.eSewaMarket.ShippingAddressActivity
@@ -103,6 +104,11 @@ class MoreFragment : Fragment() {
 
         binding.shippingAddress.setOnClickListener {
             val intent = Intent(requireContext(), ShippingAddressActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.myOrder.setOnClickListener {
+            val intent = Intent(requireContext(), OrderActivity::class.java)
             startActivity(intent)
         }
 
