@@ -9,6 +9,7 @@ import com.example.eSewaMarket.data.models.ProductResponse
 import com.example.eSewaMarket.data.models.FavouriteToggles
 import com.example.eSewaMarket.data.models.HomeResponse
 import com.example.eSewaMarket.data.models.HotDeal
+import com.example.eSewaMarket.data.models.OrderDetailResponse
 import com.example.eSewaMarket.data.models.OrderResponse
 import com.example.eSewaMarket.data.models.PageResponse
 import com.example.eSewaMarket.data.models.Product
@@ -136,4 +137,9 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: CreateOrderRequest
     ): OrderResponse
+
+    @GET("orders")
+    suspend fun getAllOrders(
+        @Header("Authorization") token: String
+    ): List<OrderDetailResponse>
 }
