@@ -112,7 +112,7 @@ fun OrderScreen(
                                 OrderCard(
                                     onOrderItemClick = {},
                                     orderNo = order.orderNumber,
-                                    date = order.createdAt,
+                                    date = formatOrderDate(order.createdAt),
                                     totalNoOfProducts = order.products.size,
                                     status = order.orderStatus == "COMPLETED",
                                     products = order.products,
