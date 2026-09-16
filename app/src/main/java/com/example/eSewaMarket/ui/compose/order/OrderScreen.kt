@@ -50,7 +50,13 @@ fun OrderScreen(
                     )
                 },
                 bottomContent = {
-                    
+                    TabCard(
+                        tabs = tabs,
+                        selectedTabIndex = selectedTabIndex,
+                        onTabSelected = { index ->
+                            selectedTabIndex = index
+                        }
+                    )
                 }
             )
         }
