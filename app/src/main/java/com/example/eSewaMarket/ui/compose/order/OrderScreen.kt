@@ -115,7 +115,8 @@ fun OrderScreen(
                                     date = order.createdAt,
                                     totalNoOfProducts = order.products.size,
                                     status = order.orderStatus == "COMPLETED",
-                                    products = order.products
+                                    products = order.products,
+                                    totalPrice = order.totalAmount
                                 )
                             }
                         }
