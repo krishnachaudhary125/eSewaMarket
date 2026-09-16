@@ -3,6 +3,7 @@ package com.example.eSewaMarket.ui.compose.order
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.eSewaMarket.data.repository.OrderRepository
+import com.example.eSewaMarket.utils.minimumLoadingTime
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +25,9 @@ class OrderViewModel(
             _uiState.value = OrderUiState.Loading
 
             try {
-                val orders = orderRepository.getAllOrders()
+                val orders = minimumLoadingTime {
+                    orderRepository.getAllOrders()
+                }
 
                 _uiState.value = OrderUiState.Success(
                     orders = orders
