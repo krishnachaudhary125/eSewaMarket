@@ -26,6 +26,7 @@ import com.example.eSewaMarket.R
 import com.example.eSewaMarket.data.models.FavouriteResponse
 import com.example.eSewaMarket.data.repository.UserSessionRepository
 import com.example.eSewaMarket.ui.compose.favourite.FavouriteFragmentScreen
+import com.example.eSewaMarket.ui.compose.favourite.FavouriteUiState
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
 import com.example.eSewaMarket.ui.viewmodel.FavouriteViewModel
@@ -52,7 +53,11 @@ class FavouriteFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             userSessionRepository = UserSessionRepository(requireContext())
             authNavigator = AuthNavigator(userSessionRepository)
+
             setContent {
+
+                val uiState by favouriteViewModel.uiState
+                    .collectAsStateWithLifecycle()
 
                 var isLoggedIn by remember {
                     mutableStateOf(false)
@@ -60,28 +65,38 @@ class FavouriteFragment : Fragment() {
 
                 LaunchedEffect(Unit) {
                     isLoggedIn = authNavigator.isLoggedIn()
+                    favouriteViewModel.getFavourites()
                 }
 
                 var selectedIds by remember {
                     mutableStateOf<Set<Long>>(emptySet())
                 }
 
-                val products by favouriteViewModel.favouriteProducts()
-                    .collectAsStateWithLifecycle(
-                        initialValue = emptyList()
-                    )
+                val products = when (val state = uiState) {
+
+                    is FavouriteUiState.Success -> {
+                        state.favouriteData.products
+                    }
+
+                    else -> {
+                        emptyList()
+                    }
+                }
 
                 val allSelected =
-                    products.isNotEmpty() && selectedIds.size == products.size
+                    products.isNotEmpty() &&
+                            selectedIds.size == products.size
 
                 val selectedCount = selectedIds.size
 
                 val cartCount by cartViewModel
                     .cartCount()
-                    .collectAsStateWithLifecycle(initialValue = 0)
+                    .collectAsStateWithLifecycle(
+                        initialValue = 0
+                    )
 
                 FavouriteFragmentScreen(
-                    products = products,
+                    uiState = uiState,
                     isLoggedIn = isLoggedIn,
                     selectedIds = selectedIds,
                     allSelected = allSelected,
@@ -211,6 +226,9 @@ class FavouriteFragment : Fragment() {
                                 throw e
                             }
                         }
+                    },
+                    onRetry = {
+                        favouriteViewModel.retry()
                     }
                 )
             }

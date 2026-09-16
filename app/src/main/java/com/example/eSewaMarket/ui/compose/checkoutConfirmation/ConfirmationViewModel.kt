@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.eSewaMarket.data.models.OrderResponse
 import com.example.eSewaMarket.data.models.PaymentOptions
+import com.example.eSewaMarket.data.models.ProductResponse
 import com.example.eSewaMarket.data.repository.CartRepository
 import com.example.eSewaMarket.data.repository.OrderRepository
 import com.example.eSewaMarket.utils.minimumLoadingTime
@@ -33,6 +34,9 @@ class ConfirmationViewModel(
     private val _navigationEvent = MutableSharedFlow<ConfirmationNavigationEvent>()
     val navigationEvent: SharedFlow<ConfirmationNavigationEvent> = _navigationEvent.asSharedFlow()
 
+    private val _orderedProducts = MutableStateFlow<List<ProductResponse>>(emptyList())
+    val orderedProducts: StateFlow<List<ProductResponse>> = _orderedProducts.asStateFlow()
+
     private var confirmationData: ConfirmationData? = null
     private var pendingEsewaOrder: OrderResponse? = null
 
@@ -40,7 +44,7 @@ class ConfirmationViewModel(
         this.confirmationData = confirmationData
         viewModelScope.launch {
             _uiState.value = ConfirmationUiState.Loading
-            minimumLoadingTime { Unit }
+            minimumLoadingTime { }
             _uiState.value = ConfirmationUiState.Success(confirmationData = confirmationData)
         }
     }
@@ -63,8 +67,9 @@ class ConfirmationViewModel(
             result.onSuccess { order ->
                 when (data.paymentOption) {
                     PaymentOptions.CASH_ON_DELIVERY -> {
+                        _orderedProducts.value = data.checkoutProducts
                         _placedOrder.value = order
-                        syncCartQuietly()
+                        clearCartQuietly()
                     }
 
                     PaymentOptions.ESEWA -> {
@@ -72,7 +77,6 @@ class ConfirmationViewModel(
                         _navigationEvent.emit(
                             ConfirmationNavigationEvent.StartEsewaPayment(order)
                         )
-                        // cart NOT cleared here — only after payment is confirmed, below
                     }
                 }
             }.onFailure { exception ->
@@ -86,18 +90,24 @@ class ConfirmationViewModel(
         pendingEsewaOrder = null
 
         if (success) {
+            _orderedProducts.value = confirmationData?.checkoutProducts.orEmpty()
             _placedOrder.value = order
-            viewModelScope.launch { syncCartQuietly() }
+            viewModelScope.launch {
+                clearCartQuietly()
+            }
         } else {
             showError("Payment was not completed. Please try again.")
         }
     }
 
-    private suspend fun syncCartQuietly() {
-        try {
-            cartRepository.syncCartWithServer()
-        } catch (e: Exception) {
-            Log.e("cart_sync", "Failed to sync cart.", e)
+    private fun clearCartQuietly() {
+        viewModelScope.launch {
+            try {
+                cartRepository.clearCart()
+
+            } catch (e: Exception) {
+                Log.e("clear_cart", "Failed to clear cart.", e)
+            }
         }
     }
 

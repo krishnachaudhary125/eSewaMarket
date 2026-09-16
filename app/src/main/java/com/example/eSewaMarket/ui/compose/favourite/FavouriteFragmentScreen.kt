@@ -1,6 +1,5 @@
 package com.example.eSewaMarket.ui.compose.favourite
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,8 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,8 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -31,9 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.eSewaMarket.R
 import androidx.compose.ui.unit.sp
@@ -42,10 +36,12 @@ import com.example.eSewaMarket.data.models.FavouriteResponse
 import com.example.eSewaMarket.ui.compose.AppToolBar
 import com.example.eSewaMarket.ui.compose.CleanIconButton
 import com.example.eSewaMarket.ui.compose.CustomCheckbox
+import com.example.eSewaMarket.ui.compose.component.CommonError
+import com.example.eSewaMarket.ui.compose.component.CommonLoading
 
 @Composable
 fun FavouriteFragmentScreen(
-    products: List<FavouriteResponse>,
+    uiState: FavouriteUiState,
     isLoggedIn: Boolean,
     onBackClick: () -> Unit,
     noOfItems: Int,
@@ -61,260 +57,226 @@ fun FavouriteFragmentScreen(
     onAddToCartClick: (FavouriteResponse) -> Unit,
     onOptionClick: (Long) -> Unit,
     onTickClick: (Long) -> Unit,
-    onDeleteClick: (FavouriteResponse) -> Unit
+    onDeleteClick: (FavouriteResponse) -> Unit,
+    onRetry: () -> Unit
 ) {
 
-    Column(
-        modifier = Modifier.background(colorResource(id = R.color.background))
-    ) {
-
-        AppToolBar(
-            modifier = Modifier.statusBarsPadding(),
-            onBackClick = onBackClick,
-            title = {
-                Text(
-                    "Favourites",
-                    fontSize = 16.sp,
-                    color = colorResource(id = R.color.text_dark_400)
-                )
-            },
-            actionBtn = {
-
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .background(
-                            color = colorResource(id = R.color.esewa_bg_light),
-                            shape = RoundedCornerShape(8.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CleanIconButton(
-                        icon = R.drawable.ic_cart,
-                        contentDescription = "Cart",
-                        onClick = {
-                            onCartClick()
-                        }
-                    )
-                    if (cartCount > 0) {
-                        Text(
-                            text = cartCount.toString(),
-                            fontSize = 10.sp,
-                            color = Color.White,
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .offset(
-                                    x = (-10).dp,
-                                    y = 10.dp
-                                )
-                                .size(16.dp)
-                                .background(
-                                    color = colorResource(id = R.color.green),
-                                    shape = CircleShape,
-                                )
-                                .border(
-                                    width = 1.dp,
-                                    color = Color.White,
-                                    shape = CircleShape
-                                )
-                                .wrapContentSize(Alignment.Center)
-                        )
-                    }
-                }
-            }
-        )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 16.dp
-                )
-        ) {
-            if (noOfItems > 0) {
-                CustomCheckbox(
-                    checked = allSelected,
-                    onCheckedChange = onSelectAll,
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-            }
-
-            Text(
-                "Items  ( $noOfItems )",
-                fontSize = 14.sp,
-                color = colorResource(id = R.color.text_dark_300),
-                letterSpacing = 1.sp,
-                modifier = Modifier.padding(end = 8.dp)
-            )
-
-            Spacer(
-                modifier = Modifier
-                    .weight(1f)
-            )
-
-            if (selectedCount > 0) {
-                Text(
-                    text = if (allSelected) "DELETE ALL" else "DELETE",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.text_dark_300),
-                    letterSpacing = 1.sp,
-                    modifier = Modifier
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = deleteSelected
-                        )
-                )
-            }
-        }
-
-        if (noOfItems == 0) {
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 326.dp)
-                    .padding(horizontal = 16.dp)
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_empty_cart),
-                        contentDescription = "Empty Favourite",
-                        modifier = Modifier.padding(top = 32.dp)
-                    )
-
+    Scaffold(
+        containerColor = colorResource(R.color.background),
+        topBar = {
+            AppToolBar(
+                modifier = Modifier.statusBarsPadding(),
+                onBackClick = onBackClick,
+                title = {
                     Text(
-                        "No favourites yet",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        letterSpacing = 1.sp,
-                        color = colorResource(id = R.color.text_dark_400),
-                        modifier = Modifier.padding(8.dp)
-                    )
-
-                    Text(
-                        if (isLoggedIn) "Add your favourites to wishlist and\nthey will show here." else "Login to add items in favourite.",
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Medium,
+                        "Favourites",
                         fontSize = 16.sp,
-                        letterSpacing = 1.sp,
-                        lineHeight = 24.sp,
-                        color = colorResource(id = R.color.text_dark_200),
-                        modifier = Modifier.padding(8.dp)
+                        color = colorResource(id = R.color.text_dark_400)
                     )
+                },
+                actionBtn = {
 
-                    Button(
-                        onClick = continueShopping,
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.green),
-                            contentColor = Color.White
-                        ),
+                    Box(
                         modifier = Modifier
-                            .padding(top = 16.dp, bottom = 32.dp)
+                            .size(56.dp)
+                            .background(
+                                color = colorResource(id = R.color.esewa_bg_light),
+                                shape = RoundedCornerShape(8.dp)
+                            ),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            if (isLoggedIn) "CONTINUE SHOPPING" else "LOGIN",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp
+                        CleanIconButton(
+                            icon = R.drawable.ic_cart,
+                            contentDescription = "Cart",
+                            onClick = {
+                                onCartClick()
+                            }
                         )
+                        if (cartCount > 0) {
+                            Text(
+                                text = cartCount.toString(),
+                                fontSize = 10.sp,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .offset(
+                                        x = (-10).dp,
+                                        y = 10.dp
+                                    )
+                                    .size(16.dp)
+                                    .background(
+                                        color = colorResource(id = R.color.green),
+                                        shape = CircleShape,
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        color = Color.White,
+                                        shape = CircleShape
+                                    )
+                                    .wrapContentSize(Alignment.Center)
+                            )
+                        }
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+
+        when (uiState) {
+
+            FavouriteUiState.Loading -> {
+                CommonLoading()
+            }
+
+            is FavouriteUiState.Success -> {
+                val data = uiState.favouriteData.products
+
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                ) {
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 16.dp
+                            )
+                    ) {
+                        if (noOfItems > 0) {
+                            CustomCheckbox(
+                                checked = allSelected,
+                                onCheckedChange = onSelectAll,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                        }
+
+                        Text(
+                            "Items  ( $noOfItems )",
+                            fontSize = 14.sp,
+                            color = colorResource(id = R.color.text_dark_300),
+                            letterSpacing = 1.sp,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+
+                        Spacer(
+                            modifier = Modifier
+                                .weight(1f)
+                        )
+
+                        if (selectedCount > 0) {
+                            Text(
+                                text = if (allSelected) "DELETE ALL" else "DELETE",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colorResource(id = R.color.text_dark_300),
+                                letterSpacing = 1.sp,
+                                modifier = Modifier
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null,
+                                        onClick = deleteSelected
+                                    )
+                            )
+                        }
+                    }
+
+                    if (data.isEmpty()) {
+                        FavouriteEmpty(
+                            isLoggedIn = isLoggedIn,
+                            continueShopping = continueShopping
+                        )
+                    } else {
+
+                        LazyColumn{
+                            items(
+                                items = data,
+                                key = { product ->
+                                    product.productId
+                                }
+                            ) { products ->
+
+                                FavouriteProductCard(
+                                    image = {
+                                        AsyncImage(
+                                            model = products.thumbnail,
+                                            contentDescription = "Product Image",
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .background(
+                                                    color = colorResource(id = R.color.image_bg_color)
+                                                ),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    },
+                                    title = {
+                                        Text(
+                                            text = products.title,
+                                            maxLines = 1,
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            letterSpacing = 1.sp,
+                                            lineHeight = 24.sp,
+                                            color = colorResource(id = R.color.text_dark_400),
+                                            modifier = Modifier.padding(bottom = 8.dp)
+                                        )
+                                    },
+                                    brand = {
+                                        Text(
+                                            text = products.brand.uppercase(),
+                                            fontWeight = FontWeight.Medium,
+                                            fontSize = 14.sp,
+                                            lineHeight = 16.sp,
+                                            letterSpacing = 2.sp,
+                                            color = colorResource(id = R.color.text_dark_200),
+                                            modifier = Modifier.padding(bottom = 8.dp)
+                                        )
+                                    },
+                                    price = {
+                                        Text(
+                                            text = "%,.2f".format(products.price),
+                                            fontSize = 20.sp,
+                                            lineHeight = 24.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            letterSpacing = 1.sp,
+                                            color = colorResource(id = R.color.text_dark_400)
+                                        )
+                                    },
+                                    onClick = {
+                                        onProductClick(products)
+                                    },
+
+                                    optionClick = {
+                                        onOptionClick(products.productId)
+                                    },
+
+                                    addToCartClick = {
+                                        onAddToCartClick(products)
+                                    },
+
+                                    tickClick = {
+                                        onTickClick(products.productId)
+                                    },
+
+                                    checked = selectedIds.contains(products.productId),
+
+                                    onDeleteClick = {
+                                        onDeleteClick(products)
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }
 
-        } else {
-
-            LazyColumn() {
-                items(
-                    items = products,
-                    key = { product ->
-                        product.productId
-                    }
-                ) { product ->
-                    FavouriteProductCard(
-                        image = {
-                            AsyncImage(
-                                model = product.thumbnail,
-                                contentDescription = "Product Image",
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(
-                                        color = colorResource(id = R.color.image_bg_color)
-                                    ),
-                                contentScale = ContentScale.Crop
-                            )
-                        },
-
-                        title = {
-                            Text(
-                                text = product.title,
-                                maxLines = 1,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp,
-                                lineHeight = 24.sp,
-                                color = colorResource(id = R.color.text_dark_400),
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-                        },
-
-                        brand = {
-                            Text(
-                                text = product.brand.uppercase(),
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 14.sp,
-                                lineHeight = 16.sp,
-                                letterSpacing = 2.sp,
-                                color = colorResource(id = R.color.text_dark_200),
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-                        },
-
-                        price = {
-                            Text(
-                                text = "%,.2f".format(product.price),
-                                fontSize = 20.sp,
-                                lineHeight = 24.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp,
-                                color = colorResource(id = R.color.text_dark_400)
-                            )
-                        },
-
-                        onClick = {
-                            onProductClick(product)
-                        },
-
-                        optionClick = {
-                            onOptionClick(product.productId)
-                        },
-
-                        addToCartClick = {
-                            onAddToCartClick(product)
-                        },
-
-                        tickClick = {
-                            onTickClick(product.productId)
-                        },
-
-                        checked = selectedIds.contains(product.productId),
-
-                        onDeleteClick = {
-                            onDeleteClick(product)
-                        }
-                    )
-                }
+            is FavouriteUiState.Error -> {
+                CommonError(
+                    message = uiState.message,
+                    onRetry = onRetry
+                )
             }
         }
     }

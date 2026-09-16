@@ -27,6 +27,7 @@ import com.example.eSewaMarket.ui.compose.shippingAddress.AddressViewModel
 import com.example.eSewaMarket.ui.compose.shippingAddress.ShippingUiState
 import com.example.eSewaMarket.ui.viewmodel.LocationViewModel
 import com.example.eSewaMarket.utils.LocationPermissionHandler
+import com.example.eSewaMarket.utils.SnackBarUtil
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -257,11 +258,15 @@ class NewAddressActivity : AppCompatActivity() {
                         landmark = landmark
                     )
 
-                    if (addressId == null){
+                    if (addressId == null) {
                         addressViewModel.createAddress(
                             request = request,
                             onSuccess = {
-                                Toast.makeText(this, "Address saved successfully", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this,
+                                    "Address saved successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 finish()
                             }
                         )
@@ -270,7 +275,11 @@ class NewAddressActivity : AppCompatActivity() {
                             id = addressId!!,
                             request = request,
                             onSuccess = {
-                                Toast.makeText(this, "Address updated successfully", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this,
+                                    "Address updated successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 finish()
                             }
                         )
@@ -544,7 +553,11 @@ class NewAddressActivity : AppCompatActivity() {
                         is ShippingUiState.Error -> {
                             hideLoading()
 
-                            Toast.makeText(this@NewAddressActivity, state.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@NewAddressActivity,
+                                state.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
@@ -560,33 +573,44 @@ class NewAddressActivity : AppCompatActivity() {
         binding.loadingOverlay.visibility = View.GONE
     }
 
-    private fun deleteAddressDialog(){
+    private fun deleteAddressDialog() {
+        val address = editingAddress
+
+        if (address == null) {
+            Toast.makeText(this, "Address information is not available.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val dialog = MaterialAlertDialogBuilder(this)
             .setTitle("Do you want to delete this address?")
             .setNegativeButton("No", null)
             .setPositiveButton("Yes") { _, _ ->
 
-                val id = addressId
+                val id = addressId ?: return@setPositiveButton
 
-                if (id != null) {
-                    addressViewModel.deleteAddress(
-                        id = id,
-                        onSuccess = {
-                            finish()
+                addressViewModel.deleteAddress(
+                    id = id,
+                    onSuccess = {
+                        val resultIntent = Intent().apply {
+                            putExtra("deletedAddress", address)
                         }
-                    )
-                }
+                        setResult(RESULT_OK, resultIntent)
+                        finish()
+                    }
+                )
             }
             .create()
 
         dialog.setOnShowListener {
             dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE)
-                .setTextColor(ContextCompat.getColor(this, R.color.green)
+                .setTextColor(
+                    ContextCompat.getColor(this, R.color.green)
                 )
 
             dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)
-                .setTextColor(ContextCompat.getColor(this, R.color.esewa_red)
-            )
+                .setTextColor(
+                    ContextCompat.getColor(this, R.color.esewa_red)
+                )
         }
 
         dialog.show()

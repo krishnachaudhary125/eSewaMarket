@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.sp
 import com.example.eSewaMarket.R
 import com.example.eSewaMarket.data.models.OrderResponse
 import com.example.eSewaMarket.data.models.PaymentOptions
+import com.example.eSewaMarket.data.models.ProductResponse
 import com.example.eSewaMarket.ui.compose.AppToolBar
 import com.example.eSewaMarket.ui.compose.component.CommonError
 import com.example.eSewaMarket.ui.compose.component.CommonLoading
@@ -19,6 +20,7 @@ import com.example.eSewaMarket.ui.compose.component.CommonLoading
 fun ConfirmationScreen(
     state: ConfirmationUiState,
     placedOrder: OrderResponse?,
+    orderedProducts: List<ProductResponse>,
     isPlacingOrder: Boolean,
     onBackClick: () -> Unit,
     onRetry: () -> Unit,
@@ -51,6 +53,7 @@ fun ConfirmationScreen(
                 OrderPlacedSuccessView(
                     modifier = Modifier.padding(innerPadding),
                     order = placedOrder,
+                    orderedProducts = orderedProducts,
                     onViewOrderClick = {
                         onViewOrderClick(placedOrder)
                     },

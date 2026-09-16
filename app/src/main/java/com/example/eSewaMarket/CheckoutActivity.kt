@@ -66,15 +66,25 @@ class CheckoutActivity : AppCompatActivity() {
                 else -> emptyList()
             }
 
-            val addressExist = addresses.isNotEmpty()
+            val addressLoaded = addressUiState is ShippingUiState.Success
 
-            val shippingAddress = addresses.firstOrNull {
-                it.isDefaultAddress
+            val addressExist = addressLoaded && addresses.isNotEmpty()
+
+            val shippingAddress = if (addressLoaded) {
+                addresses.firstOrNull {
+                    it.isDefaultAddress
+                }
+            } else {
+                null
             }
 
-            val shippingAddressText = shippingAddress?.let {
-                "${it.addressName}, ${it.district} ${it.postalCode}"
-            } ?: "Add Shipping Address"
+            val shippingAddressText = if (!addressLoaded) {
+                ""
+            } else {
+                shippingAddress?.let {
+                    "${it.addressName}, ${it.district} ${it.postalCode}"
+                } ?: "Add Shipping Address"
+            }
 
             val count by cartViewModel.cartCount()
                 .collectAsStateWithLifecycle(
@@ -85,16 +95,17 @@ class CheckoutActivity : AppCompatActivity() {
                 products,
                 productPrice,
                 count,
-                shippingAddressText,
-                addressExist
+                addressUiState
             ) {
-                checkoutViewModel.loadCheckout(
-                    products = products,
-                    productPrice = productPrice ?: 0.0,
-                    itemCount = count,
-                    address = shippingAddressText,
-                    addressExist = addressExist
-                )
+                if (addressUiState is ShippingUiState.Success) {
+                    checkoutViewModel.loadCheckout(
+                        products = products,
+                        productPrice = productPrice ?: 0.0,
+                        itemCount = count,
+                        address = shippingAddressText,
+                        addressExist = addressExist
+                    )
+                }
             }
 
             CheckoutScreen(
@@ -157,7 +168,7 @@ class CheckoutActivity : AppCompatActivity() {
         checkoutData: CheckoutData,
         shippingAddress: String,
         shippingAddressId: Long
-    ){
+    ) {
 
         val intent = Intent(this, ConfirmationActivity::class.java).apply {
             putExtra("shippingAddress", shippingAddress)

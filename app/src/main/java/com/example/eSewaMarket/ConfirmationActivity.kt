@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.eSewaMarket.data.models.PaymentOptions
-import com.example.eSewaMarket.data.repository.UserSessionRepository
 import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationData
 import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationNavigationEvent
 import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationScreen
@@ -20,8 +19,6 @@ import com.example.eSewaMarket.ui.compose.checkoutConfirmation.ConfirmationViewM
 import com.example.eSewaMarket.ui.factory.ViewModelFactoryProvider
 import com.example.eSewaMarket.ui.payment.EsewaPayment
 import com.example.eSewaMarket.ui.viewmodel.CartViewModel
-import com.example.eSewaMarket.utils.AuthNavigator
-import com.f1soft.esewapaymentsdk.ui.screens.EsewaPaymentActivity
 import kotlin.getValue
 
 class ConfirmationActivity : AppCompatActivity() {
@@ -33,9 +30,6 @@ class ConfirmationActivity : AppCompatActivity() {
     private val confirmationViewModel: ConfirmationViewModel by viewModels {
         ViewModelFactoryProvider.confirmationFactory(this)
     }
-
-    private lateinit var userSessionRepository: UserSessionRepository
-    private lateinit var authNavigator: AuthNavigator
 
     private lateinit var esewaLauncher: ActivityResultLauncher<Intent>
 
@@ -84,14 +78,16 @@ class ConfirmationActivity : AppCompatActivity() {
                 grandTotal = intent.getDoubleExtra("grandTotal", 0.0)
             )
 
+            val orderedProducts by confirmationViewModel.orderedProducts
+                .collectAsStateWithLifecycle()
+
             LaunchedEffect(Unit) {
                 confirmationViewModel.navigationEvent.collect { event ->
                     when (event) {
                         is ConfirmationNavigationEvent.StartEsewaPayment -> {
                             val intent = Intent(this@ConfirmationActivity, EsewaPayment::class.java).apply {
                                 putExtra("orderNumber", event.order.orderNumber)
-                                putExtra("totalAmount", event.order.totalAmount)
-                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                                putExtra("grandTotal", event.order.totalAmount)
                             }
                             esewaLauncher.launch(intent)
                         }
@@ -110,6 +106,7 @@ class ConfirmationActivity : AppCompatActivity() {
             ConfirmationScreen(
                 state = uiState,
                 placedOrder = placedOrder,
+                orderedProducts = orderedProducts,
                 isPlacingOrder = isPlacingOrder,
                 onBackClick = {
                     onBackPressedDispatcher.onBackPressed()

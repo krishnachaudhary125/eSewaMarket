@@ -36,7 +36,7 @@ fun ShippingAddressScreen(
     uiState: ShippingUiState,
     onBackClick: () -> Unit,
     addAddressNow: () -> Unit,
-    onDeleteClick: () -> Unit,
+    onDeleteClick: (AddressResponse) -> Unit,
     onEditClick: (Long) -> Unit,
     onAddAddressClick: () -> Unit,
     onRetry: () -> Unit
@@ -99,7 +99,7 @@ fun ShippingAddressScreen(
 
                                 ShippingAddressDraggable(
                                     onDeleteClick = {
-                                        onDeleteClick()
+                                        onDeleteClick(addresses)
                                     },
                                     onEditClick = {
                                         onEditClick(addresses.id)
