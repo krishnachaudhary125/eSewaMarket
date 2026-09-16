@@ -2,10 +2,10 @@ package com.example.eSewaMarket.ui.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,42 +18,58 @@ fun AppToolBar(
     modifier: Modifier,
     onBackClick: () -> Unit,
     title: (@Composable () -> Unit)? = {},
-    actionBtn: (@Composable () -> Unit)? = {}
-){
-    Box(
+    actionBtn: (@Composable () -> Unit)? = {},
+    bottomContent: (@Composable () -> Unit)? = {}
+) {
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(80.dp)
-            .padding(bottom = 16.dp)
-            .background(color = Color.White)
-            .padding(horizontal = 16.dp, vertical = 4.dp)
-    ){
+    ) {
+
         Box(
-            modifier = modifier
-                .align(Alignment.CenterStart)
-        ){
-            CleanIconButton(
-                icon = R.drawable.ic_back_arrow,
-                contentDescription = "Back",
-                onClick = onBackClick
-            )
-        }
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .background(Color.White)
+                .padding(horizontal = 16.dp, vertical = 4.dp)
+        ) {
 
-        title?.let {
             Box(
-                modifier = modifier
-                    .align(Alignment.Center)
-            ){
-                it()
-            }
-        }
-
-        actionBtn?.let {
-            Box(
-                modifier = modifier.align(Alignment.CenterEnd)
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
             ) {
-                it()
+                CleanIconButton(
+                    icon = R.drawable.ic_back_arrow,
+                    contentDescription = "Back",
+                    onClick = onBackClick
+                )
+            }
+
+            title?.let {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                ) {
+                    it()
+                }
+            }
+
+            actionBtn?.let {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                ) {
+                    it()
+                }
             }
         }
+
+        bottomContent?.invoke()
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(16.dp)
+        )
     }
 }
