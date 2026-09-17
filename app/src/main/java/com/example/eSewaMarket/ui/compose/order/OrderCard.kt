@@ -95,7 +95,7 @@ fun OrderCard(
                             )
                         },
                         title = product.productTitle,
-                        brand = "",
+                        brand = product.brand,
                         price = product.price,
                         quantity = product.quantity
                     )
