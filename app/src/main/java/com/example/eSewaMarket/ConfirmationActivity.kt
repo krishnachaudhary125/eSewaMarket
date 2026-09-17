@@ -121,9 +121,8 @@ class ConfirmationActivity : AppCompatActivity() {
                     confirmationViewModel.createOrder()
                 },
                 onViewOrderClick = { order ->
-                    val intent = Intent(this, OrderActivity::class.java).apply {
-                        putExtra("orderNumber", order.orderNumber)
-                        putExtra("totalAmount", order.totalAmount)
+                    val intent = Intent(this, OrderProductDetailActivity::class.java).apply {
+                        putExtra("orderId", order.id)
                     }
                     startActivity(intent)
                     finish()
