@@ -44,8 +44,8 @@ fun OrderScreen(
 
     val tabs = listOf(
         "All",
-        "Pending",
-        "Complete"
+        "PENDING",
+        "COMPLETE"
     )
 
     Scaffold(
