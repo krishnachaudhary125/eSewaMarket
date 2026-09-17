@@ -142,4 +142,10 @@ interface ApiService {
     suspend fun getAllOrders(
         @Header("Authorization") token: String
     ): List<OrderDetailResponse>
+
+    @GET("orders/{id}")
+    suspend fun getOrderDetail(
+        @Header("Authorization") token: String,
+        @Path("id") id: Long
+    ): List<OrderDetailResponse>
 }
