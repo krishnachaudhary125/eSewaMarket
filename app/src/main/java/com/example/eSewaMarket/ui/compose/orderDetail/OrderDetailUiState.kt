@@ -7,7 +7,7 @@ sealed interface OrderDetailUiState {
     data object Loading : OrderDetailUiState
 
     data class Success(
-        val orderDetail: List<OrderDetailResponse>
+        val orderDetail: OrderDetailResponse
     ): OrderDetailUiState
 
     data class Error(

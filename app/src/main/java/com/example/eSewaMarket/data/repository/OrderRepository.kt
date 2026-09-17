@@ -57,7 +57,7 @@ class OrderRepository(
         )
     }
 
-    suspend fun getOrderDetail(id: Long): List<OrderDetailResponse> {
+    suspend fun getOrderDetail(id: Long): OrderDetailResponse {
         val token = getAuthToken()
 
         return apiService.getOrderDetail(
