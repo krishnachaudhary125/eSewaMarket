@@ -56,4 +56,13 @@ class OrderRepository(
             token = token
         )
     }
+
+    suspend fun getOrderDetail(id: Long): OrderDetailResponse {
+        val token = getAuthToken()
+
+        return apiService.getOrderDetail(
+            token = token,
+            id = id
+        )
+    }
 }

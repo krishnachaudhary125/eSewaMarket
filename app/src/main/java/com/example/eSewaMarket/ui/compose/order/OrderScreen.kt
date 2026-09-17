@@ -26,6 +26,7 @@ import com.example.eSewaMarket.utils.minimumLoadingTime
 fun OrderScreen(
     uiState: OrderUiState,
     onBackClick: () -> Unit,
+    onItemClick: (Long) -> Unit,
     onRetry: () -> Unit,
     continueShopping: () -> Unit
 ) {
@@ -43,8 +44,8 @@ fun OrderScreen(
 
     val tabs = listOf(
         "All",
-        "Pending",
-        "Complete"
+        "PENDING",
+        "COMPLETE"
     )
 
     Scaffold(
@@ -110,7 +111,9 @@ fun OrderScreen(
                                 key = { order -> order.id }
                             ) { order ->
                                 OrderCard(
-                                    onOrderItemClick = {},
+                                    onOrderItemClick = {
+                                        onItemClick(order.id)
+                                    },
                                     orderNo = order.orderNumber,
                                     date = formatOrderDate(order.createdAt),
                                     totalNoOfProducts = order.products.size,

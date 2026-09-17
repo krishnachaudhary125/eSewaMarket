@@ -33,6 +33,12 @@ class OrderActivity : AppCompatActivity() {
                     onBackPressedDispatcher
                         .onBackPressed()
                 },
+                onItemClick = { orderId ->
+                    val intent = Intent(this, OrderProductDetailActivity::class.java).apply {
+                        putExtra("orderId", orderId)
+                    }
+                    startActivity(intent)
+                },
                 onRetry = {
                     orderViewModel.retry()
                 },

@@ -124,7 +124,7 @@ fun OrderCardTop(
                     )
 
                     Text(
-                        if (status) "Complete" else "Pending",
+                        if (status) "COMPLETE" else "PENDING",
                         fontWeight = FontWeight(400),
                         fontSize = 12.sp,
                         lineHeight = 16.sp,

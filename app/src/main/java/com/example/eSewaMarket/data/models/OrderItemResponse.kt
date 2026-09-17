@@ -4,6 +4,7 @@ data class OrderItemResponse(
     val id: Long,
     val productId: Long,
     val productTitle: String,
+    val brand: String,
     val productImage: String?,
     val price: Double,
     val quantity: Int,

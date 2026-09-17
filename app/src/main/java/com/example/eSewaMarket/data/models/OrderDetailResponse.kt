@@ -4,7 +4,7 @@ data class OrderDetailResponse(
     val id: Long,
     val orderNumber: String,
 
-    val subTotal: Double,
+    val subtotal: Double,
     val shippingCharge: Double,
     val tax: Double,
     val totalAmount: Double,
