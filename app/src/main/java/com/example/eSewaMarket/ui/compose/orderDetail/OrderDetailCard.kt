@@ -76,11 +76,7 @@ fun OrderDetailCard(
 
             Column(
                 modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 16.dp
-                    )
+                    .padding(horizontal = 16.dp)
                     .fillMaxWidth()
             ) {
                 Row(
@@ -179,7 +175,8 @@ fun OrderDetailCard(
                             fontSize = 14.sp,
                             lineHeight = 16.sp,
                             letterSpacing = 1.sp,
-                            color = colorResource(id = R.color.green)
+                            color = colorResource(id = R.color.green),
+                            modifier = Modifier.padding(top = 2.dp)
                         )
 
                         Text(
