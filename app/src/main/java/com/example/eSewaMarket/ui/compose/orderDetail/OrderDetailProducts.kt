@@ -24,7 +24,6 @@ import com.example.eSewaMarket.R
 
 @Composable
 fun OrderDetailProducts(
-    noOfItems: Int,
     image: @Composable () -> Unit,
     title: String,
     brand: String,
@@ -39,13 +38,6 @@ fun OrderDetailProducts(
             bottom = 16.dp
         )
     ) {
-        Text(
-            "Items ($noOfItems)",
-            fontSize = 14.sp,
-            letterSpacing = 1.5.sp,
-            color = colorResource(R.color.text_dark_300),
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
 
         Box(
             modifier = Modifier

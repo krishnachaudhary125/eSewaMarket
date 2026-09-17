@@ -41,10 +41,20 @@ fun OrderDetailCard(
 
         Column {
 
+            Text(
+                "Items ($noOfItems)",
+                fontSize = 14.sp,
+                letterSpacing = 1.5.sp,
+                color = colorResource(R.color.text_dark_300),
+                modifier = Modifier.padding(
+                    start = 16.dp,
+                    bottom = 8.dp
+                )
+            )
+
             products.forEach { product ->
 
                 OrderDetailProducts(
-                    noOfItems = noOfItems,
                     image = {
                         AsyncImage(
                             model = product.productImage,
@@ -146,7 +156,7 @@ fun OrderDetailCard(
                 ) {
                     Row{
                         Text(
-                            "Grand Total",
+                            "Grand Total ",
                             fontSize = 14.sp,
                             lineHeight = 20.sp,
                             letterSpacing = 1.sp,
@@ -158,7 +168,8 @@ fun OrderDetailCard(
                             fontSize = 10.sp,
                             lineHeight = 16.sp,
                             letterSpacing = 1.sp,
-                            color = colorResource(id = R.color.text_dark_200)
+                            color = colorResource(id = R.color.text_dark_200),
+                            modifier = Modifier.padding(top = 2.dp)
                         )
                     }
 
