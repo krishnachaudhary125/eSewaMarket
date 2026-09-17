@@ -50,7 +50,7 @@ object ViewModelFactoryProvider {
         )
     }
 
-    fun locationFactory() : LocationViewModelFactory{
+    fun locationFactory(context: Context) : LocationViewModelFactory{
 
         return LocationViewModelFactory(
             LocationRepository(
@@ -73,13 +73,13 @@ object ViewModelFactoryProvider {
         )
     }
 
-    fun orderFactory(): OrderViewModelFactory {
+    fun orderFactory(context: Context): OrderViewModelFactory {
         return OrderViewModelFactory(
             repository = OrderRepository(RetrofitInstance.api)
         )
     }
 
-    fun orderDetailFactory(): OrderDetailViewModelFactory {
+    fun orderDetailFactory(context: Context): OrderDetailViewModelFactory {
         return OrderDetailViewModelFactory(
             repository = OrderRepository(RetrofitInstance.api)
         )
