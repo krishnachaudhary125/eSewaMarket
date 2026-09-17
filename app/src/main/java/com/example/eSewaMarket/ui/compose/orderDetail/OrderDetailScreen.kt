@@ -32,7 +32,7 @@ fun OrderDetailScreen(
                     Text(
                         "Thank you for your order",
                         fontSize = 16.sp,
-                        color = colorResource(id = R.color.text_dark_400)
+                        color = colorResource(R.color.text_dark_400)
                     )
                 },
                 onBackClick = onBackClick
@@ -47,14 +47,26 @@ fun OrderDetailScreen(
             }
 
             is OrderDetailUiState.Success -> {
+
                 LazyColumn(
-                    modifier = Modifier.padding(innerPadding)
-                ){
+                    modifier = Modifier
+                        .padding(innerPadding)
+                ) {
+
                     item {
+
                         OrderDetailCard(
                             orderNo = uiState.orderDetail.orderNumber,
-                            orderDate = formatOrderDate(uiState.orderDetail.createdAt),
-                            orderStatus = uiState.orderDetail.orderStatus
+                            orderDate = formatOrderDate(
+                                uiState.orderDetail.createdAt
+                            ),
+                            orderStatus = uiState.orderDetail.orderStatus,
+                            noOfItems = uiState.orderDetail.products.size,
+                            products = uiState.orderDetail.products,
+                            subtotal = uiState.orderDetail.subtotal,
+                            totalTax = uiState.orderDetail.tax,
+                            shippingCharge = uiState.orderDetail.shippingCharge,
+                            totalPrice = uiState.orderDetail.totalAmount
                         )
                     }
                 }

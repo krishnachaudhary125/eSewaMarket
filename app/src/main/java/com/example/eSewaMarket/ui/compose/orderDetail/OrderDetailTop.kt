@@ -30,6 +30,7 @@ fun OrderDetailTop(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(bottom = 16.dp)
             .wrapContentHeight()
             .background(Color.White)
     ) {
