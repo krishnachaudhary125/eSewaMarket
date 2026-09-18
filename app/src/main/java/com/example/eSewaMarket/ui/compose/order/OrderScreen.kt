@@ -1,5 +1,7 @@
 package com.example.eSewaMarket.ui.compose.order
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,6 +27,7 @@ import com.example.eSewaMarket.ui.compose.component.CommonError
 import com.example.eSewaMarket.ui.compose.component.CommonLoading
 import com.example.eSewaMarket.utils.minimumLoadingTime
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderScreen(
@@ -42,10 +45,11 @@ fun OrderScreen(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(selectedTabIndex) {
-        isTabSwitching = true
-        minimumLoadingTime{}
-        isTabSwitching = false
+    LaunchedEffect(isTabSwitching) {
+        if (isTabSwitching) {
+            minimumLoadingTime {}
+            isTabSwitching = false
+        }
     }
 
     val tabs = listOf(
@@ -82,7 +86,11 @@ fun OrderScreen(
                         tabs = tabs,
                         selectedTabIndex = selectedTabIndex,
                         onTabSelected = { index ->
-                            selectedTabIndex = index
+
+                            if (index != selectedTabIndex) {
+                                selectedTabIndex = index
+                                isTabSwitching = true
+                            }
                         },
                         onFilterClick = {
                             showPromoSheet = true
