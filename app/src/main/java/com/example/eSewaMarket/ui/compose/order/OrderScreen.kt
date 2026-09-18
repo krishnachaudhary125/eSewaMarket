@@ -1,17 +1,22 @@
 package com.example.eSewaMarket.ui.compose.order
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -22,6 +27,8 @@ import com.example.eSewaMarket.ui.compose.component.CommonError
 import com.example.eSewaMarket.ui.compose.component.CommonLoading
 import com.example.eSewaMarket.utils.minimumLoadingTime
 
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderScreen(
     uiState: OrderUiState,
@@ -34,18 +41,29 @@ fun OrderScreen(
         mutableIntStateOf(0)
     }
 
-    var isTabSwitching by remember { mutableStateOf(false) }
+    var isTabSwitching by remember {
+        mutableStateOf(false)
+    }
 
-    LaunchedEffect(selectedTabIndex) {
-        isTabSwitching = true
-        minimumLoadingTime{}
-        isTabSwitching = false
+    LaunchedEffect(isTabSwitching) {
+        if (isTabSwitching) {
+            minimumLoadingTime {}
+            isTabSwitching = false
+        }
     }
 
     val tabs = listOf(
         "All",
         "PENDING",
         "COMPLETE"
+    )
+
+    var showPromoSheet by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    val promoSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
     )
 
     Scaffold(
@@ -68,7 +86,14 @@ fun OrderScreen(
                         tabs = tabs,
                         selectedTabIndex = selectedTabIndex,
                         onTabSelected = { index ->
-                            selectedTabIndex = index
+
+                            if (index != selectedTabIndex) {
+                                selectedTabIndex = index
+                                isTabSwitching = true
+                            }
+                        },
+                        onFilterClick = {
+                            showPromoSheet = true
                         }
                     )
                 }
@@ -134,5 +159,15 @@ fun OrderScreen(
                 )
             }
         }
+    }
+
+    if (showPromoSheet) {
+        FilterBottomSheet(
+            onDismiss = {
+                showPromoSheet = false
+            },
+            sheetState = promoSheetState,
+            onApplyClick = {}
+        )
     }
 }

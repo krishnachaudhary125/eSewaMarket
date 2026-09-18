@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -81,13 +82,13 @@ fun OrderDetailCard(
             ) {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(bottom = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
                         "Sub Total",
                         fontSize = 14.sp,
-                        lineHeight = 20.sp,
                         letterSpacing = 1.sp,
                         color = colorResource(id = R.color.text_dark_300)
                     )
@@ -95,7 +96,6 @@ fun OrderDetailCard(
                     Text(
                         text = "Rs. %,.2f".format(subtotal),
                         fontSize = 16.sp,
-                        lineHeight = 24.sp,
                         letterSpacing = 2.sp,
                         color = colorResource(id = R.color.text_dark_400)
                     )
@@ -103,13 +103,14 @@ fun OrderDetailCard(
 
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .fillMaxWidth()
+                        .padding(bottom = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         "Tax",
                         fontSize = 14.sp,
-                        lineHeight = 20.sp,
                         letterSpacing = 1.sp,
                         color = colorResource(id = R.color.text_dark_300)
                     )
@@ -117,7 +118,6 @@ fun OrderDetailCard(
                     Text(
                         text = "Rs. %,.2f".format(totalTax),
                         fontSize = 16.sp,
-                        lineHeight = 24.sp,
                         letterSpacing = 2.sp,
                         color = colorResource(id = R.color.text_dark_400)
                     )
@@ -125,13 +125,14 @@ fun OrderDetailCard(
 
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .fillMaxWidth()
+                        .padding(bottom = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         "Shipping Charge",
                         fontSize = 14.sp,
-                        lineHeight = 20.sp,
                         letterSpacing = 1.sp,
                         color = colorResource(id = R.color.text_dark_300)
                     )
@@ -139,7 +140,6 @@ fun OrderDetailCard(
                     Text(
                         text = "Rs. %,.2f".format(shippingCharge),
                         fontSize = 16.sp,
-                        lineHeight = 24.sp,
                         letterSpacing = 2.sp,
                         color = colorResource(id = R.color.text_dark_400)
                     )
@@ -147,14 +147,15 @@ fun OrderDetailCard(
 
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .fillMaxWidth()
+                        .padding(bottom = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row{
                         Text(
                             "Grand Total ",
                             fontSize = 14.sp,
-                            lineHeight = 20.sp,
                             letterSpacing = 1.sp,
                             color = colorResource(id = R.color.text_dark_400)
                         )
@@ -162,7 +163,6 @@ fun OrderDetailCard(
                         Text(
                             "*included TAX",
                             fontSize = 10.sp,
-                            lineHeight = 16.sp,
                             letterSpacing = 1.sp,
                             color = colorResource(id = R.color.text_dark_200),
                             modifier = Modifier.padding(top = 2.dp)
@@ -173,16 +173,14 @@ fun OrderDetailCard(
                         Text(
                             "Rs.",
                             fontSize = 14.sp,
-                            lineHeight = 16.sp,
                             letterSpacing = 1.sp,
                             color = colorResource(id = R.color.green),
-                            modifier = Modifier.padding(top = 2.dp)
+                            modifier = Modifier.padding(top = 4.dp)
                         )
 
                         Text(
                             text = " %,.2f".format(totalPrice),
                             fontSize = 20.sp,
-                            lineHeight = 20.sp,
                             letterSpacing = 1.sp,
                             fontWeight = FontWeight.Bold,
                             color = colorResource(id = R.color.green)

@@ -111,10 +111,7 @@ fun OrderCardProduct(
             color = colorResource(id = R.color.text_dark_400),
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(
-                    top = 8.dp,
-                    end = 16.dp
-                )
+                .padding(end = 16.dp)
         )
     }
 }
