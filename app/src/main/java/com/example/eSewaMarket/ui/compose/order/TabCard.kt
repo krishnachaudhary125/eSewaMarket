@@ -26,7 +26,8 @@ import com.example.eSewaMarket.R
 fun TabCard(
     tabs: List<String>,
     selectedTabIndex: Int,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
+    onFilterClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -46,13 +47,13 @@ fun TabCard(
 
                 Text(
                     text = title,
-                    fontSize = if (isSelected){
+                    fontSize = if (isSelected) {
                         16.sp
                     } else {
                         14.sp
                     },
                     letterSpacing = 2.sp,
-                    fontWeight = if (isSelected){
+                    fontWeight = if (isSelected) {
                         FontWeight.Bold
                     } else {
                         FontWeight.Normal
@@ -82,6 +83,11 @@ fun TabCard(
             tint = colorResource(R.color.text_dark_300),
             modifier = Modifier
                 .align(Alignment.CenterVertically)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onFilterClick
+                )
         )
     }
 }
