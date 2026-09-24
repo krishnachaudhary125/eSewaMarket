@@ -16,6 +16,7 @@ import com.example.eSewaMarket.data.models.Product
 import com.example.eSewaMarket.data.models.ProvinceResponse
 import com.example.eSewaMarket.data.models.UserResponse
 import com.example.eSewaMarket.data.models.UserSyncRequest
+import com.example.eSewaMarket.data.models.VerifyEsewaPaymentRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -148,4 +149,17 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("id") id: Long
     ): OrderDetailResponse
+
+    @POST("orders/{orderId}/payment/verify")
+    suspend fun verifyEsewaPayment(
+        @Header("Authorization") token: String,
+        @Path("orderId") orderId: Long,
+        @Body request: VerifyEsewaPaymentRequest
+    ): OrderResponse
+
+    @DELETE("orders/{orderId}/payment")
+    suspend fun deletePendingEsewaOrder(
+        @Header("Authorization") token: String,
+        @Path("orderId") orderId: Long
+    )
 }
