@@ -116,7 +116,7 @@ fun OrderScreen(
                     val orders = when (selectedTabIndex) {
                         0 -> uiState.orders
                         1 -> uiState.orders.filter { it.orderStatus == "PENDING" }
-                        2 -> uiState.orders.filter { it.orderStatus == "COMPLETED" }
+                        2 -> uiState.orders.filter { it.orderStatus == "COMPLETED" || it.orderStatus == "CONFIRMED"}
                         else -> uiState.orders
                     }
 
@@ -142,7 +142,8 @@ fun OrderScreen(
                                     orderNo = order.orderNumber,
                                     date = formatOrderDate(order.createdAt),
                                     totalNoOfProducts = order.products.size,
-                                    status = order.orderStatus == "COMPLETED",
+                                    status = order.orderStatus == "COMPLETED" ||
+                                            order.orderStatus == "CONFIRMED",
                                     products = order.products,
                                     totalPrice = order.totalAmount
                                 )

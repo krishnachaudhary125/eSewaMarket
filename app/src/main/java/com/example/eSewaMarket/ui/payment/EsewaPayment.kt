@@ -9,6 +9,7 @@ import com.example.eSewaMarket.BuildConfig
 import com.f1soft.esewapaymentsdk.EsewaConfiguration
 import com.f1soft.esewapaymentsdk.EsewaPayment
 import com.f1soft.esewapaymentsdk.ui.screens.EsewaPaymentActivity
+import org.json.JSONObject
 
 @Suppress("DEPRECATION")
 class EsewaPayment : AppCompatActivity() {
@@ -48,12 +49,63 @@ class EsewaPayment : AppCompatActivity() {
         when (resultCode) {
             RESULT_OK -> {
 
-                val message = data?.getStringExtra(EsewaPayment.EXTRA_RESULT_MESSAGE)
+                val message = data?.getStringExtra(
+                    EsewaPayment.EXTRA_RESULT_MESSAGE
+                )
+
                 Log.d("eSewa_Payment", "Success: $message")
 
-                setResult(RESULT_OK, Intent().apply {
-                    putExtra("orderNumber", intent.getStringExtra("orderNumber"))
-                })
+                if (message.isNullOrBlank()) {
+                    setResult(RESULT_CANCELED)
+                    finish()
+                    return
+                }
+
+                try {
+                    val jsonObject = JSONObject(message)
+
+                    val transactionDetails = jsonObject.getJSONObject("transactionDetails")
+
+                    val referenceId = transactionDetails.getString("referenceId")
+
+                    val status = transactionDetails.getString("status")
+
+                    Log.d("eSewa_Payment", "Reference ID: $referenceId")
+
+                    Log.d("eSewa_Payment", "Payment Status: $status")
+
+                    if (status == "COMPLETE") {
+
+                        setResult(
+                            RESULT_OK,
+                            Intent().apply {
+                                putExtra("orderNumber", intent.getStringExtra("orderNumber"))
+                                putExtra("refId", referenceId)
+                            }
+                        )
+
+                    } else {
+
+                        setResult(
+                            RESULT_CANCELED,
+                            Intent().apply {
+                                putExtra("errorMessage", "eSewa payment was not completed.")
+                            }
+                        )
+                    }
+
+                } catch (e: Exception) {
+
+                    Log.e("eSewa_Payment", "Failed to parse eSewa response", e)
+
+                    setResult(
+                        RESULT_CANCELED,
+                        Intent().apply {
+                            putExtra("errorMessage", "Invalid eSewa payment response.")
+                        }
+                    )
+                }
+
                 finish()
             }
 

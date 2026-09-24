@@ -41,9 +41,21 @@ class ConfirmationActivity : AppCompatActivity() {
         esewaLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            confirmationViewModel.onEsewaPaymentResult(
-                success = result.resultCode == RESULT_OK
-            )
+
+            if (result.resultCode == RESULT_OK) {
+
+                val refId = result.data?.getStringExtra("refId")
+
+                confirmationViewModel.onEsewaPaymentResult(
+                    refId = refId
+                )
+
+            } else {
+
+                confirmationViewModel.onEsewaPaymentResult(
+                    refId = null
+                )
+            }
         }
 
         setContent {
