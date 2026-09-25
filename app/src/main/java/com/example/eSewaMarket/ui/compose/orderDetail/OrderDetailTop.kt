@@ -115,7 +115,7 @@ fun OrderDetailTop(
 
             Icon(
                 painter =
-                    if (orderStatus == "COMPLETED") painterResource(R.drawable.ic_shipment_status_delivered)
+                    if (orderStatus == "COMPLETED" || orderStatus == "CONFIRMED") painterResource(R.drawable.ic_shipment_status_delivered)
                 else painterResource(R.drawable.ic_shipment_status_ordered),
                 contentDescription = "Shipment Status",
                 tint = Color.Unspecified,

@@ -85,18 +85,55 @@ class ConfirmationViewModel(
         }
     }
 
-    fun onEsewaPaymentResult(success: Boolean) {
-        val order = pendingEsewaOrder ?: return
-        pendingEsewaOrder = null
+    fun onEsewaPaymentResult(refId: String?) {
 
-        if (success) {
-            _orderedProducts.value = confirmationData?.checkoutProducts.orEmpty()
-            _placedOrder.value = order
-            viewModelScope.launch {
-                clearCartQuietly()
+        val order = pendingEsewaOrder ?: return
+
+        if (refId.isNullOrBlank()) {
+
+            pendingEsewaOrder = null
+
+            deletePendingEsewaOrder(order.id)
+
+            return
+        }
+
+        viewModelScope.launch {
+
+            _isPlacingOrder.value = true
+
+            val result = minimumLoadingTime {
+
+                orderRepository.verifyEsewaPayment(
+                    orderId = order.id,
+                    refId = refId
+                )
             }
-        } else {
-            showError("Payment was not completed. Please try again.")
+
+            _isPlacingOrder.value = false
+
+            result.onSuccess { verifiedOrder ->
+
+                pendingEsewaOrder = null
+
+                _orderedProducts.value =
+                    confirmationData?.checkoutProducts.orEmpty()
+
+                _placedOrder.value = verifiedOrder
+
+                clearCartQuietly()
+
+            }.onFailure { exception ->
+
+                pendingEsewaOrder = null
+
+                deletePendingEsewaOrder(order.id)
+
+                showError(
+                    exception.message
+                        ?: "Payment verification failed."
+                )
+            }
         }
     }
 
@@ -118,6 +155,24 @@ class ConfirmationViewModel(
 
     fun showError(message: String) {
         _uiState.value = ConfirmationUiState.Error(message)
+    }
+
+    private fun deletePendingEsewaOrder(orderId: Long) {
+
+        viewModelScope.launch {
+
+            val result = orderRepository.deletePendingEsewaOrder(
+                orderId = orderId
+            )
+
+            result.onFailure { exception ->
+                Log.e(
+                    "eSewa_Order",
+                    "Failed to delete pending order",
+                    exception
+                )
+            }
+        }
     }
 }
 
